@@ -7,7 +7,7 @@ const Footer = () => {
 
   return (
 
-    <footer className='py-8'>
+    <footer className='py-8 mt-auto mx-auto'>
         <div className='container'>
             <div className="grid gap-6 grid-cols-12 border-b 
             border-gray-200 py-10 items-start">

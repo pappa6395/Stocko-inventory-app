@@ -5,7 +5,7 @@ const Logo = () => {
   return (
 
     <div className='flex items-center gap-2'>
-        <div className='flex items-center justify-center size-10 rounded-full bg-slate-900 text-slate-50'>
+        <div className='flex items-center flex-shrink-0 justify-center size-10 rounded-full bg-slate-900 text-slate-50'>
             <Package2 className='size-6' />
         </div>
         <h2 className='font-bold text-xl'>
