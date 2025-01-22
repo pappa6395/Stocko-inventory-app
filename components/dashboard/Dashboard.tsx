@@ -1,22 +1,35 @@
-import { Button } from "../ui/button";
+
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import AnalyticCard from "./Analytics/AnalyticCard";
+import Analytics from "./Analytics/Analytics";
+import RecentSaleCard from "./RecentSaleCard";
+import TransactionList from "./TransactionList";
+
 
 export default function Dashboard() {
   return (
-        <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">Inventory</h1>
-          </div>
-          <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-            <div className="flex flex-col items-center gap-1 text-center">
-              <h3 className="text-2xl font-bold tracking-tight">
-                You have no products
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                You can start selling as soon as you add a product.
-              </p>
-              <Button className="mt-4">Add Product</Button>
+        <main>
+          <section className="container py-4">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+              <AnalyticCard />
+              <AnalyticCard />
+              <AnalyticCard />
+              <AnalyticCard />
             </div>
-          </div>
+          </section>
+          <section className="container py-2">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-8">
+              <div className="col-span-full">
+                <TransactionList />
+              </div>
+              <div className="col-span-full">
+                <RecentSaleCard />
+              </div>
+              <div className="col-span-full">
+                <Analytics />
+              </div>
+            </div>
+          </section>
         </main>
   );
 }

@@ -13,3 +13,5 @@
  - Change Password Page
  - Verify Email
  - Integrate Dashboard from Shad
+ - Integrate Chart from Tremor
+ - Deployment
