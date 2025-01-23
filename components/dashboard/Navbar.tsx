@@ -1,20 +1,39 @@
-import React from 'react'
-import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
+"use client"
+
+import React, { useState } from 'react'
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '../ui/sheet'
 import { Button } from '../ui/button'
-import { CircleUser, Home, LineChart, Menu, Package, Package2, Search, ShoppingCart, Users } from 'lucide-react'
+import { ChevronDown, ChevronRight, Menu, Plus, Search } from 'lucide-react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { Input } from '../ui/input'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Badge } from '../ui/badge'
+import { ModeToggle } from '../global/mode-toggle'
+import AvatarMenu from './Menu/AvatarMenu'
+import QuickAccessMenu from './Menu/QuickAccessMenu'
+import { sidebarLinks } from '@/config/sidebar'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
+import { usePathname } from 'next/navigation'
+import { cn } from '@/lib/utils'
+import Logo from '../global/Logo'
 
 const Navbar = () => {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+    
+  const handleToggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+  const handleToggleMenuMobile = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   return (
 
-    <header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+    <header className="flex h-14 items-center gap-4 border-b 
+    bg-muted/40 px-4 lg:h-[60px] lg:px-6">
       <Sheet>
-        <SheetTrigger asChild>
+        <SheetTrigger asChild onClick={handleToggleMenuMobile}>
           <Button
             variant="outline"
             size="icon"
@@ -25,68 +44,73 @@ const Navbar = () => {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="flex flex-col">
+          <SheetTitle>
+            <Logo 
+              classNameLogo='size-4' 
+              classNameFrame='size-8' 
+              classNameText='text-base' 
+            />
+          </SheetTitle>
           <nav className="grid gap-2 text-lg font-medium">
-            <Link
-              href="#"
-              className="flex items-center gap-2 text-lg font-semibold"
-            >
-              <Package2 className="h-6 w-6" />
-              <span className="sr-only">Acme Inc</span>
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Home className="h-5 w-5" />
-              Dashboard
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl bg-muted px-3 py-2 text-foreground hover:text-foreground"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Orders
-              <Badge className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">
-                6
-              </Badge>
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Package className="h-5 w-5" />
-              Products
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <Users className="h-5 w-5" />
-              Customers
-            </Link>
-            <Link
-              href="#"
-              className="mx-[-0.65rem] flex items-center gap-4 rounded-xl px-3 py-2 text-muted-foreground hover:text-foreground"
-            >
-              <LineChart className="h-5 w-5" />
-              Analytics
-            </Link>
+          {sidebarLinks.map((link,i) => {
+                const Icon = link.icon;
+                const isHrefDropdown = link.dropdownMenu?.some(item => item.href === pathname)
+                return (
+                  <div key={i}>
+                    {link.dropdown ? (
+                      <Collapsible>
+                        <CollapsibleTrigger
+                          onClick={handleToggleMenu} 
+                          className={cn(
+                            'w-full flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
+                            isHrefDropdown && "bg-muted text-primary"
+                          )}
+                        >
+                          <div className="w-full flex items-center gap-3">
+                            <Icon className="h-4 w-4" />
+                            {link.label}
+                          </div>
+                          {isOpen 
+                          ? <ChevronDown className='flex size-4 mr-1'/> 
+                          : <ChevronRight className='flex size-4 mr-1'/> }
+                        </CollapsibleTrigger>
+                          <CollapsibleContent className='dark:bg-neutral-950'>
+                            {link.dropdownMenu?.map((item,i) => {
+                              return (
+                                <Link
+                                  key={i}
+                                  href={item.href || "#"}
+                                  className={cn("mx-4 flex items-center justify-between gap-3 rounded-lg px-3 py-1 text-muted-foreground transition-all hover:text-primary",
+                                    pathname === item.href && "bg-muted text-primary"
+                                  )}
+                                >
+                                  {item.label || ""}
+                                  <Badge className='rounded-full size-5 px-1' variant={"outline"}>
+                                    <Plus className="size-3" />
+                                  </Badge>
+                                </Link>
+                              )
+                            })}
+                          </CollapsibleContent>
+                      </Collapsible>
+                    ) : (
+                      <Link
+                        href={`${link.href || "#"}`}
+                        className={cn("flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+                        pathname===link.href && "bg-muted text-primary")}
+                      >
+                        <Icon className="h-4 w-4" />
+                        {link.label || ""}
+                      </Link>
+                    )}
+                  </div>
+                )
+              })}
           </nav>
           <div className="mt-auto">
-            <Card>
-              <CardHeader>
-                <CardTitle>Upgrade to Pro</CardTitle>
-                <CardDescription>
-                  Unlock all features and get unlimited access to our
-                  support team.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button size="sm" className="w-full">
-                  Upgrade
-                </Button>
-              </CardContent>
-            </Card>
+            <Button size="sm" className="w-full">
+              Logout
+            </Button>
           </div>
         </SheetContent>
       </Sheet>
@@ -102,22 +126,9 @@ const Navbar = () => {
           </div>
         </form>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="secondary" size="icon" className="rounded-full">
-            <CircleUser className="h-5 w-5" />
-            <span className="sr-only">Toggle user menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <QuickAccessMenu />
+      <ModeToggle />
+      <AvatarMenu />
     </header>
 
   )

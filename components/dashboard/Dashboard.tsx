@@ -20,13 +20,10 @@ export default function Dashboard() {
           <section className="container py-2">
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-8">
               <div className="col-span-full">
-                <TransactionList />
-              </div>
-              <div className="col-span-full">
-                <RecentSaleCard />
-              </div>
-              <div className="col-span-full">
                 <Analytics />
+              </div>
+              <div className="col-span-full">
+                <TransactionList />
               </div>
             </div>
           </section>
