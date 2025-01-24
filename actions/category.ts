@@ -1,14 +1,15 @@
 "use server"
 
+import { prismaClient } from "@/lib/db";
 import { CategoryProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/db"
+
 
 export async function createCategory(data: CategoryProps) {
     console.log("Payload checked:", data);
     
     try {
-        const newCategory = await prisma.category.create({
+        const newCategory = await prismaClient.category.create({
             data
         });
         revalidatePath("/dashboard/inventory/categories")
@@ -23,7 +24,7 @@ export async function createCategory(data: CategoryProps) {
 export async function getAllCategories() {
     
     try {
-        const categories = await prisma.category.findMany();
+        const categories = await prismaClient.category.findMany();
 
         return categories;
 
@@ -36,7 +37,7 @@ export async function getAllCategories() {
 export async function getCategoryByCategoryId(categoryId: number) {
 
     try {
-        const category = await prisma.category.findUnique({
+        const category = await prismaClient.category.findUnique({
             where: {
                 id: categoryId
             }

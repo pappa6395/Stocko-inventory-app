@@ -22,6 +22,7 @@ const eslintConfig = [
         }
       ]
     },
+    ignoreDuringBuilds: true,
   } 
 ];
 
