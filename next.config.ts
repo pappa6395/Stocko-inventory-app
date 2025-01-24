@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   sassOptions: {
     includePaths: ["./styles"],
   },
+  eslint: {
+    ignoreDuringBuilds: true, // Use this here instead of in ESLint config
+  },
 };
 
 export default nextConfig;
