@@ -33,20 +33,3 @@ export async function getAllCategories() {
         return null;
     }
 }
-
-export async function getCategoryByCategoryId(categoryId: number) {
-
-    try {
-        const category = await prismaClient.category.findUnique({
-            where: {
-                id: categoryId
-            }
-        });
-
-        return category;
-
-    } catch (err) {
-        console.error("Failed to find category:",err);
-        return null;
-    }
-}
