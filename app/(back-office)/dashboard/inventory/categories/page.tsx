@@ -1,6 +1,7 @@
 
 import { getAllCategories } from '@/actions/category'
 import { Button } from '@/components/ui/button'
+import { CategoryProps } from '@/type/types'
 import Link from 'next/link'
 import React from 'react'
 
@@ -9,7 +10,7 @@ import React from 'react'
 
 const page = async () => {
 
-  const categories = await getAllCategories()  
+  const categories = await getAllCategories() as CategoryProps[]
 
   return (
 
