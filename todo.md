@@ -29,3 +29,15 @@
  - Build out the Navbar
  - Start building some pages and modules
  - Deployment
+
+ #5
+ - Install and setup Prisma and MongoDB
+ - Create category model
+ - Design form and form inputs
+
+ #6
+ - React Hook Forms / Zod
+ - Create with Server Actions
+ - Design our table
+ - Fetch the records
+ - Deployment

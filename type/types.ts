@@ -14,3 +14,16 @@ export interface DropdownMenuProps {
     label: string;
     href: string;
 }
+
+export type CategoryProps = {
+    title: string;
+    slug: string;
+    description: string;
+    imageUrl: string | null;
+    status: boolean;
+}
+
+export type SelectOptionProps = {
+    label: string;
+    value: number | string | boolean
+}
