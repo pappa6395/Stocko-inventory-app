@@ -13,27 +13,15 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react"
+import { ChevronDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
-import { Checkbox } from "@/components/ui/checkbox"
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
 import {
   Table,
   TableBody,
@@ -42,9 +30,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { CategoryProps } from "@/type/types"
 import { Category } from "@prisma/client"
-import { DataTablePagination } from "./Data-Table-Pagination"
+import { DataTablePagination } from "@/components/dashboard/Table/dataTableComponents/DataTablePagination"
 
 
 
