@@ -1,6 +1,6 @@
 import type { SignApiOptions, UploadApiResponse } from "cloudinary";
 
-export async function uploadFile(file: File, signApiUrl: string) {
+export async function uploadFile(file: File | null, signApiUrl: string) {
   const timestamp = Date.now();
   const formData = new FormData();
   const parameters: SignApiOptions = {};
@@ -37,7 +37,7 @@ export async function uploadFile(file: File, signApiUrl: string) {
     throw new Error("Failed to sign the request");
   }
 
-  formData.append("file", file);
+  formData.append("file", file??"");
   formData.append("timestamp", String(timestamp));
   formData.append("signature", signature);
   formData.append(

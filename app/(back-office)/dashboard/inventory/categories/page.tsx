@@ -1,32 +1,29 @@
 
 import { getAllCategories } from '@/actions/category'
-import { Button } from '@/components/ui/button'
-import { CategoryProps } from '@/type/types'
-import Link from 'next/link'
 import React from 'react'
-
-
+import { columns } from './columns'
+import { Category } from '@prisma/client'
+import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
+import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
 
 
 const page = async () => {
 
-  const categories = await getAllCategories() as CategoryProps[]
+  const categories = await getAllCategories() as Category[]
 
   return (
 
     <div>
-        <Button asChild>
-            <Link href="/dashboard/inventory/categories/new">
-                New Category
-            </Link>
-        </Button>
-        {categories && categories.length > 0 && categories.map((item, i) => {
-          return (
-            <div key={i}>
-              {item.title}
-            </div>
-          )
-        })}
+        <TableHeader
+        title="Categories"
+        linkTitle="Add Category"
+        href="/dashboard/inventory/categories/new"
+        data={categories}
+        model="category"
+      />
+         <div className="py-8">
+        <DataTable data={categories} columns={columns} />
+      </div>
     </div>
 
   )

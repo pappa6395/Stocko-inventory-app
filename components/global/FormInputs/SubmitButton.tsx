@@ -30,22 +30,22 @@ export default function SubmitButton({
           type="button"
           disabled
           className={cn(
-            "items-center flex justify-center rounded-md px-3 py-2 text-xs font-semibold bg-slate-950 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-not-allowed",
+            "items-center flex justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-950 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-not-allowed",
             className
           )}
         >
-          <LoaderIcon className="w-4 h-4 animate-spin mr-2" />
+          <LoaderIcon className="w-3 h-3 animate-spin mr-2" />
           {loadingTitle}
         </button>
       ) : (
         <button
           type="submit"
           className={cn(
-            "flex items-center justify-center rounded-md  px-3 py-2 text-xs font-semibold bg-slate-950 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
+            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-950 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
             className
           )}
         >
-          {showIcon && <ButtonIcon className="w-4 h-4 mr-2" />}
+          {showIcon && <ButtonIcon className="w-3 h-3 mr-2" />}
           {title}
         </button>
       )}

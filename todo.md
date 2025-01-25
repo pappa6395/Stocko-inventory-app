@@ -41,3 +41,12 @@
  - Design our table
  - Fetch the records
  - Deployment
+
+ #7
+ - Create Re-usable components
+ - create table
+ 
+ #8
+ - Integrating Data Table with Pagination
+ - Implement Import and Export
+ - Deployment

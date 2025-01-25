@@ -34,18 +34,6 @@ const FormHeader = ({
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
                 Create {title}
             </h1>
-            <div className="items-center gap-2 md:ml-auto flex">
-                <Button variant="outline" size="sm">
-                Discard
-                </Button>
-                <Button
-                    variant="default" 
-                    size="sm"
-                    onClick={onClick} 
-                >
-                    Save {title}
-                </Button>
-            </div>
         </div>
     </div>
 

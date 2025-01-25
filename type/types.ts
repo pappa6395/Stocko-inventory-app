@@ -27,3 +27,8 @@ export type SelectOptionProps = {
     label: string;
     value: number | string | boolean
 }
+
+export type ExcelCategoryProps = {
+    Image: string;
+    Title: string;
+}
