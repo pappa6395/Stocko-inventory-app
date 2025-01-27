@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { deleteCategoryById } from "@/actions/category";
@@ -38,7 +38,9 @@ export default function ActionColumn({
   editEndpoint,
   id = 0,
 }: ActionColumnProps) {
+
   const isActive = row.isActive;
+
   async function handleDelete() {
     try {
       if (model === "category") {
@@ -74,7 +76,7 @@ export default function ActionColumn({
               size={"sm"}
               className="text-red-600 hover:text-red-700 transition-all duration-500 cursor-pointer "
             >
-              <Trash className="w-4 h-4  mr-2 flex-shrink-0" />
+              <Trash2 className="w-4 h-4 flex-shrink-0" />
               <span>Delete</span>
             </Button>
           </AlertDialogTrigger>
@@ -102,8 +104,8 @@ export default function ActionColumn({
           <span>Delete</span>
         </DropdownMenuItem> */}
         <DropdownMenuItem>
-          <Link href={editEndpoint} className="flex item gap-2">
-            <Pencil className="w-4 h-4 " />
+          <Link href={editEndpoint} className="flex items-center ml-1">
+            <Pencil className="w-4 h-4 mr-2 flex-shrink-0" />
             <span>Edit</span>
           </Link>
         </DropdownMenuItem>

@@ -15,25 +15,47 @@ import TextInput from '@/components/global/FormInputs/TextInputForm'
 import { uploadFile } from '@/utils/uploadFile'
 import Image from 'next/image'
 import { generateSlug } from '@/lib/generateSlug'
-import { createCategory } from '@/actions/category'
+import { createCategory, updateCategoryById } from '@/actions/category'
 import toast from 'react-hot-toast'
 import SubmitButton from '@/components/global/FormInputs/SubmitButton'
 import ImageInput from '@/components/global/FormInputs/ImageInput'
+import { Category } from '@prisma/client'
 
 
-const CategoryForm = () => {
+type CategoryFormProps = {
+  initialData?: Category | null;
+  editingId?: string;
+}
+
+const CategoryForm = ({
+  initialData,
+  editingId,
+}: CategoryFormProps) => {
   
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CategoryProps>();
+  } = useForm<CategoryProps>({
+    defaultValues: {
+      title: initialData?.title?? "",
+      description: initialData?.description?? "",
+      imageUrl: initialData?.imageUrl?? "",
+      status: initialData?.status?? true,
+      slug: initialData?.slug?? "",
+    }
+  });
 
   const router = useRouter()
-  const [status, setStatus] = useState<any>(null);
+  const initialStatus = {
+    value: initialData?.status ? true : false,
+    label: initialData?.status ? "Active" : "Disabled"
+  }
+  const [status, setStatus] = useState<any>(initialStatus);
   const [file, setFile] = useState<File | null>(null);
-  const [fileUrl, setFileUrl] = useState<string | null>(null);
+  const initialImageUrl = initialData?.imageUrl || null
+  const [fileUrl, setFileUrl] = useState<string | null>(initialImageUrl);
   const [isLoading, setIsLoading] = useState(false);
 
   const options: any[] = [
@@ -49,9 +71,18 @@ const CategoryForm = () => {
       data.imageUrl = fileUrl;
       data.status = status?.value as boolean;
       data.slug = generateSlug(data.title);
-
-      const newCategory = await createCategory(data);
-      console.log("New category:", newCategory);
+      if (editingId) {
+        const updateCategory = await updateCategoryById(editingId, data)
+        console.log("Updated category:", updateCategory);
+        
+        if (updateCategory) {
+          toast.success("Successfully updated");
+          reset();
+          setIsLoading(false);
+          router.push(`/dashboard/inventory/categories`);
+        }
+      } else {
+        const newCategory = await createCategory(data);
         
         if (newCategory) {
           toast.success("Successfully created");
@@ -59,12 +90,12 @@ const CategoryForm = () => {
           setIsLoading(false);
           router.push(`/dashboard/inventory/categories`);
         }
-    } 
-      catch (error) {
-        console.error("Failed to save category:", error);
+      }
+      
+    } catch (error) {
+        console.error("Failed to save or update category:", error);
     }
-  };
-
+  }
 
   const handleBack = () => {
     router.back()
@@ -73,7 +104,7 @@ const CategoryForm = () => {
   return (
 
     <div>
-      <FormHeader title={"Category"} onClick={handleBack} />
+      <FormHeader title={"Category"} onClick={handleBack} editingId={editingId} />
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
           <ImageInput 
@@ -83,6 +114,7 @@ const CategoryForm = () => {
             setFileUrl={setFileUrl}
             file={file}
             setFile={setFile}
+            isLoading={isLoading}
           /> 
         </div>  
         <form 
@@ -146,7 +178,7 @@ const CategoryForm = () => {
                 </Button>
                 <SubmitButton
                   size={"sm"}
-                  title={"Save Category"}
+                  title={editingId ? "Update Category" : "Save Category"}
                   loading={isLoading}
                 />
               </div>
@@ -161,6 +193,7 @@ const CategoryForm = () => {
             setFileUrl={setFileUrl}
             file={file}
             setFile={setFile}
+            isLoading={isLoading}
           /> 
         </div>  
       </div>

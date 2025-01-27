@@ -85,7 +85,7 @@ export default function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center gap-8">
-        <div className="flex-1 w-full">
+        <div className="flex-1">
           <SearchBar
             data={data}
             onSearch={setSearchResults}

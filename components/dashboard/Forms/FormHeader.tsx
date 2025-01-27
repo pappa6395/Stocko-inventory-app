@@ -7,9 +7,11 @@ import React from 'react'
 
 const FormHeader = ({
     title,
+    editingId,
     onClick
 }: {
     title: string
+    editingId?: string;
     onClick?: (data:any) => typeof data;
 }) => {
 
@@ -32,7 +34,7 @@ const FormHeader = ({
                 <span className="sr-only">Back</span>
             </Button>
             <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                Create {title}
+                {editingId ? "Update" : "Create"} {title}
             </h1>
         </div>
     </div>

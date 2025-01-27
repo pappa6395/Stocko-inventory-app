@@ -3,7 +3,7 @@ import { Label } from '@/components/ui/label'
 import React from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
-import { Upload } from 'lucide-react'
+import { LoaderIcon, Upload } from 'lucide-react'
 import { uploadFile } from '@/utils/uploadFile'
 import toast from 'react-hot-toast'
 
@@ -15,7 +15,7 @@ export type ImageInputProps = {
     setFileUrl: (url: string) => void;
     file: File | null;
     setFile: (file: File | null) => void;
-    
+    isLoading: boolean;
 }
 
 const ImageInput = ({
@@ -25,6 +25,7 @@ const ImageInput = ({
     setFileUrl,
     file,
     setFile,
+    isLoading
     
 }: ImageInputProps) => {
 
@@ -82,10 +83,18 @@ const ImageInput = ({
             </div>
         </CardContent>
         <CardFooter className="justify-end">
-            <Button type={"submit"} variant="outline" className="w-full">
-                <Upload className="h-4 w-4 mr-2" />
-                Upload Image
-            </Button>
+            {isLoading ? (
+                <Button type={"submit"} variant="outline" className="w-full" disabled>
+                    <LoaderIcon className="h-4 w-4 animate-spin mr-2" />
+                    Upload Image
+                </Button>
+            ) : (
+                <Button type={"submit"} variant="outline" className="w-full">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Image
+                </Button>
+            )}
+            
         </CardFooter>
         </Card>
     </form>

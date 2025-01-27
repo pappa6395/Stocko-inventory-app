@@ -135,112 +135,112 @@ export default function TableHeader({
           const json = XLSX.utils.sheet_to_json(workSheet);
           setJsonData(JSON.stringify(json, null, 2));
  
-        //   try {
-        //     setLoading(true);
-        //     if (model === "category") {
-        //       const categories = json.map((item: any) => {
-        //         return {
-        //           title: item.Title,
-        //           slug: generateSlug(item.Title),
-        //           description: item.Description,
-        //           imageUrl: item.Image,
-        //           mainCategoryId: item.mainCategoryId,
-        //           status: true,
-        //         };
-        //       });
-        //       await createBulkCategories(categories);
-        //     } else if (model === "brand") {
-        //       const brands = json.map((item: any) => {
-        //         return {
-        //           title: item.Title,
-        //           slug: generateSlug(item.Title),
-        //           logo: item.Logo,
-        //           status: true,
-        //         };
-        //       });
-        //       await createBulkBrands(brands);
-        //       // console.log(brands);
-        //     } else if (model === "warehouse") {
-        //       const warehouses = json.map((item: any) => {
-        //         return {
-        //           name: item.name,
-        //           slug: generateSlug(item.name),
-        //           logo: item.logo,
-        //           country: item.country,
-        //           city: item.city,
-        //           phone: item.phone,
-        //           email: item.email,
-        //           zipCode: item.zipCode,
-        //           contactPerson: item.contactPerson,
-        //           status: true,
-        //         };
-        //       });
-        //       await createBulkWarehouses(warehouses);
-        //       // console.log(warehouses);
-        //     } else if (model === "supplier") {
-        //       const suppliers = json.map((item: any) => {
-        //         return {
-        //           name: item.name,
-        //           imageUrl: item.imageUrl,
-        //           country: item.country,
-        //           city: item.city,
-        //           phone: String(item.phone),
-        //           email: item.email,
-        //           state: item.state,
-        //           companyName: item.companyName,
-        //           vatNumber: String(item.vatNumber),
-        //           address: item.address,
-        //           postalCode: String(item.postalCode),
-        //           status: true,
-        //         };
-        //       });
-        //       await createBulkSuppliers(suppliers);
-        //       // console.log(suppliers);
-        //     } else if (model === "unit") {
-        //       const units = json.map((item: any) => {
-        //         return {
-        //           title: item.title,
-        //           abbreviation: item.abbreviation,
-        //         };
-        //       });
-        //       await createBulkUnits(units);
-        //       // console.log(brands);
-        //     } else if (model === "product") {
-        //       const products = json.map((item: any) => {
-        //         return {
-        //           name: item.name,
-        //           slug: generateSlug(item.name),
-        //           productCode: item.productCode,
-        //           stockQty: item.stockQty,
-        //           warehouseId: item.warehouseId,
-        //           brandId: item.brandId,
-        //           supplierId: item.supplierId,
-        //           categoryId: item.categoryId,
-        //           unitId: item.unitId,
-        //           productCost: item.productCost,
-        //           productPrice: item.productPrice,
-        //           alertQty: item.alertQty,
-        //           productTax: item.productTax,
-        //           productThumbnail: item.productThumbnail,
-        //           taxMethod: item.taxMethod,
-        //           status: true,
-        //           productImages: [...item.productThumbnail],
-        //           productDetails: item.productDetails,
-        //         };
-        //       });
-        //       await createBulkProducts(products as any);
-        //       // console.log(brands);
-        //     }
-        //     setLoading(false);
-        //     setUploadSuccess(true);
-        //     // window.location.reload();
-        //     // toast.success("All Data Synced Successfully with No errors 👍");
-        //   } catch (error) {
-        //     setUploadSuccess(false);
-        //     setLoading(false);
-        //     toast.error("Something went wrong, Please Try again 😢");
-        //     console.log(error);
-        //   }
+          try {
+            setLoading(true);
+            if (model === "category") {
+              const categories = json.map((item: any) => {
+                return {
+                  title: item.Title,
+                  slug: generateSlug(item.Title),
+                  description: item.Description,
+                  imageUrl: item.Image,
+                  mainCategoryId: item.mainCategoryId,
+                  status: true,
+                };
+              });
+              await createBulkCategories(categories);
+            // } else if (model === "brand") {
+            //   const brands = json.map((item: any) => {
+            //     return {
+            //       title: item.Title,
+            //       slug: generateSlug(item.Title),
+            //       logo: item.Logo,
+            //       status: true,
+            //     };
+            //   });
+            //   await createBulkBrands(brands);
+            //   // console.log(brands);
+            // } else if (model === "warehouse") {
+            //   const warehouses = json.map((item: any) => {
+            //     return {
+            //       name: item.name,
+            //       slug: generateSlug(item.name),
+            //       logo: item.logo,
+            //       country: item.country,
+            //       city: item.city,
+            //       phone: item.phone,
+            //       email: item.email,
+            //       zipCode: item.zipCode,
+            //       contactPerson: item.contactPerson,
+            //       status: true,
+            //     };
+            //   });
+            //   await createBulkWarehouses(warehouses);
+            //   // console.log(warehouses);
+            // } else if (model === "supplier") {
+            //   const suppliers = json.map((item: any) => {
+            //     return {
+            //       name: item.name,
+            //       imageUrl: item.imageUrl,
+            //       country: item.country,
+            //       city: item.city,
+            //       phone: String(item.phone),
+            //       email: item.email,
+            //       state: item.state,
+            //       companyName: item.companyName,
+            //       vatNumber: String(item.vatNumber),
+            //       address: item.address,
+            //       postalCode: String(item.postalCode),
+            //       status: true,
+            //     };
+            //   });
+            //   await createBulkSuppliers(suppliers);
+            //   // console.log(suppliers);
+            // } else if (model === "unit") {
+            //   const units = json.map((item: any) => {
+            //     return {
+            //       title: item.title,
+            //       abbreviation: item.abbreviation,
+            //     };
+            //   });
+            //   await createBulkUnits(units);
+            //   // console.log(brands);
+            // } else if (model === "product") {
+            //   const products = json.map((item: any) => {
+            //     return {
+            //       name: item.name,
+            //       slug: generateSlug(item.name),
+            //       productCode: item.productCode,
+            //       stockQty: item.stockQty,
+            //       warehouseId: item.warehouseId,
+            //       brandId: item.brandId,
+            //       supplierId: item.supplierId,
+            //       categoryId: item.categoryId,
+            //       unitId: item.unitId,
+            //       productCost: item.productCost,
+            //       productPrice: item.productPrice,
+            //       alertQty: item.alertQty,
+            //       productTax: item.productTax,
+            //       productThumbnail: item.productThumbnail,
+            //       taxMethod: item.taxMethod,
+            //       status: true,
+            //       productImages: [...item.productThumbnail],
+            //       productDetails: item.productDetails,
+            //     };
+            //   });
+            //   await createBulkProducts(products as any);
+            //   // console.log(brands);
+            // }
+            setLoading(false);
+            setUploadSuccess(true);
+            // window.location.reload();
+            // toast.success("All Data Synced Successfully with No errors 👍");
+            }} catch (error) {
+            setUploadSuccess(false);
+            setLoading(false);
+            toast.error("Something went wrong, Please Try again 😢");
+            console.log(error);
+          }
         }
       };
       reader.readAsBinaryString(excelFile);
