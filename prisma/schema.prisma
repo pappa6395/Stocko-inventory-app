@@ -20,7 +20,103 @@ model Category {
   imageUrl    String?
   status      Boolean @default(true)
   slug        String @unique
+  products     Products[]
 
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt  
+}
+
+model Brand {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  products  Products[]
+  status    Boolean
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Unit {
+  id           Int      @id @default(autoincrement())
+  title        String
+  abbreviation String
+  products     Products[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Warehouse {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String @unique
+  products  WarehouseProduct[]
+  imageUrl  String?
+  phone     String
+  email     String
+  country   String
+  city      String
+  zipCode   String
+  contactPerson String
+  status        Boolean
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Supplier {
+  id          Int      @id @default(autoincrement())
+  name        String
+  imageUrl    String?
+  products    Products[]
+  companyName String
+  vatNumber   String
+  email       String
+  phone       String
+  address     String
+  city        String
+  state       String
+  postalCode  String
+  country     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Products {
+  id                Int      @id @default(autoincrement())
+  name              String
+  slug              String   @unique
+  productCode       String
+  stockQty          Int
+  codeSymbology     String?
+  saleUnit          String?
+  productCost       Float
+  productPrice      Float
+  productTax        Float
+  taxMethod         String
+  productImages     String[]
+  productDetails    String
+  alertQuantity     Int
+  unit              Unit @relation(fields:[unitId], references: [id])
+  unitId            Int
+  category          Category @relation(fields:[categoryId], references: [id])
+  categoryId        Int
+  brand             Brand @relation(fields:[brandId], references: [id])
+  brandId           Int
+  warehouses        WarehouseProduct[]
+  supplier          Supplier? @relation(fields:[supplierId], references: [id])
+  supplierId        Int?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model WarehouseProduct {
+  id           Int        @id @default(autoincrement())
+  warehouseId  Int
+  productId    Int
+  warehouse    Warehouse  @relation(fields: [warehouseId], references: [id])
+  product      Products   @relation(fields: [productId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([warehouseId, productId])
 }

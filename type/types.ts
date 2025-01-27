@@ -32,3 +32,71 @@ export type ExcelCategoryProps = {
     Image: string;
     Title: string;
 }
+
+export type BrandProps = {
+    title: string;
+    slug: string;
+    status: boolean;
+    imageUrl: string | null;
+}
+
+export type UnitProps = {
+    title: string;
+    abbreviation: string;
+}
+
+export type WarehouseProps = {
+    name: string;
+    slug: string;
+    imageUrl: string | null;
+    phone: string;
+    email: string;
+    country: string;
+    city: string;
+    zipCode: string;
+    contactPerson: string;
+    status: boolean;
+}
+
+export type SupplierProps = {
+    name: string;
+    imageUrl: string | null;
+    companyName: string;
+    vatNumber: string;
+    email: string;
+    phone: string;
+    address: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+}
+
+export type ProductProps = {
+    name: string;
+    slug: string;
+    productCode: number;
+    stockQty: number;
+    codeSymbology?: string;
+    saleUnit?: string;
+    warehouseId: string;
+    brandId: number;
+    categoryId: number;
+    unitId: number;
+    productCost: number;
+    productPrice: number;
+    alertQuantity: number;
+    productTax: number;
+    taxMethod: string;
+    productImages: string[];
+    productDetails: string | null;
+}
+
+// Realationships
+/**
+ *  Category => One to Many => a category has many products
+ *  Warehouse => many to many => Many warehouses have many products / Products have many warehouses
+ *  Brands => one to many => a brand has many products
+ *  Unit => one to many => a unit has many products
+ *  Supplier => one to many => a supplier has many products
+ */

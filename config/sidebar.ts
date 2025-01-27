@@ -48,11 +48,11 @@ export const sidebarLinks: ISidebarLink[] = [
         },
         {
           label: 'Warehouse',
-          href: '/dashboard/inventory/warehouse',
+          href: '/dashboard/inventory/warehouses',
         },
         {
           label: 'Supplier',
-          href: '/dashboard/inventory/supplier',
+          href: '/dashboard/inventory/suppliers',
         },
       ]
     },

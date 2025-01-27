@@ -39,6 +39,8 @@ import { generateSlug } from "@/lib/generateSlug";
 import { createBulkCategories } from "@/actions/category";
 import toast from "react-hot-toast";
 import exportDataToExcel from "@/lib/exportDataToExcel";
+import { createBulkBrands } from "@/actions/brand";
+import { createBulkWarehouses } from "@/actions/warehouses";
 // import { createBulkBrands } from "@/actions/brand";
 // import { createBulkWarehouses } from "@/actions/warehouse";
 // import { createBulkSuppliers } from "@/actions/supplier";
@@ -149,34 +151,33 @@ export default function TableHeader({
                 };
               });
               await createBulkCategories(categories);
-            // } else if (model === "brand") {
-            //   const brands = json.map((item: any) => {
-            //     return {
-            //       title: item.Title,
-            //       slug: generateSlug(item.Title),
-            //       logo: item.Logo,
-            //       status: true,
-            //     };
-            //   });
-            //   await createBulkBrands(brands);
-            //   // console.log(brands);
-            // } else if (model === "warehouse") {
-            //   const warehouses = json.map((item: any) => {
-            //     return {
-            //       name: item.name,
-            //       slug: generateSlug(item.name),
-            //       logo: item.logo,
-            //       country: item.country,
-            //       city: item.city,
-            //       phone: item.phone,
-            //       email: item.email,
-            //       zipCode: item.zipCode,
-            //       contactPerson: item.contactPerson,
-            //       status: true,
-            //     };
-            //   });
-            //   await createBulkWarehouses(warehouses);
-            //   // console.log(warehouses);
+            } else if (model === "brand") {
+              const brands = json.map((item: any) => {
+                return {
+                  title: item.Title,
+                  slug: generateSlug(item.Title),
+                  imageUrl: item.Logo,
+                  status: true,
+                };
+              });
+              await createBulkBrands(brands);
+            } else if (model === "warehouse") {
+              const warehouses = json.map((item: any) => {
+                return {
+                  name: item.name,
+                  slug: generateSlug(item.name),
+                  imageUrl: item.logo,
+                  country: item.country,
+                  city: item.city,
+                  phone: item.phone.toString(),
+                  email: item.email,
+                  zipCode: item.zipCode.toString(),
+                  contactPerson: item.contactPerson.toString(),
+                  status: true,
+                };
+              });
+              await createBulkWarehouses(warehouses);
+              console.log(warehouses);
             // } else if (model === "supplier") {
             //   const suppliers = json.map((item: any) => {
             //     return {
@@ -381,7 +382,7 @@ export default function TableHeader({
                         <div className="grid gap-4 py-4">
                           <Button asChild variant="outline">
                             <Link href={excelDownload} download>
-                              Download {model} Sample Data
+                              Download {model} sample data
                             </Link>
                           </Button>
  

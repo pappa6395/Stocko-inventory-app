@@ -24,6 +24,8 @@ import { MoreHorizontal, Pencil, Trash, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import Link from "next/link";
 import { deleteCategoryById } from "@/actions/category";
+import { deleteBrandById } from "@/actions/brand";
+import { deleteWarehouseById } from "@/actions/warehouses";
  
 type ActionColumnProps = {
   row: any;
@@ -45,6 +47,18 @@ export default function ActionColumn({
     try {
       if (model === "category") {
         const res = await deleteCategoryById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "brand") {
+        const res = await deleteBrandById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "warehouse") {
+        const res = await deleteWarehouseById(id);
         if (res?.ok) {
           window.location.reload();
         }

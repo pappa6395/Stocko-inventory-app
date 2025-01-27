@@ -28,8 +28,8 @@ export default function DateRangeFilter({
   className?: string;
 }) {
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2024, 0, 20),
-    to: addDays(new Date(2024, 0, 20), 20),
+    from: new Date(),
+    to: addDays(new Date(), 20),
   });
   // console.log(date);
   const handleChange = (selectedDate: any) => {
