@@ -26,6 +26,8 @@ import Link from "next/link";
 import { deleteCategoryById } from "@/actions/category";
 import { deleteBrandById } from "@/actions/brand";
 import { deleteWarehouseById } from "@/actions/warehouses";
+import { deleteSupplierById } from "@/actions/suppliers";
+import { deleteUnitById } from "@/actions/units";
  
 type ActionColumnProps = {
   row: any;
@@ -59,6 +61,18 @@ export default function ActionColumn({
         toast.success(`${model} Deleted Successfully`);
       } else if (model === "warehouse") {
         const res = await deleteWarehouseById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "supplier") {
+        const res = await deleteSupplierById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "unit") {
+        const res = await deleteUnitById(id);
         if (res?.ok) {
           window.location.reload();
         }

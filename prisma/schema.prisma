@@ -39,8 +39,8 @@ model Brand {
 
 model Unit {
   id           Int      @id @default(autoincrement())
-  title        String
-  abbreviation String
+  title        String @unique
+  abbreviation String @unique
   products     Products[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -66,6 +66,8 @@ model Warehouse {
 model Supplier {
   id          Int      @id @default(autoincrement())
   name        String
+  slug        String @unique
+  status      Boolean
   imageUrl    String?
   products    Products[]
   companyName String
@@ -81,20 +83,32 @@ model Supplier {
   updatedAt   DateTime @updatedAt
 }
 
+model Banner {
+  id Int @id @default(autoincrement())
+  imageUrl   String
+  bannerLink String
+  position   String
+  status     Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Products {
   id                Int      @id @default(autoincrement())
   name              String
   slug              String   @unique
-  productCode       String
+  productCode       Int
   stockQty          Int
-  codeSymbology     String?
+  codeSymbology     String
   saleUnit          String?
   productCost       Float
   productPrice      Float
   productTax        Float
   taxMethod         String
   productImages     String[]
+  productThumbnail  String?
   productDetails    String
+  status            Boolean
   alertQuantity     Int
   unit              Unit @relation(fields:[unitId], references: [id])
   unitId            Int

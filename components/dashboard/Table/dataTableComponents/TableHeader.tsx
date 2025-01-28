@@ -41,6 +41,8 @@ import toast from "react-hot-toast";
 import exportDataToExcel from "@/lib/exportDataToExcel";
 import { createBulkBrands } from "@/actions/brand";
 import { createBulkWarehouses } from "@/actions/warehouses";
+import { createBulkSuppliers } from "@/actions/suppliers";
+import { createBulkUnits } from "@/actions/units";
 // import { createBulkBrands } from "@/actions/brand";
 // import { createBulkWarehouses } from "@/actions/warehouse";
 // import { createBulkSuppliers } from "@/actions/supplier";
@@ -178,34 +180,33 @@ export default function TableHeader({
               });
               await createBulkWarehouses(warehouses);
               console.log(warehouses);
-            // } else if (model === "supplier") {
-            //   const suppliers = json.map((item: any) => {
-            //     return {
-            //       name: item.name,
-            //       imageUrl: item.imageUrl,
-            //       country: item.country,
-            //       city: item.city,
-            //       phone: String(item.phone),
-            //       email: item.email,
-            //       state: item.state,
-            //       companyName: item.companyName,
-            //       vatNumber: String(item.vatNumber),
-            //       address: item.address,
-            //       postalCode: String(item.postalCode),
-            //       status: true,
-            //     };
-            //   });
-            //   await createBulkSuppliers(suppliers);
-            //   // console.log(suppliers);
-            // } else if (model === "unit") {
-            //   const units = json.map((item: any) => {
-            //     return {
-            //       title: item.title,
-            //       abbreviation: item.abbreviation,
-            //     };
-            //   });
-            //   await createBulkUnits(units);
-            //   // console.log(brands);
+            } else if (model === "supplier") {
+              const suppliers = json.map((item: any) => {
+                return {
+                  name: item.name,
+                  slug: generateSlug(item.name),
+                  imageUrl: item.imageUrl,
+                  country: item.country,
+                  city: item.city,
+                  phone: String(item.phone),
+                  email: item.email,
+                  state: item.state,
+                  companyName: item.companyName,
+                  vatNumber: String(item.vatNumber),
+                  address: item.address,
+                  postalCode: String(item.postalCode),
+                  status: true,
+                };
+              });
+              await createBulkSuppliers(suppliers);
+            } else if (model === "unit") {
+              const units = json.map((item: any) => {
+                return {
+                  title: item.title,
+                  abbreviation: item.abbreviation,
+                };
+              });
+              await createBulkUnits(units);
             // } else if (model === "product") {
             //   const products = json.map((item: any) => {
             //     return {

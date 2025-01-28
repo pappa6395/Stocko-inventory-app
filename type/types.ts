@@ -60,6 +60,7 @@ export type WarehouseProps = {
 
 export type SupplierProps = {
     name: string;
+    slug: string;
     imageUrl: string | null;
     companyName: string;
     vatNumber: string;
@@ -70,26 +71,42 @@ export type SupplierProps = {
     state: string;
     postalCode: string;
     country: string;
+    status: boolean;
+
 }
 
 export type ProductProps = {
     name: string;
     slug: string;
     productCode: number;
+    status: boolean;
     stockQty: number;
-    codeSymbology?: string;
+
+    codeSymbology: string;
     saleUnit?: string;
+
     warehouseId: string;
     brandId: number;
     categoryId: number;
     unitId: number;
+    supplierId: number;
+
     productCost: number;
     productPrice: number;
     alertQuantity: number;
     productTax: number;
     taxMethod: string;
     productImages: string[];
-    productDetails: string | null;
+    productThumbnail: string | null;
+    
+    productDetails: string;
+}
+
+export type BannerProps = {
+    imageUrl: string;
+    bannerLink: string;
+    position: string;
+    status: boolean;
 }
 
 // Realationships
@@ -100,3 +117,8 @@ export type ProductProps = {
  *  Unit => one to many => a unit has many products
  *  Supplier => one to many => a supplier has many products
  */
+
+export type SelectOptionsProps = {
+    label: string;
+    value: string;
+};

@@ -49,6 +49,23 @@ export async function getAllWarehouses() {
     }
 }
 
+export async function getAllWarehouseProducts() {
+    
+    try {
+        const warehouseProducts = await prismaClient.warehouseProduct.findMany({
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        return warehouseProducts;
+
+    } catch (err) {
+        console.error("Failed to get warehouses:",err);
+        return null;
+    }
+}
+
 export async function getWarehouseById(id: string) {
 
     if (id) {

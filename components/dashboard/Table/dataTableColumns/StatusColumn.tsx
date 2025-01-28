@@ -13,7 +13,7 @@ const StatusColumn = ({
 
   return (
 
-    <Badge variant={"outline"}>
+    <Badge variant={status=== true ? "active" : "disabled"}>
         <span>{status ? "Active" : "Disabled"}</span>
     </Badge>
 

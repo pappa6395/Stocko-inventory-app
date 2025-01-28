@@ -46,8 +46,8 @@
  - Create Re-usable components
  - create table
  
- #8, 9, 10, 11, 12, 13
+ #8, 9, 10, 11, 12, 13, 14
  - Integrating Data Table with Pagination
- - Categories, Brands, Warehouses
+ - Categories, Brands, Warehouses, Suppliers, Units, Products
  - Implement Import and Export
  - Deployment

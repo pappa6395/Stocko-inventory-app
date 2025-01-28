@@ -27,6 +27,7 @@ const FormHeader = ({
             <Button 
                 onClick={handleBack}
                 variant="outline" 
+                type="button"
                 size="icon" 
                 className="h-7 w-7"
             >
