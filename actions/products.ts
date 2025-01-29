@@ -1,7 +1,7 @@
 "use server"
 
 import { prismaClient } from "@/lib/db";
-import { ProductProps } from "@/type/types";
+import { ProductProps, WarehouseProductProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 
@@ -28,6 +28,23 @@ export async function createProduct(data: ProductProps) {
 
     } catch (err) {
         console.error("Failed to create product:",err);
+        return null;
+    }
+}
+
+export async function createWarehouseProduct(data: WarehouseProductProps) {
+    console.log("Payload checked:", data);
+    
+    try {
+
+        const newWarehouseProduct = await prismaClient.warehouseProduct.create({
+            data
+        });
+        revalidatePath("/dashboard/inventory/products")
+        return newWarehouseProduct;
+
+    } catch (err) {
+        console.error("Failed to create warehouse product:",err);
         return null;
     }
 }

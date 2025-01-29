@@ -83,19 +83,20 @@ export type ProductProps = {
     stockQty: number;
 
     codeSymbology: string;
-    saleUnit?: string;
+    saleUnit?: number;
 
-    warehouseId: string;
     brandId: number;
     categoryId: number;
-    unitId: number;
     supplierId: number;
+    unitId: number;
 
     productCost: number;
     productPrice: number;
     alertQuantity: number;
     productTax: number;
     taxMethod: string;
+
+    barCodeImageUrl: string;
     productImages: string[];
     productThumbnail: string | null;
     
@@ -107,6 +108,11 @@ export type BannerProps = {
     bannerLink: string;
     position: string;
     status: boolean;
+}
+
+export type WarehouseProductProps = {
+    warehouseId: number;
+    productId: number;
 }
 
 // Realationships

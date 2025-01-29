@@ -16,12 +16,17 @@ import ImageInput from '@/components/global/FormInputs/ImageInput'
 import { Brand, Category, Products, Supplier, Unit, Warehouse, WarehouseProduct } from '@prisma/client'
 import TextInput from '@/components/global/FormInputs/TextInputForm'
 import FormSelectInput from '@/components/global/FormInputs/FormSelectInput'
-import { createProduct, updateProductById } from '@/actions/products'
+import { createProduct, createWarehouseProduct, updateProductById } from '@/actions/products'
 import TextArea from '@/components/global/FormInputs/TextAreaInput'
 import JsBarcode from 'jsbarcode'
 import { Barcode, Binary } from 'lucide-react'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/badge'
+import BarcodeImageInput from '@/components/global/FormInputs/BarcodeImageInput'
+import { base64ToFile } from '@/lib/base64ToFile'
+import MultipleImageInput from '@/components/global/FormInputs/MultipleImageInput'
 
 
 type ProductFormProps = {
@@ -53,7 +58,15 @@ const ProductForm = ({
     formState: { errors },
   } = useForm<ProductProps>({
     defaultValues: {
-      
+      name: initialData?.name || "Hello World",
+      productCode: initialData?.productCode || 0,
+      status: initialData?.status || false,
+      stockQty: initialData?.stockQty || 100,
+      saleUnit: initialData?.saleUnit || 0,
+      productCost: initialData?.productCost || 50,
+      productPrice: initialData?.productPrice || 100,
+      alertQuantity: initialData?.alertQuantity || 20,
+      productDetails: initialData?.productDetails || "Product details"
     }
     
   });
@@ -65,158 +78,165 @@ const ProductForm = ({
   }
   const [status, setStatus] = useState<any>(initialStatus);
 
-  const initialSymbology = initialData?.codeSymbology
-  const [selectedSymbology, setSelectedSymbology] = useState<string>("CODE128");
+  const initialSymbology = initialData && initialData?.codeSymbology || "CODE128";
+  const [selectedSymbology, setSelectedSymbology] = useState<string>(initialSymbology);
 
-  const initialProductTax = {
-    value: initialData?.productTax || "",
-    label: initialData?.productTax || "Product Tax",
-  }
-  const [selectedProductTax, setSelectedProductTax] = useState<any>(initialProductTax);
+  const initialProductTax = initialData?.productTax || ""
+  const [selectedProductTax, setSelectedProductTax] = useState<any>({
+    value: initialProductTax,
+  });
 
-  const initialTaxMethod = {
-    value: initialData?.taxMethod || "taxMethod",
-    label: initialData?.taxMethod || "Tax Method",
-  }
+  const initialTaxMethod = initialData?.taxMethod || ""
   const [selectedTaxMethod, setSelectedTaxMethod] = useState<any>(initialTaxMethod);
 
-  const [file, setFile] = useState<File | null>(null);
-  const initialImageUrl = initialData?.productThumbnail || null
-  const [fileUrl, setFileUrl] = useState<string | null>(initialImageUrl);
+  const [files, setFiles] = useState<File[]>([]);
+  const initialImageUrls = initialData?.productImages || []
+  const [fileUrls, setFileUrls] = useState<string[]>(initialImageUrls);
 
   const initialProductCategoryId = initialData?.categoryId || "";
   const initialCategory = productCategories?.find(
     (item) => item.title === initialProductCategoryId
-    );
+  );
   const [selectedMainCategory, setSelectedMainCategory] =
-  useState<any>(initialCategory);
+  useState<any>(initialCategory?.id);
 
   const initialProductBrandId = initialData?.brandId || "";
   const initialBrand = productBrands?.find(
     (item) => item.title === initialProductBrandId
     );
   const [selectedBrand, setSelectedBrand] =
-  useState<any>(initialBrand);
+  useState<any>(initialBrand?.id);
 
   const initialProductWarehouseId = initialData?.id || "";
   const initialWarehouse = productWarehouses?.find(
     (item) => item.warehouseId === initialProductWarehouseId
     );
   const [selectedWarehouse, setSelectedWarehouse] =
-  useState<any>(initialWarehouse);
+  useState<any>(initialWarehouse?.warehouseId);
 
   const initialProductSupplierId = initialData?.supplierId || "";
   const initialSupplier = productSuppliers?.find(
     (item) => item.name === initialProductSupplierId
     );
-  const [selectedSupplier, setSelectedSupplier] =
-  useState<any>(initialSupplier);
+  const [selectedSupplier, setSelectedSupplier] =useState<any>(initialSupplier?.id);
 
   const initialProductUnitId = initialData?.unitId || "";
   const initialUnit = productUnits?.find(
     (item) => item.title === initialProductUnitId
     );
   const [selectedUnit, setSelectedUnit] =
-  useState<any>(initialUnit);
+  useState<any>(initialUnit?.id);
 
-  const [productCode, setProductCode] = useState<string>(String(initialData?.productCode || 987654321));
+  const [productCode, setProductCode] = useState<string>(String(initialData?.productCode || 0));
   const [barcodeImage, setBarcodeImage] = useState<string>("");
+  const [barcodeUrl, setBarcodeUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const options: any[] = [
     { value: true, label: "Active" },
     { value: false, label: "Disabled" },
   ];
-  const symbologyOptions: any[] = [
-    { value: "CODE128", label: "CODE128" },
-    { value: "CODE39", label: "CODE39" },
-    { value: "EAN13", label: "EAN13" },
-    { value: "UPC", label: "UPC" },
-  ];
   const productTaxOptions: any[] = [
     { value: 7, label: "VAT 7%" },
     { value: 10, label: "VAT 10%" },
   ];
   const taxMethodOptions: any[] = [
-    { value: "monthly", label: "Monthly" },
-    { value: "Annual", label: "Annually" },
+    { value: "exclusive", label: "Exclusive" },
+    { value: "inclusive", label: "Inclusive" },
   ];
 
   const categoryOptions = productCategories?.map((item) => {
     return {
-      value: item.id.toString(),
+      value: item.title,
       label: item.title,
     }
   });
   const brandOptions = productBrands?.map((item) => {
     return {
-      value: item.id.toString(),
+      value: item.title,
       label: item.title,
     }
   });
   const warehouseOptions = warehouses?.map((item) => {
     return {
-      value: item.id.toString(),
+      value: item.name,
       label: item.name,
     }
   });
   const supplierOptions = productSuppliers?.map((item) => {
     return {
-      value: item.id.toString(),
+      value: item.name,
       label: item.name,
     }
   });
   const unitOptions = productUnits?.map((item) => {
     return {
-      value: item.id.toString(),
+      value: item.title,
       label: `${item.title} (${item.abbreviation})`,
     }
   });
 
-  // const [step, setStep] = useState(1)
+  const [step, setStep] = useState(1)
 
-  // const nextStep= () => {
-  //     if (step < 3) {
-  //         setStep((prev) => prev + 1)
-  //     }
-  // }
-  // const prevStep = () => {
-  //     if (step > 1) {
-  //         setStep((prev) => prev - 1)
-  //     }
-  // }
+  const nextStep= () => {
+      if (step < 3) {
+          setStep((prev) => prev + 1)
+      }
+  }
+  const prevStep = () => {
+      if (step > 1) {
+          setStep((prev) => prev - 1)
+      }
+  }
 
   const saveProduct = async(data: ProductProps) => {
-    
+
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      
-      data.productThumbnail = fileUrl;
+      data.productImages = fileUrls;
       data.status = status?.value as boolean;
       data.slug = generateSlug(data.name);
+      data.codeSymbology = selectedSymbology;
+      data.taxMethod = selectedTaxMethod?.value as string;
+      data.productTax = selectedProductTax?.value as number;
+      data.productCode = Number(productCode);
+      data.barCodeImageUrl = barcodeUrl;
+      data.productCost = Number(data.productCost);
+      data.productPrice = Number(data.productPrice);
+      data.stockQty = Number(data.stockQty);
+      data.alertQuantity = Number(data.alertQuantity);
+      data.saleUnit = Number(data.saleUnit);
+
+      const warehouseProductData = {
+        warehouseId: Number(selectedWarehouse?.value || 0),
+        productId: initialData?.id || 0,
+      };
+
+      console.log("Product Data:", data);
+      setIsLoading(false);
       if (editingId) {
-        const updateSupplier = await updateProductById(editingId, data)
-        console.log("Updated supplier:", updateSupplier);
+        const updateProduct = await updateProductById(editingId, data)
+        console.log("Updated supplier:", updateProduct);
         
-        if (updateSupplier) {
+        if (updateProduct) {
           toast.success("Successfully updated");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/suppliers`);
+          router.push(`/dashboard/inventory/products`);
         }
       } else {
-        const newSupplier = await createProduct(data);
-        
-        if (newSupplier) {
+        const newProduct = await createProduct(data);
+        const newWarehouseProduct = await createWarehouseProduct(warehouseProductData)
+        if (newProduct) {
           toast.success("Successfully created");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/suppliers`);
+          router.push(`/dashboard/inventory/products`);
         }
       }
       
     } catch (error) {
-        console.error("Failed to save or update supplier:", error);
+        console.error("Failed to save or update product:", error);
     }
   }
 
@@ -288,23 +308,25 @@ const ProductForm = ({
 
     <div>
       <FormHeader title={"Product"} onClick={handleBack} editingId={editingId} />
-      <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
-        <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
-          <ImageInput 
-            title="Product Image"
-            description="Update the Product image"
-            fileUrl={fileUrl}
-            setFileUrl={setFileUrl}
-            file={file}
-            setFile={setFile}
-            isLoading={isLoading}
-          /> 
-        </div>  
+      <div className={cn(step === 1 ? 'grid grid-cols-1 sm:grid-cols-12 py-4 w-full' : "")}>
+        {step === 2 ? "" : (
+          <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
+            <MultipleImageInput 
+              title="Product Image"
+              description="Update the Product image"
+              fileUrls={fileUrls}
+              setFileUrls={setFileUrls}
+              files={files}
+              setFiles={setFiles}
+            />
+          </div>  
+        )}
         <form 
           onSubmit={handleSubmit(saveProduct)} 
-          className='grid md:col-span-8 col-span-full gap-4'>
-          <div className='space-y-4 px-4'>
-            <Card>
+          className={cn(step === 1 ? 'grid md:col-span-8 col-span-full gap-4' : 'grid grid-cols-1 md:grid-cols-12 py-4 w-full' )}>
+          {step === 1 && (
+            <div className='space-y-4 px-4'>
+              <Card>
                 <CardHeader>
                     <CardTitle>Product Context</CardTitle>
                     <CardDescription>Update the product segments</CardDescription>
@@ -339,8 +361,7 @@ const ProductForm = ({
                             setOption={setSelectedWarehouse}
                             toolTipText='Add new warehouse'
                             href={"/dashboard/inventory/warehouses/new"}
-                            />
-                            
+                            />  
                           </div>
                           <div className="flex space-x-2 items-end">
                             <FormSelectInput
@@ -372,11 +393,200 @@ const ProductForm = ({
                           </div>
                     </div>
                 </CardContent>
-            </Card>
-            <Card>
+              </Card>
+              <div className='grid py-6 translate-y-10'>
+                <div className='flex justify-between gap-4'>
+                  <Button
+                    type='button'
+                    onClick={handleBack} 
+                    variant={"outline"} 
+                    size="lg"
+                  >
+                    Discard
+                  </Button>
+                  <Button
+                    type='button'
+                    onClick={nextStep} 
+                    variant={"default"} 
+                    size="lg"
+                  >
+                    Next
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+          {step === 2 && (
+              <div className='grid md:col-span-8 gap-4 col-span-full'>
+                <Card>
+                  <CardHeader>
+                      <CardTitle>Product</CardTitle>
+                      <CardDescription>Update the product details</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                      <div className="grid gap-6">
+                          <div className="grid gap-3">
+                              <TextInput
+                                register={register}
+                                errors={errors}
+                                label="Product Name"
+                                name="name" 
+                              />
+                          </div>
+                          <div className="grid gap-3">
+                            <TextArea
+                              register={register}
+                              errors={errors}
+                              label="Description"
+                              name="productDetails"
+                            />
+                          </div>
+                      </div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardHeader>
+                      <CardTitle>Product</CardTitle>
+                      <CardDescription>Update the product details</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                      <div className="grid gap-6">
+                          <div className="grid md:grid-cols-2 gap-3">
+                              <div className='flex flex-col gap-2'>
+                                <Label>Select Symbology</Label>
+                                <select
+                                  value={selectedSymbology}
+                                  onChange={(e) => setSelectedSymbology(e.target.value)}
+                                  className="block w-full rounded-md border-0 py-2 text-gray-900 
+                                  shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                                  focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm 
+                                  sm:leading-6 text-sm"
+                                >
+                                  <option value="CODE128">CODE128</option>
+                                  <option value="CODE39">CODE39</option>
+                                  <option value="EAN13">EAN13</option>
+                                  <option value="UPC">UPC</option>
+                                </select>
+                              </div>
+                              <div className='flex items-end gap-2'>
+                                <div className='flex flex-col gap-2'>
+                                  <Label>Product Code</Label>
+                                  <input
+                                    id="product-code"
+                                    name="productCode"
+                                    type="number"
+                                    disabled={!productCode}
+                                    value={productCode}
+                                    onChange={handleChange}
+                                    className='block w-full rounded-md border-0 py-2 
+                                    text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 
+                                    placeholder:text-gray-400 focus:ring-2 focus:ring-inset 
+                                    focus:ring-indigo-600 sm:text-sm sm:leading-6 text-sm'
+                                  />
+                                </div>
+                                <div className='pb-1'>
+                                  <Button
+                                    type="button"
+                                    variant="outline"
+                                    size={"sm"}
+                                    onClick={handleClick}
+                                  >
+                                    <Binary className='' />
+                                  </Button>
+                                </div>
+                                {barcodeImage && (
+                                  <Dialog>
+                                  <DialogTrigger asChild>
+                                    <Button variant="outline">
+                                      <Barcode />
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                      <DialogTitle>Barcode</DialogTitle>
+                                      <DialogDescription>
+                                        Make changes to your profile here. Click save when you're done.
+                                      </DialogDescription>
+                                    </DialogHeader>
+                                    <div className="grid gap-4 py-4 bg-slate-200 rounded-md justify-center">
+                                      <BarcodeImageInput
+                                        fileUrl={barcodeImage}
+                                        setFileUrl={setBarcodeUrl}
+                                        file={base64ToFile(barcodeImage, "barcode.png")}
+                                        isLoading={isLoading}
+                                        initialBarcode={initialData?.barcodeImageUrl || ""}
+                                      />
+                                      <p>Product Code: <strong>{productCode}</strong></p>
+                                    </div>
+                                    <DialogFooter>
+                                      <DialogClose>
+                                          <Badge className='py-2'>Close</Badge>
+                                      </DialogClose>
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                                )}
+                              </div>
+                              
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-3">
+                              <TextInput
+                                register={register}
+                                errors={errors}
+                                label="Product Cost"
+                                name="productCost"
+                                type="number"
+                                unit="$"
+                              />
+                              <TextInput
+                                register={register}
+                                errors={errors}
+                                label="Product Price"
+                                name="productPrice"
+                                type="number"
+                                unit="$"
+                              />  
+                          </div>
+                          <div className="grid md:grid-cols-2 gap-3">
+                              <FormSelectInput
+                                label="Product Tax"
+                                options={productTaxOptions}
+                                option={selectedProductTax}
+                                setOption={setSelectedProductTax}
+                              />
+                              <FormSelectInput
+                                label="Tax Method"
+                                options={taxMethodOptions}
+                                option={selectedTaxMethod}
+                                setOption={setSelectedTaxMethod}
+                              />
+                          </div>
+                      </div>
+                  </CardContent>
+                </Card>
+                <div className='hidden md:flex justify-between gap-4 py-4'>
+                  <Button
+                    type='button'
+                    onClick={prevStep} 
+                    variant={"outline"} 
+                    size="lg"
+                  >
+                    Previous
+                  </Button>
+                  <SubmitButton
+                    size={"sm"}
+                    title={editingId ? "Update Product" : "Save Product"}
+                    loading={isLoading}
+                  />
+                </div>
+              </div>
+            )}
+          {step === 2 && (
+            <div className='grid pt-4 md:pt-0 px-0 md:px-4 col-span-full md:col-span-4 gap-4 h-fit'>
+              <Card>
                 <CardHeader>
-                    <CardTitle>Product</CardTitle>
-                    <CardDescription>Update the product details</CardDescription>
+                    <CardTitle>Product Stock</CardTitle>
+                    <CardDescription>Update the product stocks</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
@@ -384,26 +594,16 @@ const ProductForm = ({
                             <TextInput
                               register={register}
                               errors={errors}
-                              label="Product Name"
-                              name="name" 
-                              toolTipText='Product name'
-                            />
-                        </div>
-                        <div className="grid gap-3">
-                          <TextArea
-                            register={register}
-                            errors={errors}
-                            label="Description"
-                            name="productDetails"
-                          />
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-3">
-                             <TextInput
-                              register={register}
-                              errors={errors}
                               label="Stock Quantity"
                               name="stockQty"
                               type="number"
+                            />
+                            <TextInput
+                              register={register}
+                              errors={errors}
+                              label="Sale Unit"
+                              name="saleUnit"
+                              type="text"
                             />
                             <TextInput
                               register={register}
@@ -414,145 +614,48 @@ const ProductForm = ({
                               toolTipText='To alert when stock is low quantity for refillment'
                             />
                         </div>
-                        <div className="grid md:grid-cols-2 gap-3">
-                            {/* <FormSelectInput
-                              label="Code Symbology"
-                              options={symbologyOptions}
-                              option={selectedSymbology}
-                              setOption={setSelectedSymbology}
-                            /> */}
-                            <div className='flex flex-col gap-2'>
-                              <Label>Select Symbology</Label>
-                              <select
-                                value={selectedSymbology}
-                                onChange={(e) => setSelectedSymbology(e.target.value)}
-                                className="block w-full rounded-md border-0 py-2 text-gray-900 
-                                shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
-                                focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm 
-                                sm:leading-6 text-sm"
-                              >
-                                <option value="CODE128">CODE128</option>
-                                <option value="CODE39">CODE39</option>
-                                <option value="EAN13">EAN13</option>
-                                <option value="UPC">UPC</option>
-                              </select>
-                            </div>
-                            <div className='flex items-end gap-2'>
-                              <div className='flex flex-col gap-2'>
-                                <Label>Product Code</Label>
-                                <input
-                                  id="product-code"
-                                  name="productCode"
-                                  type="number"
-                                  disabled={!productCode}
-                                  value={productCode}
-                                  onChange={handleChange}
-                                  className='block w-full rounded-md border-0 py-2 
-                                  text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 
-                                  placeholder:text-gray-400 focus:ring-2 focus:ring-inset 
-                                  focus:ring-indigo-600 sm:text-sm sm:leading-6 text-sm'
-                                />
-                              </div>
-                              <div className='pb-1'>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  size={"sm"}
-                                  onClick={handleClick}
-                                >
-                                  <Binary className='' />
-                                </Button>
-                              </div>
-                              {barcodeImage && (
-                                <Dialog>
-                                <DialogTrigger asChild>
-                                  <Button variant="outline">
-                                    <Barcode />
-                                  </Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px]">
-                                  <DialogHeader>
-                                    <DialogTitle>Barcode</DialogTitle>
-                                    <DialogDescription>
-                                      Make changes to your profile here. Click save when you're done.
-                                    </DialogDescription>
-                                  </DialogHeader>
-                                  <div className="grid gap-4 py-4 bg-slate-200 rounded-md justify-center">
-                                    <img src={barcodeImage} alt="Barcode" className="mt-2 border rounded" />
-                                    <p>Product Code: <strong>{productCode}</strong></p>
-                                  </div>
-                                  <DialogFooter>
-                                    <Button type="submit">Save changes</Button>
-                                  </DialogFooter>
-                                </DialogContent>
-                              </Dialog>
-                              )}
-                            </div>
-                            
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-3">
-                            <TextInput
-                              register={register}
-                              errors={errors}
-                              label="Product Cost"
-                              name="productCost"
-                              type="number"
-                            />
-                            <TextInput
-                              register={register}
-                              errors={errors}
-                              label="Product Price"
-                              name="productPrice"
-                              type="number"
-                            />  
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-3">
-                            <FormSelectInput
-                              label="Product Tax"
-                              options={productTaxOptions}
-                              option={selectedProductTax}
-                              setOption={setSelectedProductTax}
-                            />
-                            <FormSelectInput
-                              label="Tax Method"
-                              options={taxMethodOptions}
-                              option={selectedTaxMethod}
-                              setOption={setSelectedTaxMethod}
-                            />
-                        </div>
                     </div>
                 </CardContent>
-            </Card>
-            <div className='grid py-6 translate-y-10'>
-              <div className='flex justify-between gap-4'>
-                <Button
-                  type='button'
-                  onClick={handleBack} 
-                  variant={"outline"} 
-                  size="lg"
-                >
-                  Discard
-                </Button>
-                <SubmitButton
-                  size={"sm"}
-                  title={editingId ? "Update Supplier" : "Save Supplier"}
-                  loading={isLoading}
-                />
-              </div>
+              </Card>
+              <div className='md:hidden flex justify-between gap-4 py-4'>
+                  <Button
+                    type='button'
+                    onClick={prevStep} 
+                    variant={"outline"} 
+                    size="lg"
+                  >
+                    Previous
+                  </Button>
+                  <SubmitButton
+                    size={"sm"}
+                    title={editingId ? "Update Product" : "Save Product"}
+                    loading={isLoading}
+                  />
+                </div>
             </div>
-          </div>
+          )}
         </form>
-        <div className='hidden md:grid sm:col-span-4 col-span-full space-y-6'>
-          <ImageInput 
-            title="Product Image"
-            description="Update the product image"
-            fileUrl={fileUrl}
-            setFileUrl={setFileUrl}
-            file={file}
-            setFile={setFile}
-            isLoading={isLoading}
-          /> 
-        </div>  
+        {step === 1 && (
+          <div className='hidden md:grid px-4 col-span-4'>
+            {/* <ImageInput 
+              title="Product Image"
+              description="Update the Product image"
+              fileUrl={fileUrl}
+              setFileUrl={setFileUrl}
+              file={file}
+              setFile={setFile}
+              isLoading={isLoading}
+            /> */}
+            <MultipleImageInput 
+              title="Product Image"
+              description="Update the Product image"
+              fileUrls={fileUrls}
+              setFileUrls={setFileUrls}
+              files={files}
+              setFiles={setFiles}
+            />
+          </div>
+          )}   
       </div>
     </div>
     

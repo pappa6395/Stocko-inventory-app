@@ -6,9 +6,10 @@ export async function uploadFile(file: File | null, signApiUrl: string) {
   const parameters: SignApiOptions = {};
   const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
   const uploadsFolder = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOADS_FOLDER;
+  const apiKey = process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY;
 
-  if (!cloudName) {
-    throw new Error("Missing NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME");
+  if (!cloudName || !apiKey) {
+    throw new Error("Cloudinary environment variables are missing.");
   }
 
   if (uploadsFolder) {
@@ -42,7 +43,7 @@ export async function uploadFile(file: File | null, signApiUrl: string) {
   formData.append("signature", signature);
   formData.append(
     "api_key",
-    String(process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY)
+    String(apiKey)
   );
 
   const response = await fetch(

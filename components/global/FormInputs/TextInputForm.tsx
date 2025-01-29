@@ -12,7 +12,7 @@ type TextInputProps = {
 register: any,
 errors: any,
 label: string,
-type?: string,
+type?: string | number,
 name: string,
 toolTipText?: string,
 unit?: string,

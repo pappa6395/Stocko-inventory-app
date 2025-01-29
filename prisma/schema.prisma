@@ -100,13 +100,14 @@ model Products {
   productCode       Int
   stockQty          Int
   codeSymbology     String
-  saleUnit          String?
+  saleUnit          Int?
   productCost       Float
   productPrice      Float
   productTax        Float
   taxMethod         String
   productImages     String[]
   productThumbnail  String?
+  barcodeImageUrl   String?
   productDetails    String
   status            Boolean
   alertQuantity     Int
