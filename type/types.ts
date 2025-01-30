@@ -90,13 +90,17 @@ export type ProductProps = {
     supplierId: number;
     unitId: number;
 
+    batchNumber: string;
+    expiryDate: string;
+    isFeatured: boolean;
+
     productCost: number;
     productPrice: number;
     alertQuantity: number;
     productTax: number;
     taxMethod: string;
 
-    barCodeImageUrl: string;
+    barcodeImageUrl: string;
     productImages: string[];
     productThumbnail: string | null;
     

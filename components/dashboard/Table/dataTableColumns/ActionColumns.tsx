@@ -28,6 +28,7 @@ import { deleteBrandById } from "@/actions/brand";
 import { deleteWarehouseById } from "@/actions/warehouses";
 import { deleteSupplierById } from "@/actions/suppliers";
 import { deleteUnitById } from "@/actions/units";
+import { deleteProductById } from "@/actions/products";
  
 type ActionColumnProps = {
   row: any;
@@ -77,7 +78,13 @@ export default function ActionColumn({
           window.location.reload();
         }
         toast.success(`${model} Deleted Successfully`);
-      }
+      } else if (model === "product") {
+        const res = await deleteProductById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } 
     } catch (error) {
       console.log(error);
       toast.error("Category Couldn't be deleted");

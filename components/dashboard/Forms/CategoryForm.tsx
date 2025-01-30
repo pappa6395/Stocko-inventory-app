@@ -104,7 +104,7 @@ const CategoryForm = ({
   return (
 
     <div>
-      <FormHeader title={"Category"} onClick={handleBack} editingId={editingId} />
+      <FormHeader title={"Category"} editingId={editingId} href={"/categories"} loading={isLoading} />
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
           <ImageInput 
@@ -142,8 +142,8 @@ const CategoryForm = ({
             {/* Category Details */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Product Details</CardTitle>
-                    <CardDescription>Update the product details</CardDescription>
+                    <CardTitle>Category Details</CardTitle>
+                    <CardDescription>Update the Category details</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
@@ -174,7 +174,7 @@ const CategoryForm = ({
                   variant={"outline"} 
                   size="lg"
                 >
-                  Discard
+                  Close
                 </Button>
                 <SubmitButton
                   size={"sm"}

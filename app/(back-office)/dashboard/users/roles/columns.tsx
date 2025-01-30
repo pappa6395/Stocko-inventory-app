@@ -1,18 +1,14 @@
 "use client";
  
-import Image from "next/image";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
  
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
-import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColumn";
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Products, Supplier } from "@prisma/client";
-import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-export const columns: ColumnDef<Products>[] = [
+import { Unit } from "@prisma/client";
+
+export const columns: ColumnDef<Unit>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,26 +32,12 @@ export const columns: ColumnDef<Products>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "productThumbnail",
-    header: "Product Image",
-    cell: ({ row }) => <ImageColumn row={row} accessorKey="productThumbnail" />,
+    accessorKey: "title",
+    header: ({ column }) => <SortableColumn column={column} title="Title" />,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => <SortableColumn column={column} title="Name" />,
-  },
-  {
-    accessorKey: "productCode",
-    header: ({ column }) => <SortableColumn column={column} title="Product code" />,
-  },
-  {
-    accessorKey: "categoryId",
-    header: ({ column }) => <SortableColumn column={column} title="Category" />,
-  },
-  {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,
+    accessorKey: "abbreviation",
+    header: ({ column }) => <SortableColumn column={column} title="Abbreviation" />,
   },
   {
     accessorKey: "createdAt",
@@ -65,13 +47,13 @@ export const columns: ColumnDef<Products>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const product = row.original;
+      const unit = row.original;
       return (
         <ActionColumn
           row={row}
-          model="product"
-          editEndpoint={`products/update/${product.id}`}
-          id={(product.id)}
+          model="unit"
+          editEndpoint={`units/update/${unit.id}`}
+          id={(unit.id)}
         />
       );
     },

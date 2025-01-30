@@ -99,7 +99,7 @@ const BrandForm = ({
   return (
 
     <div>
-      <FormHeader title={"Brand"} onClick={handleBack} editingId={editingId} />
+      <FormHeader title={"Brand"} editingId={editingId} href={"/brands"} loading={isLoading} />
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
           <ImageInput 
@@ -159,7 +159,7 @@ const BrandForm = ({
                   variant={"outline"} 
                   size="lg"
                 >
-                  Discard
+                  Close
                 </Button>
                 <SubmitButton
                   size={"sm"}

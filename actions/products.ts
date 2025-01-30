@@ -17,37 +17,49 @@ export async function createProduct(data: ProductProps) {
             }
         });
         if (existingProduct) {
-            return existingProduct
+            return {
+                success: false,
+                data: null,
+                error: "Product with this slug already exists"
+            }
         }
 
-        const newSupplier = await prismaClient.products.create({
+        const newProduct = await prismaClient.products.create({
             data
         });
         revalidatePath("/dashboard/inventory/products")
-        return newSupplier;
+        return {
+            success: true,
+            data: newProduct,
+            error: null
+        }
 
     } catch (err) {
         console.error("Failed to create product:",err);
-        return null;
+        return {
+            success: false,
+            data: null,
+            error: "Failed to create product"
+        }
     }
 }
 
-export async function createWarehouseProduct(data: WarehouseProductProps) {
-    console.log("Payload checked:", data);
+// export async function createWarehouseProduct(data: WarehouseProductProps) {
+//     console.log("Payload checked:", data);
     
-    try {
+//     try {
 
-        const newWarehouseProduct = await prismaClient.warehouseProduct.create({
-            data
-        });
-        revalidatePath("/dashboard/inventory/products")
-        return newWarehouseProduct;
+//         const newWarehouseProduct = await prismaClient.warehouseProduct.create({
+//             data
+//         });
+//         revalidatePath("/dashboard/inventory/products")
+//         return newWarehouseProduct;
 
-    } catch (err) {
-        console.error("Failed to create warehouse product:",err);
-        return null;
-    }
-}
+//     } catch (err) {
+//         console.error("Failed to create warehouse product:",err);
+//         return null;
+//     }
+// }
 
 export async function getAllProducts() {
     

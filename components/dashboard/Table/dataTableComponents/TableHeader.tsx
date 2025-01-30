@@ -43,6 +43,7 @@ import { createBulkBrands } from "@/actions/brand";
 import { createBulkWarehouses } from "@/actions/warehouses";
 import { createBulkSuppliers } from "@/actions/suppliers";
 import { createBulkUnits } from "@/actions/units";
+import { createBulkProducts } from "@/actions/products";
 // import { createBulkBrands } from "@/actions/brand";
 // import { createBulkWarehouses } from "@/actions/warehouse";
 // import { createBulkSuppliers } from "@/actions/supplier";
@@ -207,37 +208,41 @@ export default function TableHeader({
                 };
               });
               await createBulkUnits(units);
-            // } else if (model === "product") {
-            //   const products = json.map((item: any) => {
-            //     return {
-            //       name: item.name,
-            //       slug: generateSlug(item.name),
-            //       productCode: item.productCode,
-            //       stockQty: item.stockQty,
-            //       warehouseId: item.warehouseId,
-            //       brandId: item.brandId,
-            //       supplierId: item.supplierId,
-            //       categoryId: item.categoryId,
-            //       unitId: item.unitId,
-            //       productCost: item.productCost,
-            //       productPrice: item.productPrice,
-            //       alertQty: item.alertQty,
-            //       productTax: item.productTax,
-            //       productThumbnail: item.productThumbnail,
-            //       taxMethod: item.taxMethod,
-            //       status: true,
-            //       productImages: [...item.productThumbnail],
-            //       productDetails: item.productDetails,
-            //     };
-            //   });
-            //   await createBulkProducts(products as any);
-            //   // console.log(brands);
-            // }
+            } else if (model === "product") {
+              const products = json.map((item: any) => {
+                return {
+                  name: item.name,
+                  slug: generateSlug(item.name),
+                  productCode: item.productCode,
+                  codeSymbology: item.codeSymbology,
+                  saleUnit: item.saleUnit,
+                  stockQty: item.stockQty,
+                  productCost: item.productCost,
+                  productPrice: item.productPrice,
+                  alertQuantity: item.alertQuantity,
+                  barcodeImageUrl: item.barcodeImageUrl,
+                  productTax: item.productTax,
+                  productThumbnail: item.productThumbnail,
+                  taxMethod: item.taxMethod,
+                  status: true,
+                  productImages: typeof item.productImages === "string"
+                  ? item.productImages.split(", ").map((img: any) => img.trim())
+                  : [],
+                  productDetails: item.productDetails,
+                  warehouseId: item.warehouseId,
+                  brandId: item.brandId,
+                  supplierId: item.supplierId,
+                  categoryId: item.categoryId,
+                  unitId: item.unitId,
+                };
+              });
+              await createBulkProducts(products as any);
+            }
             setLoading(false);
             setUploadSuccess(true);
             // window.location.reload();
             // toast.success("All Data Synced Successfully with No errors 👍");
-            }} catch (error) {
+            } catch (error) {
             setUploadSuccess(false);
             setLoading(false);
             toast.error("Something went wrong, Please Try again 😢");

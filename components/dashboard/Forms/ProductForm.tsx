@@ -6,27 +6,28 @@ import { Label } from '@/components/ui/label'
 import React, { useState } from 'react'
 import FormHeader from './FormHeader'
 import { useRouter } from 'next/navigation'
-import Select from "react-tailwindcss-select";
 import { useForm } from 'react-hook-form';
 import { ProductProps } from '@/type/types'
 import { generateSlug } from '@/lib/generateSlug'
 import toast from 'react-hot-toast'
 import SubmitButton from '@/components/global/FormInputs/SubmitButton'
-import ImageInput from '@/components/global/FormInputs/ImageInput'
-import { Brand, Category, Products, Supplier, Unit, Warehouse, WarehouseProduct } from '@prisma/client'
+import { Brand, Category, Products, Supplier, Unit, Warehouse } from '@prisma/client'
 import TextInput from '@/components/global/FormInputs/TextInputForm'
 import FormSelectInput from '@/components/global/FormInputs/FormSelectInput'
-import { createProduct, createWarehouseProduct, updateProductById } from '@/actions/products'
+import { createProduct, updateProductById } from '@/actions/products'
 import TextArea from '@/components/global/FormInputs/TextAreaInput'
 import JsBarcode from 'jsbarcode'
 import { Barcode, Binary } from 'lucide-react'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
 import BarcodeImageInput from '@/components/global/FormInputs/BarcodeImageInput'
 import { base64ToFile } from '@/lib/base64ToFile'
 import MultipleImageInput from '@/components/global/FormInputs/MultipleImageInput'
+import Image from 'next/image'
+import { convertDateToIso } from '@/lib/convertDatetoISO'
+import { convertIsoToDateString } from '@/lib/convertISOtoDate'
+import CloseBtn from '@/components/global/FormInputs/CloseBtn'
 
 
 type ProductFormProps = {
@@ -34,8 +35,6 @@ type ProductFormProps = {
   editingId?: string;
   productCategories: Category[];
   productBrands: Brand[];
-  productWarehouses: WarehouseProduct[];
-  warehouses: Warehouse[];
   productSuppliers: Supplier[];
   productUnits: Unit[];
 }
@@ -45,8 +44,6 @@ const ProductForm = ({
   editingId,
   productCategories,
   productBrands,
-  productWarehouses,
-  warehouses,
   productSuppliers,
   productUnits
 }: ProductFormProps) => {
@@ -59,125 +56,130 @@ const ProductForm = ({
   } = useForm<ProductProps>({
     defaultValues: {
       name: initialData?.name || "Hello World",
-      productCode: initialData?.productCode || 0,
-      status: initialData?.status || false,
       stockQty: initialData?.stockQty || 100,
       saleUnit: initialData?.saleUnit || 0,
       productCost: initialData?.productCost || 50,
       productPrice: initialData?.productPrice || 100,
       alertQuantity: initialData?.alertQuantity || 20,
-      productDetails: initialData?.productDetails || "Product details"
+      productDetails: initialData?.productDetails || "Product details",
+      productTax: initialData?.productTax,
+      taxMethod: initialData?.taxMethod || "Tax Method",
+      batchNumber: initialData?.batchNumber || "",
+      expiryDate: convertIsoToDateString(initialData?.expiryDate || new Date()),
     }
-    
   });
 
   const router = useRouter()
+
+  // Categories
+  const categoryOptions = productCategories?.map((item) => {
+    return {
+      value: item.id.toString(),
+      label: item.title,
+    }
+  });
+  const initialProductCategoryId = initialData?.categoryId || 0;
+  const initialCategory = categoryOptions?.find(
+    (item) => Number(item.value) === initialProductCategoryId);
+  const [selectedMainCategory, setSelectedMainCategory] =
+  useState<any>(initialCategory);
+
+  // Brands
+  const brandOptions = productBrands?.map((item) => {
+    return {
+      value: item.id.toString(),
+      label: item.title,
+    }
+  });
+  const initialProductBrandId = initialData?.brandId || 0;
+  const initialBrand = brandOptions?.find(
+    (item) => Number(item.value) === initialProductBrandId
+    );
+  const [selectedBrand, setSelectedBrand] =
+  useState<any>(initialBrand);
+
+  // Suppliers
+  const supplierOptions = productSuppliers?.map((item) => {
+    return {
+      value: item.id.toString(),
+      label: item.name,
+    }
+  });
+  const initialProductSupplierId = initialData?.supplierId || 0;
+  const initialSupplier = supplierOptions?.find(
+    (item) => Number(item.value) === initialProductSupplierId
+  );
+  const [selectedSupplier, setSelectedSupplier] = 
+  useState<any>(initialSupplier);
+
+  // Units
+  const unitOptions = productUnits?.map((item) => {
+    return {
+      value: item.id.toString(),
+      label: `${item.title} (${item.abbreviation})`,
+    }
+  });
+  const initialProductUnitId = initialData?.unitId || 0;
+  const initialUnit = unitOptions?.find(
+    (item) => Number(item.value) === initialProductUnitId
+  );
+  const [selectedUnit, setSelectedUnit] = useState<any>(initialUnit);
+
+  // Images
+  const [files, setFiles] = useState<File[]>([]);
+  const initialImageUrls = initialData?.productImages || []
+  const [fileUrls, setFileUrls] = useState<string[]>(initialImageUrls);
+
+  // Barcode
+  const initialProductCode = initialData?.productCode || 0;
+  const [productCode, setProductCode] = useState<number>(initialProductCode);
+  const initialBarcodeImageUrl = initialData?.barcodeImageUrl || ""
+  const [barcodeImage, setBarcodeImage] = useState<string>("");
+  const [barcodeUrl, setBarcodeUrl] = useState("");
+
+  // Code Symbology
+  const initialSymbology = initialData && initialData?.codeSymbology || "CODE128";
+  const [selectedSymbology, setSelectedSymbology] = useState<string>(initialSymbology);
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [newErrors, setNewErrors] = useState<Partial<ProductProps>>({});
+
+  // Status
+  const options: any[] = [
+    { value: true, label: "Active" },
+    { value: false, label: "Disabled" },
+  ];
   const initialStatus = {
     value: initialData?.status ? true : false,
     label: initialData?.status ? "Active" : "Disabled"
   }
   const [status, setStatus] = useState<any>(initialStatus);
+  
 
-  const initialSymbology = initialData && initialData?.codeSymbology || "CODE128";
-  const [selectedSymbology, setSelectedSymbology] = useState<string>(initialSymbology);
-
-  const initialProductTax = initialData?.productTax || ""
-  const [selectedProductTax, setSelectedProductTax] = useState<any>({
-    value: initialProductTax,
-  });
-
-  const initialTaxMethod = initialData?.taxMethod || ""
-  const [selectedTaxMethod, setSelectedTaxMethod] = useState<any>(initialTaxMethod);
-
-  const [files, setFiles] = useState<File[]>([]);
-  const initialImageUrls = initialData?.productImages || []
-  const [fileUrls, setFileUrls] = useState<string[]>(initialImageUrls);
-
-  const initialProductCategoryId = initialData?.categoryId || "";
-  const initialCategory = productCategories?.find(
-    (item) => item.title === initialProductCategoryId
-  );
-  const [selectedMainCategory, setSelectedMainCategory] =
-  useState<any>(initialCategory?.id);
-
-  const initialProductBrandId = initialData?.brandId || "";
-  const initialBrand = productBrands?.find(
-    (item) => item.title === initialProductBrandId
-    );
-  const [selectedBrand, setSelectedBrand] =
-  useState<any>(initialBrand?.id);
-
-  const initialProductWarehouseId = initialData?.id || "";
-  const initialWarehouse = productWarehouses?.find(
-    (item) => item.warehouseId === initialProductWarehouseId
-    );
-  const [selectedWarehouse, setSelectedWarehouse] =
-  useState<any>(initialWarehouse?.warehouseId);
-
-  const initialProductSupplierId = initialData?.supplierId || "";
-  const initialSupplier = productSuppliers?.find(
-    (item) => item.name === initialProductSupplierId
-    );
-  const [selectedSupplier, setSelectedSupplier] =useState<any>(initialSupplier?.id);
-
-  const initialProductUnitId = initialData?.unitId || "";
-  const initialUnit = productUnits?.find(
-    (item) => item.title === initialProductUnitId
-    );
-  const [selectedUnit, setSelectedUnit] =
-  useState<any>(initialUnit?.id);
-
-  const [productCode, setProductCode] = useState<string>(String(initialData?.productCode || 0));
-  const [barcodeImage, setBarcodeImage] = useState<string>("");
-  const [barcodeUrl, setBarcodeUrl] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const options: any[] = [
-    { value: true, label: "Active" },
-    { value: false, label: "Disabled" },
-  ];
-  const productTaxOptions: any[] = [
-    { value: 7, label: "VAT 7%" },
-    { value: 10, label: "VAT 10%" },
-  ];
+  // Tax Method
   const taxMethodOptions: any[] = [
     { value: "exclusive", label: "Exclusive" },
     { value: "inclusive", label: "Inclusive" },
   ];
-
-  const categoryOptions = productCategories?.map((item) => {
-    return {
-      value: item.title,
-      label: item.title,
-    }
-  });
-  const brandOptions = productBrands?.map((item) => {
-    return {
-      value: item.title,
-      label: item.title,
-    }
-  });
-  const warehouseOptions = warehouses?.map((item) => {
-    return {
-      value: item.name,
-      label: item.name,
-    }
-  });
-  const supplierOptions = productSuppliers?.map((item) => {
-    return {
-      value: item.name,
-      label: item.name,
-    }
-  });
-  const unitOptions = productUnits?.map((item) => {
-    return {
-      value: item.title,
-      label: `${item.title} (${item.abbreviation})`,
-    }
-  });
-
+  const initialTaxMethodValue = initialData?.taxMethod || "";
+  const initialTaxMethod = taxMethodOptions?.find(
+    (item) => item.value === initialTaxMethodValue
+  );
+  const [selectedTaxMethod, setSelectedTaxMethod] = useState<any>(initialTaxMethod);
+  
+  // Product Tax
+  const productTaxOptions: any[] = [
+    { value: 7, label: "VAT 7%" },
+    { value: 10, label: "VAT 10%" },
+  ];
+  const initialProductTaxValue = initialData?.productTax || 0;
+  const initialProductTax = productTaxOptions?.find(
+    (item) => item.value === initialProductTaxValue
+  );
+  const [selectedProductTax, setSelectedProductTax] = useState<any>(initialProductTax);
+  
+  // Step
   const [step, setStep] = useState(1)
-
   const nextStep= () => {
       if (step < 3) {
           setStep((prev) => prev + 1)
@@ -189,55 +191,91 @@ const ProductForm = ({
       }
   }
 
-  const saveProduct = async(data: ProductProps) => {
+  // Validate Data
+  const validate = (data: ProductProps) => {
+    let newErrors: Partial<ProductProps> = {}
 
-    setIsLoading(true);
-    try {
-      data.productImages = fileUrls;
-      data.status = status?.value as boolean;
-      data.slug = generateSlug(data.name);
-      data.codeSymbology = selectedSymbology;
-      data.taxMethod = selectedTaxMethod?.value as string;
-      data.productTax = selectedProductTax?.value as number;
-      data.productCode = Number(productCode);
-      data.barCodeImageUrl = barcodeUrl;
-      data.productCost = Number(data.productCost);
-      data.productPrice = Number(data.productPrice);
-      data.stockQty = Number(data.stockQty);
-      data.alertQuantity = Number(data.alertQuantity);
-      data.saleUnit = Number(data.saleUnit);
-
-      const warehouseProductData = {
-        warehouseId: Number(selectedWarehouse?.value || 0),
-        productId: initialData?.id || 0,
-      };
-
-      console.log("Product Data:", data);
-      setIsLoading(false);
-      if (editingId) {
-        const updateProduct = await updateProductById(editingId, data)
-        console.log("Updated supplier:", updateProduct);
-        
-        if (updateProduct) {
-          toast.success("Successfully updated");
-          reset();
-          setIsLoading(false);
-          router.push(`/dashboard/inventory/products`);
-        }
-      } else {
-        const newProduct = await createProduct(data);
-        const newWarehouseProduct = await createWarehouseProduct(warehouseProductData)
-        if (newProduct) {
-          toast.success("Successfully created");
-          reset();
-          setIsLoading(false);
-          router.push(`/dashboard/inventory/products`);
-        }
-      }
-      
-    } catch (error) {
-        console.error("Failed to save or update product:", error);
+    if (!data.categoryId) {
+      newErrors.categoryId?.toString() ? "Category is required" : "";
+      toast.error("Category is required")
     }
+    if (!data.brandId) {
+      newErrors.brandId?.toString() ? "Brand is required" : "";
+      toast.error("Brand is required")
+    }
+    if (!data.supplierId) {
+      newErrors.supplierId?.toString() ? "Supplier is required" : "";
+      toast.error("Supplier is required")
+    }
+    if (!data.unitId) {
+      newErrors.unitId?.toString() ? "Unit is required" : "";
+      toast.error("Unit is required")
+    }
+    if (!data.productCode) {
+      newErrors.productCode?.toString() ? "Product Code is required" : "";
+      toast.error("Product Code is required")
+    }
+
+    setNewErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  // Submit Data
+  const saveProduct = async(data: ProductProps) => {
+    setIsLoading(true);
+
+    data.productImages = fileUrls;
+    data.status = status?.value as boolean;
+    data.slug = generateSlug(data.name);
+    data.codeSymbology = selectedSymbology;
+    data.taxMethod = selectedTaxMethod?.value as string;
+    data.productTax = selectedProductTax?.value as number;
+    data.productCode = Number(productCode);
+    data.barcodeImageUrl = barcodeUrl;
+    data.brandId = Number(selectedBrand?.value);
+    data.categoryId = Number(selectedMainCategory?.value);
+    data.supplierId = Number(selectedSupplier?.value);
+    data.productThumbnail = fileUrls[0]
+    data.unitId = Number(selectedUnit?.value);
+    data.productCost = Number(data.productCost);
+    data.productPrice = Number(data.productPrice);
+    data.stockQty = Number(data.stockQty);
+    data.alertQuantity = Number(data.alertQuantity);
+    data.saleUnit = Number(data.saleUnit);
+    data.expiryDate = convertDateToIso(data?.expiryDate);
+
+    console.log("Product Data:", data);
+
+    if (validate(data)) {
+      try {
+      
+        if (editingId) {
+          const updateProduct = await updateProductById(editingId, data)
+          console.log("Updated supplier:", updateProduct);
+          
+          if (updateProduct) {
+            toast.success("Successfully updated");
+            reset();
+            setIsLoading(false);
+            router.push(`/dashboard/inventory/products`);
+          }
+        } else {
+          const newProduct = await createProduct(data);
+          
+          if (newProduct.success) {
+            toast.success("Successfully created");
+            reset();
+            setIsLoading(false);
+            router.push(`/dashboard/inventory/products`);
+          }
+        }
+        
+      } catch (error) {
+          console.error("Failed to save or update product:", error);
+          setIsLoading(false);
+      }
+    }
+    
   }
 
   const handleBack = () => {
@@ -292,7 +330,7 @@ const ProductForm = ({
     : generateProductCode();
 
     if (validateInput(newCode, selectedSymbology)) {
-      setProductCode(newCode);
+      setProductCode(+newCode);
       generateBarcode(newCode, selectedSymbology);
     } else {
       alert("Invalid input for the selected format. Please try again.");
@@ -301,13 +339,64 @@ const ProductForm = ({
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProductCode(e.target.value);
+    setProductCode(+e.target.value);
   }
+
+  const handlePrintBarcode = (barcodeImage: string) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Print Barcode</title>
+            <style>
+                @page { size: A4; margin: 10mm; }
+                body { display: flex; justify-content: center; align-items: center; }
+                .barcode-container {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 10px;
+                    width: 100%;
+                    padding: 10mm;
+                }
+                .barcode {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 10px;
+                    border: 1px solid black;
+                }
+                img { width: 100%; height: auto; }
+            </style>
+        </head>
+        <body>
+            <div class="barcode-container">
+                ${Array(36)
+                  .fill(`<div class="barcode"><img src="${barcodeImage}" alt="Generated Barcode" /></div>`)
+                  .join("")}
+            </div>
+            <script>
+                window.onload = function() {
+                    window.print();
+                    window.onafterprint = function() { window.close(); };
+                };
+            </script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+ };
 
   return (
 
     <div>
-      <FormHeader title={"Product"} onClick={handleBack} editingId={editingId} />
+      <FormHeader 
+        title={"Product"} 
+        editingId={editingId}
+        href={"/products"}
+        loading={isLoading} 
+      />
       <div className={cn(step === 1 ? 'grid grid-cols-1 sm:grid-cols-12 py-4 w-full' : "")}>
         {step === 2 ? "" : (
           <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
@@ -355,16 +444,6 @@ const ProductForm = ({
                           </div>
                           <div className="flex space-x-2 items-end">
                             <FormSelectInput
-                            label="Warehouse"
-                            options={warehouseOptions}
-                            option={selectedWarehouse}
-                            setOption={setSelectedWarehouse}
-                            toolTipText='Add new warehouse'
-                            href={"/dashboard/inventory/warehouses/new"}
-                            />  
-                          </div>
-                          <div className="flex space-x-2 items-end">
-                            <FormSelectInput
                             label="Supplier"
                             options={supplierOptions}
                             option={selectedSupplier}
@@ -391,19 +470,64 @@ const ProductForm = ({
                             setOption={setStatus}
                             />
                           </div>
+                          <div className="flex w-full space-x-2 items-end">
+                            <TextInput
+                              register={register}
+                              errors={errors}
+                              label="Product Batch Number"
+                              name="batchNumber"
+                              type="number"
+                              
+                            />
+                          </div>
+                          <div className="flex w-full space-x-2 items-end">
+                            <TextInput
+                              register={register}
+                              errors={errors}
+                              label="Expire Date"
+                              name="expiryDate"
+                              type="Date"
+                            />
+                          </div>
+                          <div className="flex py-2 gap-4 text-sm/6">
+                              <div className="flex h-6 shrink-0 items-center">
+                                <div className="group grid size-4 grid-cols-1">
+                                  <input
+                                  {...register("isFeatured")}
+                                    id="featured"
+                                    name="isFeatured"
+                                    type="checkbox"
+                                    className="col-start-1 row-start-1 appearance-none 
+                                    rounded-sm border border-gray-300 bg-white 
+                                    checked:border-indigo-600 checked:bg-indigo-600 
+                                    indeterminate:border-indigo-600 indeterminate:bg-indigo-600 
+                                    focus-visible:outline-2 focus-visible:outline-offset-2 
+                                    focus-visible:outline-indigo-600 disabled:border-gray-300 
+                                    disabled:bg-gray-100 disabled:checked:bg-gray-100 
+                                    forced-colors:appearance-auto"
+                                  />
+                                </div>
+                              </div> 
+                              <div>
+                                <label 
+                                    htmlFor="comments" 
+                                    className="font-medium text-gray-900">
+                                    Featured
+                                  </label>
+                                  <p id="comments-description" className="text-gray-500">
+                                    Featured Products will be used in POS
+                                  </p>
+                              </div>
+                          </div>
+                          
                     </div>
                 </CardContent>
               </Card>
               <div className='grid py-6 translate-y-10'>
                 <div className='flex justify-between gap-4'>
-                  <Button
-                    type='button'
-                    onClick={handleBack} 
-                    variant={"outline"} 
-                    size="lg"
-                  >
-                    Discard
-                  </Button>
+                  <CloseBtn 
+                    href='/products'
+                  />
                   <Button
                     type='button'
                     onClick={nextStep} 
@@ -490,6 +614,7 @@ const ProductForm = ({
                                     variant="outline"
                                     size={"sm"}
                                     onClick={handleClick}
+                                    disabled={initialStatus.value} 
                                   >
                                     <Binary className='' />
                                   </Button>
@@ -519,6 +644,12 @@ const ProductForm = ({
                                       <p>Product Code: <strong>{productCode}</strong></p>
                                     </div>
                                     <DialogFooter>
+                                    <button 
+                                      onClick={() => handlePrintBarcode(barcodeImage)} 
+                                      className="bg-blue-500 text-white text-sm px-3 py-2 rounded">
+                                          Print Barcode
+                                    </button>
+
                                       <DialogClose>
                                           <Badge className='py-2'>Close</Badge>
                                       </DialogClose>
@@ -617,6 +748,25 @@ const ProductForm = ({
                     </div>
                 </CardContent>
               </Card>
+              {initialBarcodeImageUrl ? (
+                  <Card>
+                    <CardHeader>
+                        <CardTitle>Barcode Image</CardTitle>
+                        <CardDescription>Type: {selectedSymbology}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className='w-full flex items-center'>
+                        <Image 
+                          src={`${initialBarcodeImageUrl}`}
+                          alt={"barcode"}
+                          width={200}
+                          height={200}
+                          className=''
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+              ) : ("")}
               <div className='md:hidden flex justify-between gap-4 py-4'>
                   <Button
                     type='button'

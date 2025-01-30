@@ -103,7 +103,7 @@ const WarehouseForm = ({
   return (
 
     <div>
-      <FormHeader title={"Warehouse"} onClick={handleBack} editingId={editingId} />
+      <FormHeader title={"Warehouse"} editingId={editingId} href={"/warehouses"} loading={isLoading} />
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
           <ImageInput 
@@ -206,7 +206,7 @@ const WarehouseForm = ({
                   variant={"outline"} 
                   size="lg"
                 >
-                  Discard
+                  Close
                 </Button>
                 <SubmitButton
                   size={"sm"}

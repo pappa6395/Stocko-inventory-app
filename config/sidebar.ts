@@ -9,7 +9,7 @@ export const sidebarLinks: ISidebarLink[] = [
       dropdown: false,
     },
     {
-      label: 'Users',
+      label: 'User Management',
       href: '#',
       icon: Users,
       dropdown: true,
