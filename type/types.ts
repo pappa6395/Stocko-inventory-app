@@ -132,3 +132,59 @@ export type SelectOptionsProps = {
     label: string;
     value: string;
 };
+
+export interface RoleProps {
+    displayTitle: string;
+    roleTitle: string;
+    description: string;
+  
+    canViewBrands: boolean;
+    canAddBrands: boolean;
+    canEditBrands: boolean;
+    canDeleteBrands: boolean;
+  
+    canViewCategories: boolean;
+    canAddCategories: boolean;
+    canEditCategories: boolean;
+    canDeleteCategories: boolean;
+  
+    canViewProducts: boolean;
+    canAddProducts: boolean;
+    canEditProducts: boolean;
+    canDeleteProducts: boolean;
+  
+    canAccessDashboard: boolean;
+    canManageRoles: boolean;
+    canManageUnits: boolean;
+  
+    canViewUsers: boolean;
+    canAddUsers: boolean;
+    canEditUsers: boolean;
+    canDeleteUsers: boolean;
+  
+    canViewWarehouses: boolean;
+    canAddWarehouses: boolean;
+    canEditWarehouses: boolean;
+    canDeleteWarehouses: boolean;
+  
+    canViewSuppliers: boolean;
+    canAddSuppliers: boolean;
+    canEditSuppliers: boolean;
+    canDeleteSuppliers: boolean;
+}
+
+export interface UserProps {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    firstName: string;
+    lastName: string;
+    name: string;
+    phone: string;
+    profileImage: string | null;
+  
+    // Foreign key to Role
+    roleId: number;
+  
+    status: boolean;
+  }

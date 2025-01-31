@@ -1,7 +1,7 @@
 "use server"
 
 import { prismaClient } from "@/lib/db";
-import { BrandProps, WarehouseProps } from "@/type/types";
+import { WarehouseProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 

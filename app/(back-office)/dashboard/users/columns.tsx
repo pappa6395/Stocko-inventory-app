@@ -3,12 +3,19 @@
 import { Checkbox } from "@/components/ui/checkbox";
  
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
+import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColumn";
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Role } from "@prisma/client";
+import { Role, User } from "@prisma/client";
+import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
+import InviteUser from "@/components/dashboard/Table/dataTableColumns/InviteUser";
 
-export const columns: ColumnDef<Role>[] = [
+interface IUser extends User {
+  role: Role;
+}
+
+export const columns: ColumnDef<IUser>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -32,12 +39,35 @@ export const columns: ColumnDef<Role>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "displayTitle",
-    header: ({ column }) => <SortableColumn column={column} title="Title" />,
+    accessorKey: "profileImage",
+    header: "Profile Image",
+    cell: ({ row }) => <ImageColumn row={row} accessorKey="profileImage" />,
   },
   {
-    accessorKey: "description",
-    header: ({ column }) => <SortableColumn column={column} title="Description" />,
+    accessorKey: "name",
+    header: ({ column }) => <SortableColumn column={column} title="Name" />,
+  },
+  {
+    accessorKey: "role",
+    header: "Role",
+    cell: ({ row }) => {
+      const user = row.original?.role || null
+      const role = user.displayTitle
+      return <p>{role}</p>
+    }
+  },
+  {
+    accessorKey: "roleId",
+    header: "Invite",
+    cell: ({ row }) => {
+      const user = row.original
+      return <InviteUser user={user} />
+    }
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,
   },
   {
     accessorKey: "createdAt",
@@ -47,13 +77,13 @@ export const columns: ColumnDef<Role>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const role = row.original;
+      const user = row.original;
       return (
         <ActionColumn
           row={row}
-          model="role"
-          editEndpoint={`roles/update/${role.id}`}
-          id={(role.id)}
+          model="user"
+          editEndpoint={`users/update/${user.id}`}
+          id={(user.id)}
         />
       );
     },

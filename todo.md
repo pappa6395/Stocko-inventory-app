@@ -52,5 +52,7 @@
  - Implement Import and Export
  - Deployment
 
- #17
- - Create User page
+ #17 18 19
+ - Create User directory and details
+ - Create Role directory and details
+ - Deployment

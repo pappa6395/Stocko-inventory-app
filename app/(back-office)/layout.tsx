@@ -10,7 +10,7 @@ const Layout = ({children}: {children: ReactNode}) => {
       <Sidebar />
       <div className="flex flex-col">
         <Navbar />
-        <div className='py-8 px-4 max-w-6xl mx-auto border w-full my-4'>
+        <div className='py-8 px-4 max-w-6xl mx-auto w-full my-4'>
         {children}
         </div>
       </div>

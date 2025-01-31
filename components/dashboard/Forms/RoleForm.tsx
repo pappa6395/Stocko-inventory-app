@@ -1,22 +1,31 @@
 "use client"
 
-import { Button } from '@/components/ui/button'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import React, { useState } from 'react'
 import FormHeader from './FormHeader'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form';
-import { UnitProps } from '@/type/types'
+import { RoleProps } from '@/type/types'
 import toast from 'react-hot-toast'
-import SubmitButton from '@/components/global/FormInputs/SubmitButton'
-import { Unit } from '@prisma/client'
+import { Role } from '@prisma/client'
 import TextInput from '@/components/global/FormInputs/TextInputForm'
-import { createUnit, updateUnitById } from '@/actions/units'
-import TextArea from '@/components/global/FormInputs/TextAreaInput'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import FormFooter from '@/components/global/FormInputs/FormFooter'
+import { permissions } from '@/config/permissions'
+import { createRoleName } from '@/lib/createRoleName'
+import { createRole, updateRoleById } from '@/actions/roles'
 
 
 type RoleFormProps = {
-  initialData?: Unit | null;
+  initialData?: Role | null;
   editingId?: string;
 }
 
@@ -30,10 +39,38 @@ const RoleForm = ({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<UnitProps>({
+  } = useForm<RoleProps>({
     defaultValues: {
-      title: initialData?.title || "",
-      abbreviation: initialData?.abbreviation || "",
+      displayTitle: initialData?.displayTitle || "",
+      roleTitle: initialData?.roleTitle || "",
+      description: initialData?.description || "",
+      canViewBrands: initialData?.canViewBrands || false,
+      canAddBrands: initialData?.canAddBrands || false,
+      canEditBrands: initialData?.canEditBrands || false,
+      canDeleteBrands: initialData?.canDeleteBrands || false,
+      canViewCategories: initialData?.canViewCategories || false,
+      canAddCategories: initialData?.canAddCategories || false,
+      canEditCategories: initialData?.canEditCategories || false,
+      canDeleteCategories: initialData?.canDeleteCategories || false,
+      canViewProducts: initialData?.canViewProducts || false,
+      canAddProducts: initialData?.canAddProducts || false,
+      canEditProducts: initialData?.canEditProducts || false,
+      canDeleteProducts: initialData?.canDeleteProducts || false,
+      canAccessDashboard: initialData?.canAccessDashboard || false,
+      canManageRoles: initialData?.canManageRoles || false,
+      canManageUnits: initialData?.canManageUnits || false,
+      canViewUsers: initialData?.canViewUsers || false,
+      canAddUsers: initialData?.canAddUsers || false,
+      canEditUsers: initialData?.canEditUsers || false,
+      canDeleteUsers: initialData?.canDeleteUsers || false,
+      canViewWarehouses: initialData?.canViewWarehouses || false,
+      canAddWarehouses: initialData?.canAddWarehouses || false,
+      canEditWarehouses: initialData?.canEditWarehouses || false,
+      canDeleteWarehouses: initialData?.canDeleteWarehouses || false,
+      canViewSuppliers: initialData?.canViewSuppliers || false,
+      canAddSuppliers: initialData?.canAddSuppliers || false,
+      canEditSuppliers: initialData?.canEditSuppliers || false,
+      canDeleteSuppliers: initialData?.canDeleteSuppliers || false,
     }
     
   });
@@ -41,36 +78,35 @@ const RoleForm = ({
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false);
 
-  const options: any[] = [
-    { value: true, label: "Active" },
-    { value: false, label: "Disabled" },
-  ];
-
-  const saveUnit = async(data: UnitProps) => {
+  const saveRole = async(data: RoleProps) => {
+    
+    data.roleTitle = createRoleName(data?.displayTitle || "")
+    console.log("Data:", data);
+    
     
     try {
       setIsLoading(true);
       
       if (editingId) {
-        const updateUnit = await updateUnitById(editingId, data)
-        console.log("Updated unit:", updateUnit);
+        const updateRole = await updateRoleById(editingId, data)
+        console.log("Updated role:", updateRole);
         
-        if (updateUnit) {
+        if (updateRole) {
           toast.success("Successfully updated");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/units`);
+          router.push(`/dashboard/users/roles`);
         }
       } else {
-        const newUnit = await createUnit(data);
+        const newRole = await createRole(data);
         
-        if (newUnit) {
+        if (newRole) {
           toast.success("Successfully created");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/units`);
+          router.push(`/dashboard/users/roles`);
         } else {
-          toast.error("Failed to create unit");
+          toast.error("Failed to create role");
           reset();
           setIsLoading(false);
         }
@@ -80,10 +116,6 @@ const RoleForm = ({
         console.error("Failed to save or update unit:", error);
     }
   }
-
-  const handleBack = () => {
-    router.back()
-  };
 
   return (
 
@@ -97,7 +129,7 @@ const RoleForm = ({
       />
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <form 
-          onSubmit={handleSubmit(saveUnit)} 
+          onSubmit={handleSubmit(saveRole)} 
           className='grid col-span-full gap-4'>
           <div className='space-y-4 px-4'>
             <Card>
@@ -106,42 +138,80 @@ const RoleForm = ({
                     <CardDescription>Update the role details</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid gap-6">
-                        <div className="grid gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3">
                         <TextInput
                             register={register}
                             errors={errors}
-                            label="Title"
-                            name="title"
+                            label="Role Title"
+                            name="displayTitle"
                           />
-                        </div>
-                        <div className="grid gap-3">
-                          <TextArea
+                          <TextInput
                             register={register}
                             errors={errors}
-                            label="Description"
+                            label="Role Description"
                             name="description"
                           />
-                        </div>
                     </div>
                 </CardContent>
             </Card>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Module</TableHead>
+                  <TableHead>Privileges</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {permissions.map((permission, i) => (
+                  <TableRow key={i}>
+                    <TableCell className="font-medium">{permission.model}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-4">
+                        <ul className="items-center w-full text-sm font-medium 
+                        text-gray-900 bg-white border border-gray-200 rounded-lg 
+                        sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                          {permission.permissions.map((item, j) => {
+                            return (
+                              <li key={j} className="w-full border-b border-gray-200 sm:border-b-0 
+                              sm:border-r dark:border-gray-600">
+                                  <div className="flex items-center ps-3">
+                                      <input 
+                                        id={item.name} 
+                                        type="checkbox"
+                                        {...register(`${item.name}` as any)}
+                                        name={item.name} 
+                                        className="w-4 h-4 text-blue-600 bg-gray-100 
+                                        border-gray-300 rounded-sm focus:ring-blue-500 
+                                        dark:focus:ring-blue-600 dark:ring-offset-gray-700 
+                                        dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 
+                                        dark:border-gray-500"/>
+                                      <label 
+                                        htmlFor={item.name}
+                                        className="w-full py-3 ms-2 text-sm font-medium 
+                                        text-gray-900 dark:text-gray-300"
+                                      >
+                                        {item.display}
+                                      </label>
+                                  </div>
+                              </li>
+                            )
+                          })}
+                            
+                        </ul>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
             <div className='grid py-6 translate-y-10'>
-              <div className='flex justify-between gap-4'>
-                <Button
-                  type='button'
-                  onClick={handleBack} 
-                  variant={"outline"} 
-                  size="lg"
-                >
-                  Close
-                </Button>
-                <SubmitButton
-                  size={"sm"}
-                  title={editingId ? "Update Unit" : "Save Unit"}
-                  loading={isLoading}
+                <FormFooter 
+                  title={"Role"} 
+                  href={"/roles"} 
+                  parent={"/users"}
+                  editingId=''
+                  loading={isLoading} 
                 />
-              </div>
             </div>
           </div>
         </form>

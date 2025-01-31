@@ -29,6 +29,8 @@ import { deleteWarehouseById } from "@/actions/warehouses";
 import { deleteSupplierById } from "@/actions/suppliers";
 import { deleteUnitById } from "@/actions/units";
 import { deleteProductById } from "@/actions/products";
+import { deleteRoleById } from "@/actions/roles";
+import { deleteUserById } from "@/actions/users";
  
 type ActionColumnProps = {
   row: any;
@@ -80,6 +82,18 @@ export default function ActionColumn({
         toast.success(`${model} Deleted Successfully`);
       } else if (model === "product") {
         const res = await deleteProductById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "role") {
+        const res = await deleteRoleById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "user") {
+        const res = await deleteUserById(id);
         if (res?.ok) {
           window.location.reload();
         }

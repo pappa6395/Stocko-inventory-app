@@ -1,6 +1,7 @@
 
-import { PageProps } from '@/.next/types/app/(back-office)/dashboard/inventory/categories/new/page';
-import { getUnitById } from '@/actions/units';
+
+import { PageProps } from '@/.next/types/app/(back-office)/dashboard/users/roles/update/[id]/page';
+import { getRoleById } from '@/actions/roles';
 import RoleForm from '@/components/dashboard/Forms/RoleForm';
 import React from 'react'
 
@@ -9,19 +10,17 @@ const page = async ({params: paramsPromise}: PageProps) => {
 
     const { id } = await paramsPromise;
 
-    const unit = await getUnitById(id) || null
+    const role = (await getRoleById(id))?.data || null
 
-  
+
     return (
   
       <div>
           <RoleForm 
-            initialData={unit ?? null}
             editingId={id ?? ""}
-            />
+            initialData={role ?? null}
+          />
       </div>
-  
-  
     )
 }
 

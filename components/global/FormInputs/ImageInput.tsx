@@ -1,6 +1,8 @@
+"use client"
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import React from 'react'
+import React, { useState } from 'react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { LoaderIcon, Upload } from 'lucide-react'
@@ -15,7 +17,6 @@ export type ImageInputProps = {
     setFileUrl: (url: string) => void;
     file: File | null;
     setFile: (file: File | null) => void;
-    isLoading: boolean;
 }
 
 const ImageInput = ({
@@ -25,9 +26,10 @@ const ImageInput = ({
     setFileUrl,
     file,
     setFile,
-    isLoading
     
 }: ImageInputProps) => {
+
+    const [isLoading, setIsLoading] = useState(false)
 
     function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
         if (!e.target.files) return;
@@ -36,6 +38,7 @@ const ImageInput = ({
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        setIsLoading(true);
         try {
           if (!file) {
             toast.error("No file selected");
@@ -46,6 +49,8 @@ const ImageInput = ({
           setFileUrl(result.secure_url);
         } catch (error) {
           console.error(error);
+        } finally {
+            setIsLoading(false)
         }
     }
 

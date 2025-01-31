@@ -13,6 +13,73 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           Int     @id @default(autoincrement())
+  name         String
+  firstName    String  
+  lastName     String  @unique
+  email        String  @unique
+  password     String
+  phone        String
+  profileImage String?
+  status       Boolean @default(false)
+  // Foreign key to Role
+  roleId       Int
+  role         Role @relation(fields: [roleId], references: [id])
+
+  @@index([roleId], name: "idx_roleId")
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime? @updatedAt
+}
+
+model Role {
+id            Int     @id @default(autoincrement())
+displayTitle   String // Human-friendly name for UI
+roleTitle      String @unique // Programmatic name for code
+description   String?
+// Relationships
+users User[]
+// Module Permissions
+canViewBrands   Boolean @default(false)
+canAddBrands    Boolean @default(false)
+canEditBrands   Boolean @default(false)
+canDeleteBrands Boolean @default(false)
+
+canViewCategories   Boolean @default(false)
+canAddCategories    Boolean @default(false)
+canEditCategories   Boolean @default(false)
+canDeleteCategories Boolean @default(false)
+
+canViewProducts   Boolean @default(false)
+canAddProducts    Boolean @default(false)
+canEditProducts   Boolean @default(false)
+canDeleteProducts Boolean @default(false)
+
+canAccessDashboard   Boolean @default(false)
+canManageRoles      Boolean @default(false)
+canManageUnits      Boolean @default(false)
+
+canViewUsers    Boolean @default(false)
+canAddUsers     Boolean @default(false)
+canEditUsers    Boolean @default(false)
+canDeleteUsers  Boolean @default(false)
+
+canViewWarehouses   Boolean @default(false)
+canAddWarehouses    Boolean @default(false)
+canEditWarehouses   Boolean @default(false)
+canDeleteWarehouses Boolean @default(false)
+
+canViewSuppliers    Boolean @default(false)
+canAddSuppliers     Boolean @default(false)
+canEditSuppliers    Boolean @default(false)
+canDeleteSuppliers  Boolean @default(false)
+
+createdAt      DateTime   @default(now())
+updatedAt      DateTime   @updatedAt
+}
+
+
 model Category {
   id          Int @id @default(autoincrement())
   title       String
@@ -136,3 +203,4 @@ model Products {
 
 //   @@unique([warehouseId, productId])
 // }
+
