@@ -113,7 +113,6 @@ const WarehouseForm = ({
             setFileUrl={setFileUrl}
             file={file}
             setFile={setFile}
-            isLoading={isLoading}
           /> 
         </div>  
         <form 
@@ -225,7 +224,6 @@ const WarehouseForm = ({
             setFileUrl={setFileUrl}
             file={file}
             setFile={setFile}
-            isLoading={isLoading}
           /> 
         </div>  
       </div>

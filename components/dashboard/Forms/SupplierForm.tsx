@@ -116,7 +116,6 @@ const SupplierForm = ({
             setFileUrl={setFileUrl}
             file={file}
             setFile={setFile}
-            isLoading={isLoading}
           /> 
         </div>  
         <form 
@@ -250,7 +249,6 @@ const SupplierForm = ({
             setFileUrl={setFileUrl}
             file={file}
             setFile={setFile}
-            isLoading={isLoading}
           /> 
         </div>  
       </div>
