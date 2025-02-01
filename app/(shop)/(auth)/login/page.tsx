@@ -1,6 +1,4 @@
 import LoginForm from '@/components/frontend/LoginForm'
-import { Lock, Mail } from 'lucide-react'
-import Link from 'next/link'
 import React from 'react'
 
 const page = () => {
@@ -9,10 +7,9 @@ const page = () => {
 
     <section>
         <div className='md:container px-4 md:px-0'>
-            <div className="grid grid-cols-1 lg:grid-cols-2
-            max-w-4xl mx-auto border my-3 shadow-xl rounded-md">
+            <div className="mx-auto border max-w-4xl grid grid-cols-2 justify-center my-3 shadow-xl rounded-md">
                 <LoginForm />
-                <div className='bg-blue-600 h-full text-center hidden lg:block'>
+                <div className='bg-blue-600 w-full text-center hidden lg:block'>
                     <p>Connect with every application</p>
                     <p className='text-xs text-gray-300'>
                         Everything you need is customizable on the dashboard

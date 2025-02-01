@@ -3,8 +3,10 @@
 import { prismaClient } from "@/lib/db";
 import { UserProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
+import { Resend } from "resend";
 import bcrypt from "bcryptjs"
-
+import InviteUserEmail from "@/emails";
+import { User } from "@prisma/client";
 
 
 export async function createUser(data: UserProps) {
@@ -53,7 +55,7 @@ export async function createUser(data: UserProps) {
             });
             revalidatePath("/dashboard/users")
             console.log("New user created:", newUser);
-            
+            await sendInvitationEmailToUser(newUser, confirmPassword)
             return {
                 ok: true,
                 error: null,
@@ -126,7 +128,20 @@ export async function getUserById(id: string) {
 
 export async function updateUserById(id: string, data: UserProps) {
 
-    
+    console.log("Update Payload Checked:",data);
+    const {
+        name, 
+        firstName, 
+        lastName, 
+        email, 
+        password,  
+        phone, 
+        status, 
+        roleId, 
+        profileImage,
+        inviteSent, 
+    } = data;
+
     if (id && data) {
 
         try {
@@ -143,7 +158,18 @@ export async function updateUserById(id: string, data: UserProps) {
                 where: {
                     id: Number(id),
                 },
-                data
+                data: {
+                    email,
+                    firstName,
+                    lastName,
+                    password,
+                    name,
+                    phone,
+                    profileImage,
+                    roleId,
+                    status,
+                    inviteSent,
+                }
             });
             revalidatePath("/dashboard/users")
             return {
@@ -184,4 +210,72 @@ export async function deleteUserById(id: number) {
             error: "Failed to delete user",
         }
     }
+}
+
+
+export async function sendInvitationEmailToUser(data: User, temporaryPassword: string) {
+   
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const {
+        name, 
+        firstName, 
+        lastName, 
+        email, 
+        password,  
+        phone, 
+        status, 
+        roleId, 
+        profileImage 
+    } = data
+
+    try {
+        const userById = await prismaClient.role.findUnique({
+            where: {
+                id: roleId
+            }
+        })
+        const role = userById?.displayTitle || "";
+        const userEmail = email || "";
+        const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+        await resend.emails.send({
+        from: 'Stocko-Online <admin@89residencexclusive.co>',
+        to: userEmail,
+        subject: 'Welcome to Stocko-Online - Your Login Credentials',
+        react: InviteUserEmail({
+                username: firstName,
+                password: temporaryPassword,
+                loginEmail: userEmail,
+                invitedByUsername: 'admin@example.com',
+                invitedByEmail: 'admin@example.com',
+                inviteLink: `${baseUrl}/login`,
+                inviteRole: role,
+                inviteFromIp: '192.168.0.1',
+                inviteFromLocation: 'New York',
+            }),
+        });
+        const invitedUserData: UserProps = {
+            email,
+            password,
+            confirmPassword:  password,
+            firstName,
+            lastName,
+            name,
+            phone,
+            profileImage,
+            roleId,
+            status,
+            inviteSent: true,
+        }
+        const userId = data.id.toString();
+        await updateUserById(userId, invitedUserData)
+
+    } catch (err) {
+        console.error("Failed to send invitation email:",err);
+        return {
+            ok: false,
+            data: null,
+            error: "Failed to send invitation email",
+        }
+    }
+   
 }

@@ -1,11 +1,34 @@
+"use client"
+
 import React from 'react'
 import Logo from './Logo'
 import { Button } from '../ui/button'
 import { LayoutGrid, ShoppingBasket } from 'lucide-react'
 import { ModeToggle } from './mode-toggle'
-import Image from 'next/image'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
+import { User } from '@prisma/client'
+import { generateInitial } from '@/lib/generateInitial'
+import { signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
-const ShopHeader = () => {
+const ShopHeader = ({user}: {user: User | undefined | null}) => {
+
+    const router = useRouter();
+
+    const handleSignOut = async () => {
+        try {
+            await signOut();
+            router.push("/login")
+            toast.success("Signed out successfully")
+        } catch (err) {
+            console.error("Failed to sign out:", err);
+            return;
+        }
+        
+    }
+
   return (
     <header className='py-3'>
         <div className='container'>
@@ -40,18 +63,32 @@ const ShopHeader = () => {
                         >
                             <ShoppingBasket className='size-6 rounded-full'/>
                         </Button>
-                        <Button 
-                            variant={"outline"} 
-                            size={"icon"} 
-                            className='rounded-full'>
-                            <Image
-                                src={"/profile.svg"}
-                                alt="profile"
-                                width={24}
-                                height={24} 
-                                className='size-6 rounded-full'
-                            />
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button 
+                                    variant={"outline"} 
+                                    size={"icon"} 
+                                    className='rounded-full'>
+                                    <Avatar>
+                                        <AvatarImage src={user?.profileImage ?? "/profile.svg"} alt="profile" className='object-fit rounded' />
+                                        <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
+                                    </Avatar>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>Settings</DropdownMenuItem>
+                            <DropdownMenuItem>Support</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
+                                    Log out
+                                </Button>
+                            </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                        
                     </div>
                 <ModeToggle />
             </div>

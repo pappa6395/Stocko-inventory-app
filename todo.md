@@ -52,7 +52,12 @@
  - Implement Import and Export
  - Deployment
 
- #17 18 19
+ #17 18 19 20
  - Create User directory and details
  - Create Role directory and details
+ - sendInvitationalEmail to new user
+ - hashed password
  - Deployment
+
+ #21
+ - login function

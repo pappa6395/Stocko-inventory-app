@@ -13,6 +13,14 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Session {
+  id           Int   @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       Int   
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model User {
   id           Int     @id @default(autoincrement())
   name         String
@@ -23,6 +31,8 @@ model User {
   phone        String
   profileImage String?
   status       Boolean @default(false)
+  inviteSent   Boolean @default(false) 
+  session      Session[]
   // Foreign key to Role
   roleId       Int
   role         Role @relation(fields: [roleId], references: [id])

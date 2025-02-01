@@ -57,14 +57,6 @@ export const columns: ColumnDef<IUser>[] = [
     }
   },
   {
-    accessorKey: "roleId",
-    header: "Invite",
-    cell: ({ row }) => {
-      const user = row.original
-      return <InviteUser user={user} />
-    }
-  },
-  {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,

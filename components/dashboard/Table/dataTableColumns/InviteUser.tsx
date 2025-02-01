@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { User } from '@prisma/client'
 import React from 'react'
 
-
+// We do not use this, just an idea
 const InviteUser = ({user}: {user: User}) => {
 
     const sendInvitation = () => {

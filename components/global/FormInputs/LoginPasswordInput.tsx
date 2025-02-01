@@ -9,7 +9,7 @@ TooltipTrigger,
  
 import { CircleHelp, Eye, EyeOff, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
-type TextInputProps = {
+type LoginPasswordInputProps = {
 register: any,
 errors: any,
 label: string,
@@ -20,7 +20,7 @@ unit?: string,
 placeholder?: string,
 icon?: any,
 };
-export default function TextInput({
+export default function LoginPasswordInput({
 register,
 errors,
 label,
@@ -30,9 +30,10 @@ toolTipText,
 unit,
 icon,
 placeholder,
-}: TextInputProps) {
+}: LoginPasswordInputProps) {
 const Icon = icon;
 
+const [isPassword, setIsPassword] = useState("");
 const [showPassword, setShowPassword] = useState(false);
 const handleTogglePasswordVisibility = () => {
   setShowPassword(!showPassword);
@@ -71,9 +72,21 @@ return (
        )}
        <input
          id={name}
-         type={name !== 'password' ? type : showPassword ? 'text' : 'password'}
-         {...register(`${name}`, { required: true,
+         type={showPassword ? 'text' : 'password'}
+         {...register(`${name}`, { 
+          required: true,
+          minLength: {
+            value: 8,
+            message: "Password must be at least 8 characters",
+          },
+          pattern: {
+            value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])/,
+            message:
+              "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
+          }, 
         })}
+         value={isPassword}
+         onChange={(e) => setIsPassword(e.target.value)}
          className={cn(
            "block w-full rounded-md border-0 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-sm",
            (errors[`${name}`] && "focus:ring-red-500 pl-8") ||
@@ -101,7 +114,7 @@ return (
        
      </div>
      {errors[`${name}`] && (
-       <span className="text-xs text-red-600">{label} is required</span>
+       <span className="text-xs text-red-600">{label} must be at least 8 charactors and contain at least one uppercase letter, one lowercase letter, one number, and one special character</span>
      )}
    </div>
  </div>

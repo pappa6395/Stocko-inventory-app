@@ -182,9 +182,14 @@ export interface UserProps {
     name: string;
     phone: string;
     profileImage: string | null;
-  
+    inviteSent: boolean;
     // Foreign key to Role
     roleId: number;
   
     status: boolean;
-  }
+}
+
+export type LoginProps = {
+    email: string;
+    password: string;
+}

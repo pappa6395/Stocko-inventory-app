@@ -15,8 +15,9 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/colla
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import Logo from '../global/Logo'
+import { User } from '@prisma/client'
 
-const Navbar = () => {
+const Navbar = ({user}: {user: User}) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -128,7 +129,7 @@ const Navbar = () => {
       </div>
       <QuickAccessMenu />
       <ModeToggle />
-      <AvatarMenu />
+      <AvatarMenu user={user} />
     </header>
 
   )
