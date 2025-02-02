@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Package2 } from 'lucide-react'
+import Image from 'next/image';
 import React from 'react'
 
 const Logo = ({
@@ -16,8 +17,13 @@ const Logo = ({
   return (
 
     <div className='flex items-center gap-2'>
-        <div className={cn('flex items-center flex-shrink-0 justify-center size-10 rounded-full bg-slate-900 text-slate-50', classNameFrame)}>
-            <Package2 className={cn('size-6', classNameLogo)} />
+        <div className={cn('flex items-center flex-shrink-0 justify-center rounded-full text-slate-50', classNameFrame)}>
+            <Image 
+              src={"/StockOnline.png"} 
+              alt="logo" 
+              width={100} height={100}
+              className={cn(classNameLogo)}
+            />
         </div>
         <h2 className={cn('font-bold text-xl', classNameText)}>
             Stocko-Online

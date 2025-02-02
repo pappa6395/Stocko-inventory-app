@@ -1,7 +1,7 @@
 "use server"
 
 import { prismaClient } from "@/lib/db";
-import { UserProps } from "@/type/types";
+import { ChangePasswordProps, UserProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
 import bcrypt from "bcryptjs"
@@ -188,6 +188,68 @@ export async function updateUserById(id: string, data: UserProps) {
     }
 }
 
+export async function updateUserPassword(data: ChangePasswordProps) {
+
+    console.log("Update Payload Checked:",data);
+    const {
+        password,  
+        confirmPassword,
+        roleId, 
+        email,
+        userId
+    } = data;
+
+        if (!userId || !data) {
+            return {
+            ok: false,
+            data: null,
+            error: "Invalid request",
+            };
+        }
+        try {
+            const user = await prismaClient.user.findUnique({ where: { id: Number(userId) } });
+
+            if (!user) return {
+                ok: false,
+                data: null,
+                error: "User not found",
+            }
+
+            if (password !== confirmPassword) {
+                return {
+                  ok: false,
+                  data: null,
+                  error: "Passwords do not match",
+                };
+              }
+
+            const hashedPassword = await bcrypt.hash(password, 10)
+            const updateUser = await prismaClient.user.update({
+                where: {
+                    id: Number(userId),
+                },
+                data: {
+                    password: hashedPassword,
+                }
+            });
+            //revalidatePath("/login")
+            console.log("Password updated successfully");
+            return {
+                ok: true,
+                data: updateUser,
+                error: null,
+            }
+            
+        } catch (err) {
+            console.error("Failed to update user by ID:",err);
+            return {
+                ok: false,
+                data: null,
+                error: "Failed to update user",
+            }
+        }
+}
+
 export async function deleteUserById(id: number) {
     console.log("Category ID to be deleted:", id);
 
@@ -225,7 +287,7 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
         phone, 
         status, 
         roleId, 
-        profileImage 
+        profileImage, 
     } = data
 
     try {
@@ -245,9 +307,9 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
                 username: firstName,
                 password: temporaryPassword,
                 loginEmail: userEmail,
-                invitedByUsername: 'admin@example.com',
-                invitedByEmail: 'admin@example.com',
-                inviteLink: `${baseUrl}/login`,
+                invitedByUsername: 'Admin.Pap',
+                invitedByEmail: 'admin@89residencexclusive.co',
+                inviteLink: `${baseUrl}/login?userId=${data.id}&roleId=${roleId}&email=${userEmail}`,
                 inviteRole: role,
                 inviteFromIp: '192.168.0.1',
                 inviteFromLocation: 'New York',

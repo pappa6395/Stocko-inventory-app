@@ -13,13 +13,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Session {
-  id           Int   @id @default(autoincrement())
-  sessionToken String   @unique
-  userId       Int   
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
+// model Session {
+//   id           Int   @id @default(autoincrement())
+//   sessionToken String   @unique
+//   userId       Int   
+//   expires      DateTime
+//   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+// }
 
 model User {
   id           Int     @id @default(autoincrement())
@@ -32,7 +32,7 @@ model User {
   profileImage String?
   status       Boolean @default(false)
   inviteSent   Boolean @default(false) 
-  session      Session[]
+  //session      Session[]
   // Foreign key to Role
   roleId       Int
   role         Role @relation(fields: [roleId], references: [id])

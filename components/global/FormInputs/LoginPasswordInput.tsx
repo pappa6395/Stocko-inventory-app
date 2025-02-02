@@ -99,7 +99,7 @@ return (
            {unit}
          </p>
        )}
-       {name === "password" ? (
+       {name === "password" || "confirmPassword" ? (
         <Button
           type="button" 
           variant={"ghost"}

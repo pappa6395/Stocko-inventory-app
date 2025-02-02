@@ -37,7 +37,8 @@ export async function getAllCategories() {
     try {
         const categories = await prismaClient.category.findMany({
             orderBy: {
-                createdAt: "desc"
+                title: "asc",
+
             }
         });
 

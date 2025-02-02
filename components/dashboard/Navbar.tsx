@@ -16,6 +16,8 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import Logo from '../global/Logo'
 import { User } from '@prisma/client'
+import { SidebarTrigger } from '../ui/sidebar'
+import { Separator } from '../ui/separator'
 
 const Navbar = ({user}: {user: User}) => {
   const pathname = usePathname();
@@ -115,6 +117,8 @@ const Navbar = ({user}: {user: User}) => {
           </div>
         </SheetContent>
       </Sheet>
+      <SidebarTrigger className="-ml-2" />
+      <Separator orientation="vertical" className="h-4" />
       <div className="w-full flex-1">
         <form>
           <div className="relative">

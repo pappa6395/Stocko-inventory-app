@@ -12,7 +12,3 @@ export function generateInitial(name: string | null | undefined): string {
       return "CN";
     }
   }
-   
-  // Example usage
-  const initials = generateInitial("Muke John");
-  console.log(initials); // Outputs: MJ

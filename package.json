@@ -49,6 +49,7 @@
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
+    "embla-carousel-react": "^8.5.2",
     "fs": "0.0.1-security",
     "input-otp": "^1.4.2",
     "jsbarcode": "^3.11.6",

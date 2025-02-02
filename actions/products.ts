@@ -78,6 +78,35 @@ export async function getAllProducts() {
     }
 }
 
+export async function getProductsByCategoryId(categoryId: string) {
+    
+    try {
+        if (categoryId === 'all') {
+            const products = await prismaClient.products.findMany();
+            return {
+                ok: true,
+                data: products,
+                error: null
+            }
+        } else {
+            const products = await prismaClient.products.findMany({
+                where: {
+                    categoryId: Number(categoryId)
+                },
+            });
+            return {
+                ok: true,
+                data: products,
+                error: null
+            }
+        }
+        
+    } catch (err) {
+        console.error("Failed to get products:",err);
+        return null;
+    }
+}
+
 export async function getProductById(id: string) {
 
     if (id) {

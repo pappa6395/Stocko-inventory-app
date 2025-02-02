@@ -13,8 +13,13 @@ import LoginPasswordInput from '../global/FormInputs/LoginPasswordInput';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 
+interface LoginFormProps {
+    roleId?: number;
+    email?: string;
+    userId?: number;
+}
 
-const LoginForm = () => {
+const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
@@ -27,34 +32,41 @@ const LoginForm = () => {
     } = useForm<LoginProps>()
 
     const handleLogin = async (data: LoginProps) => {
-        //setIsLoading(true);
+        setIsLoading(true);
         console.log(data);
-        
-        try {
-            setIsLoading(true);
-            console.log("Attempting to sign in with credentials:", data);
-            const loginData = await signIn("credentials", {
-              ...data,
-              redirect: false,
-            });
-            console.log("SignIn response:", loginData);
-            if (loginData?.error) {
-              setIsLoading(false);
-              toast.error("Sign-in error: Check your credentials");
-              
-            } else {
-              // Sign-in was successful
-              
-              reset();
-              setIsLoading(false);
-              toast.success("Login Successful");
-              router.push("/dashboard");
-            }
-          } catch (error) {
+
+        if (roleId && email && userId) {
+            router.push(`/change-password?userId=${userId}&roleId=${roleId}&email=${email}`)
             setIsLoading(false);
-            console.error("Network Error:", error);
-            toast.error("Its seems something is wrong with your Network");
-          }
+        } else {
+
+            try {
+                
+                console.log("Attempting to sign in with credentials:", data);
+                const loginData = await signIn("credentials", {
+                  ...data,
+                  redirect: false,
+                });
+                console.log("SignIn response:", loginData);
+                if (loginData?.error) {
+                  setIsLoading(false);
+                  toast.error("Sign-in error: Check your credentials");
+                  
+                } else {
+                  // Sign-in was successful
+                  
+                  reset();
+                  setIsLoading(false);
+                  toast.success("Login Successful");
+                  router.push("/dashboard");
+                }
+              } catch (error) {
+                setIsLoading(false);
+                console.error("Network Error:", error);
+                toast.error("Its seems something is wrong with your Network");
+              }
+        }
+        
     }
 
   return (

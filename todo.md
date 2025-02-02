@@ -60,4 +60,10 @@
  - Deployment
 
  #21
- - login function
+ - Authentication
+
+ #22
+ - Profile menu
+
+ #23
+ - Point of Sale

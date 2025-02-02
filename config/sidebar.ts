@@ -10,7 +10,7 @@ export const sidebarLinks: ISidebarLink[] = [
     },
     {
       label: 'User Management',
-      href: '#',
+      href: '/dashboard/users',
       icon: Users,
       dropdown: true,
       dropdownMenu: [
@@ -26,7 +26,7 @@ export const sidebarLinks: ISidebarLink[] = [
     },
     {
       label: 'Inventory',
-      href: '#',
+      href: '/dashboard/inventory/products',
       icon: Layers,
       dropdown: true,
       dropdownMenu: [
@@ -58,7 +58,7 @@ export const sidebarLinks: ISidebarLink[] = [
     },
     {
       label: 'Sales',
-      href: '#',
+      href: '/dashboard/sales',
       icon: CircleDollarSign,
       dropdown: true,
       dropdownMenu: [
@@ -82,23 +82,23 @@ export const sidebarLinks: ISidebarLink[] = [
     },
     {
       label: 'POS',
-      href: '/dashboard/pos',
+      href: '/pos',
       icon: Presentation,
       dropdown: false,
     },
     {
       label: 'Stocks',
-      href: '#',
+      href: '/dashboard/stocks',
       icon: Boxes,
       dropdown: true,
       dropdownMenu: [
         {
           label: 'Stock Transfer',
-          href: '/dashboard/stocks/stock-transfer',
+          href: '/dashboard/stocks/transfer',
         },
         {
           label: 'Stock Adjustments',
-          href: '/dashboard/stocks/stock-adjustments',
+          href: '/dashboard/stocks/adjustments',
         },
       ]
     },
@@ -120,4 +120,4 @@ export const sidebarLinks: ISidebarLink[] = [
       icon: BarChart4,
       dropdown: false,
     },
-  ]
+]

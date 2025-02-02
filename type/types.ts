@@ -193,3 +193,11 @@ export type LoginProps = {
     email: string;
     password: string;
 }
+
+export type ChangePasswordProps = {
+    password: string;
+    confirmPassword: string;
+    roleId: number;
+    email: string;
+    userId: number;
+}
