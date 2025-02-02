@@ -81,14 +81,14 @@ export async function getAllProducts() {
 export async function getProductsByCategoryId(categoryId: string) {
     
     try {
-        if (categoryId === 'all') {
+        if (categoryId && categoryId === 'all') {
             const products = await prismaClient.products.findMany();
             return {
                 ok: true,
                 data: products,
                 error: null
             }
-        } else {
+        } else if (categoryId && categoryId !== 'all') {
             const products = await prismaClient.products.findMany({
                 where: {
                     categoryId: Number(categoryId)

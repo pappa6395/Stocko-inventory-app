@@ -1,4 +1,5 @@
-import { PageProps } from '@/.next/types/app/layout'
+
+import { PageProps } from '@/.next/types/app/(point-of-sale)/pos/page'
 import { getAllCategories } from '@/actions/category'
 import { getProductsByCategoryId } from '@/actions/products'
 import PointOfSale from '@/components/pos/PointOfSale'
@@ -7,7 +8,7 @@ import React from 'react'
 
 const page = async ({searchParams: searchParamsPromise}: PageProps) => {
 
-  const { cate } = await searchParamsPromise || 'all'
+  const { cate } = await searchParamsPromise
   const categories = await getAllCategories() || []
   const products = (await getProductsByCategoryId(cate))?.data || []
 
@@ -17,7 +18,7 @@ const page = async ({searchParams: searchParamsPromise}: PageProps) => {
         <PointOfSale 
           categories={categories}
           products={products} 
-          cate={cate} 
+          cate={cate ?? ""} 
         />
     </div>
 

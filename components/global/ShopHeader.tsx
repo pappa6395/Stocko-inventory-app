@@ -33,8 +33,12 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
     <header className='py-3'>
         <div className='container'>
             <div className='flex items-center justify-between gap-2'>
-                <div className="flex gap-2">
-                    <Logo />
+                <div className="flex items-center gap-2">
+                    <Logo
+                        classNameFrame='size-12'
+                        classNameLogo='size-10'
+                        classNameText='text-xl' 
+                    />
                     <Button variant={"outline"} className='rounded-lg'>
                         <LayoutGrid className='size-4' />
                         <span className='text-xs'>Catalog</span>
