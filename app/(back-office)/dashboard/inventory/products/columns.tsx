@@ -10,9 +10,17 @@ import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColu
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Products, Supplier } from "@prisma/client";
+import { Category, Products } from "@prisma/client";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-export const columns: ColumnDef<Products>[] = [
+
+export interface IProducts extends Products {
+  
+  id: number;
+  name: string;
+  category: { title: string };
+}
+
+export const columns: ColumnDef<IProducts>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -49,8 +57,13 @@ export const columns: ColumnDef<Products>[] = [
     header: ({ column }) => <SortableColumn column={column} title="Product code" />,
   },
   {
-    accessorKey: "categoryId",
-    header: ({ column }) => <SortableColumn column={column} title="Category" />,
+    //accessorFn: (row) => row.category.title,   // Etracting string from array
+    accessorKey: "category",
+    header: "Category",
+    cell: ({ row }) => {
+      const product = row.original?.category.title || "N/A"
+      return <p>{product}</p>
+    }
   },
   {
     accessorKey: "status",

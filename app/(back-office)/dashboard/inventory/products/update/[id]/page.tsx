@@ -9,7 +9,6 @@ import { getAllUnits } from '@/actions/units';
 import ProductForm from '@/components/dashboard/Forms/ProductForm';
 import React from 'react'
 
-
 const page = async ({params: paramsPromise}: PageProps) => {
 
     const { id } = await paramsPromise;

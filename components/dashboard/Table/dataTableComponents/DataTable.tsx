@@ -46,7 +46,7 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
-export default function DataTable<TData, TValue>({
+export default function DataTable<TData extends object, TValue=unknown>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {

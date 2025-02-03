@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { columns } from './columns'
+import { columns, IProducts } from './columns'
 import { Products, Supplier } from '@prisma/client'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
@@ -10,7 +10,7 @@ import { getAllProducts } from '@/actions/products'
 
 const page = async () => {
 
-  const products = await getAllProducts() as Products[]
+  const products = await getAllProducts() || []
 
   return (
 

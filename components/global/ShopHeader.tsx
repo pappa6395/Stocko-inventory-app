@@ -12,6 +12,7 @@ import { generateInitial } from '@/lib/generateInitial'
 import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
+import Link from 'next/link'
 
 const ShopHeader = ({user}: {user: User | undefined | null}) => {
 
@@ -82,6 +83,11 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
                             <DropdownMenuContent align="end">
                             <DropdownMenuLabel>My Account</DropdownMenuLabel>
                             <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Link href="/dashboard">
+                                    Dashboard
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>Settings</DropdownMenuItem>
                             <DropdownMenuItem>Support</DropdownMenuItem>
                             <DropdownMenuSeparator />

@@ -1,5 +1,6 @@
 "use server"
 
+import { IProducts } from "@/app/(back-office)/dashboard/inventory/products/columns";
 import { prismaClient } from "@/lib/db";
 import { ProductProps, WarehouseProductProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
@@ -64,9 +65,12 @@ export async function createProduct(data: ProductProps) {
 export async function getAllProducts() {
     
     try {
-        const products = await prismaClient.products.findMany({
+        const products: IProducts[] = await prismaClient.products.findMany({
             orderBy: {
                 createdAt: "desc"
+            },
+            include: {
+                category: true,
             }
         });
 

@@ -6,66 +6,72 @@ import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
 import ItemCard from './item-card'
 import OrderCard from './order-card'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '../ui/carousel'
+import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 
 const PointOfSale = ({
     categories,
     products, 
     cate
 }: {
-    categories: Category[]; 
-    products: Products[];
+    categories?: Category[]; 
+    products?: Products[];
     cate: string;
 }) => {
-
+    
 
   return (
 
     <div className="grid grid-cols-12 divide-x-2 
         divide-gray-200 min-h-screen">
             <div className='col-span-9 px-3'>
-                <div className='grid grid-cols-7 gap-2'>
-                    <Button 
-                        variant={"outline"} 
-                        size={"sm"} 
-                        asChild 
-                        className={cn('py-2 px-2', 
-                        cate === `all` ? "bg-slate-400" : "")}
-                    >
-                        <Link href={`/pos?cate=all`} className='flex gap-2'>
-                            <Image 
-                                src={"/StockOnline.png"}
-                                alt='category'
-                                width={200}
-                                height={200}
-                                className='size-6 rounded-full'
-                            />
-                            <h3 className='text-sm font-medium truncate'>All</h3>
-                        </Link>
-                    </Button>
-                    {categories.slice(0,6).map((category, index) => {
-                        return (
-                            <Button 
-                                key={index} 
-                                variant={"outline"} 
-                                size={"sm"} 
-                                asChild
-                                className={cn('py-2 px-2', 
-                                cate === `${category.id}` ? "bg-slate-400" : "")}
-                            >
-                                <Link href={`/pos?cate=${category.id}`} className='flex gap-2'>
-                                    <Image 
-                                        src={category?.imageUrl ?? "/placeholder.svg"}
-                                        alt='category'
-                                        width={200}
-                                        height={200}
-                                        className='size-6 rounded-full'
-                                    />
-                                    <h3 className='text-sm font-medium truncate'>{category.title}</h3>
-                                </Link>
-                            </Button>
-                        )
-                    })}
-                </div>
+                <ScrollArea className="w-full whitespace-nowrap">
+                    <div className='gap-2 space-x-1'>
+                        <Button 
+                            variant={"outline"} 
+                            size={"sm"} 
+                            asChild 
+                            className={cn('py-2 px-2', 
+                            cate === `all` ? "bg-slate-400" : "")}
+                        >
+                            <Link href={`/pos?cate=all`} className='flex gap-2'>
+                                <Image 
+                                    src={"/StockOnline.png"}
+                                    alt='category'
+                                    width={200}
+                                    height={200}
+                                    className='size-6 rounded-full'
+                                />
+                                <h3 className='text-sm font-medium truncate'>All</h3>
+                            </Link>
+                        </Button>
+                        {categories && categories.map((category, index) => {
+                            return (
+                                <Button 
+                                    key={index} 
+                                    variant={"outline"} 
+                                    size={"sm"} 
+                                    asChild
+                                    className={cn('py-2 px-2', 
+                                    cate === `${category.id}` ? "bg-slate-400" : "")}
+                                >
+                                    <Link href={`/pos?cate=${category.id}`} className='flex gap-2'>
+                                        <Image 
+                                            src={category?.imageUrl ?? "/placeholder.svg"}
+                                            alt='category'
+                                            width={200}
+                                            height={200}
+                                            className='size-6 rounded-full'
+                                        />
+                                        <h3 className='text-sm font-medium truncate'>{category.title}</h3>
+                                    </Link>
+                                </Button>
+                            )
+                        })}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                </ScrollArea>
+                
                 <div className='px-2 pt-2'>
                     {products && products.length > 0 ? (
                         <div className='grid grid-cols-4 gap-4'>

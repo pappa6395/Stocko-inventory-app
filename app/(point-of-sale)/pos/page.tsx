@@ -14,10 +14,10 @@ const page = async ({searchParams: searchParamsPromise}: PageProps) => {
 
   return (
 
-    <div className='md:container md:px-0 px-2'>
+    <div className='md:px-0 px-2'>
         <PointOfSale 
-          categories={categories}
-          products={products} 
+          categories={categories ?? []}
+          products={products ?? []} 
           cate={cate ?? ""} 
         />
     </div>
