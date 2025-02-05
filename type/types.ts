@@ -1,4 +1,5 @@
 
+import { Customers, Role, User } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -200,4 +201,12 @@ export type ChangePasswordProps = {
     roleId: number;
     email: string;
     userId: number;
+}
+
+export interface IUser extends User {
+  role: Role;
+}
+
+export interface ICustomer extends Customers {
+    user: IUser
 }

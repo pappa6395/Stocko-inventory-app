@@ -65,22 +65,20 @@ const ImageInput = ({
         </CardHeader>
         <CardContent>
             <div className="grid gap-3">
-                <div className="grid gap-2">
-                    <Image
-                        alt="Category image"
-                        className="aspect-square w-full rounded-md object-contain"
-                        height={400}
-                        src={fileUrl ||"/placeholder.svg"}
-                        width={400}
-                    />
-                </div>
+                <Image
+                    alt="Category image"
+                    className="aspect-square w-full rounded-md object-contain"
+                    height={400}
+                    src={fileUrl ||"/placeholder.svg"}
+                    width={400}
+                />
                 <input
                     type="file"
                     name="file"
                     onChange={handleFileChange}
                     className="block w-full text-xs file:mr-4 truncate
                     file:rounded-md file:border-0 file:bg-neutral-900 dark:file:bg-slate-50
-                    file:py-2 file:px-2 file:text-xs file:font-normal
+                    file:py-1 file:px-2 file:text-xs file:font-normal
                     file:text-white dark:file:text-black hover:file:bg-neutral-800 
                     file:cursor-pointer focus:outline-none
                     disabled:pointer-events-none disabled:opacity-60"

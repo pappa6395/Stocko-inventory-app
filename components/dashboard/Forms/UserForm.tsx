@@ -132,8 +132,8 @@ const UserForm = ({
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
           <ImageInput 
-            title="Warehouse Image"
-            description="Update the Warehouse image"
+            title="Profile Image"
+            description="Update the Profile image"
             fileUrl={fileUrl}
             setFileUrl={setFileUrl}
             file={file}

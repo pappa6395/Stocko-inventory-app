@@ -8,7 +8,7 @@ import React from 'react'
 
 const page = async ({searchParams: searchParamsPromise}: PageProps) => {
 
-  const { cate } = await searchParamsPromise
+  const { cate="all" } = await searchParamsPromise
   const categories = await getAllCategories() || []
   const products = (await getProductsByCategoryId(cate))?.data || []
 

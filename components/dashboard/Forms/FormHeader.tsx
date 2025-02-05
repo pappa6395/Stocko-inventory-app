@@ -49,6 +49,7 @@ const FormHeader = ({
                 <CloseBtn href={href} size="sm" parent={parent} />
                 <SubmitButton
                     title={`Save ${title}`}
+                    size={"sm"}
                     loading={loading} 
                     loadingTitle={loading ? `Saving ${title}` : `Save ${title}`}
                 />

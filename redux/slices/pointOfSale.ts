@@ -3,11 +3,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import toast from "react-hot-toast";
 
 export interface OrderLineItem {
-  id: string;
+  id: number;
   name: string;
   price: number;
   qty: number;
-  productThumbnail: string;
+  productThumbnail: string | null;
 }
 
 interface OrderLineItems {
@@ -36,18 +36,27 @@ const pointOfSaleSlice = createSlice({
   initialState,
   reducers: {
     addProductToOrderLine: (state, action: PayloadAction<OrderLineItem>) => {
-      state.products.push(action.payload);
-      saveItemsToLocalStorage(state.products);
+      const existingItem = state.products.find(
+        (product) => product.id === action.payload.id
+      );
+      if (existingItem) {
+        existingItem.qty += 1;
+        saveItemsToLocalStorage(state.products);
+        return;
+      } else {
+        state.products.push(action.payload);
+        saveItemsToLocalStorage(state.products);
+      }
       toast.success("Item added Successfully");
     },
-    removeProductFromOrderLine: (state, action: PayloadAction<string>) => {
+    removeProductFromOrderLine: (state, action: PayloadAction<number>) => {
       state.products = state.products.filter(
         (product) => product.id !== action.payload
       );
       saveItemsToLocalStorage(state.products);
       toast.success("Item Removed Successfully");
     },
-    incrementQty: (state, action: PayloadAction<string>) => {
+    incrementQty: (state, action: PayloadAction<number>) => {
       const item = state.products.find(
         (product) => product.id === action.payload
       );
@@ -56,7 +65,7 @@ const pointOfSaleSlice = createSlice({
         saveItemsToLocalStorage(state.products);
       }
     },
-    decrementQty: (state, action: PayloadAction<string>) => {
+    decrementQty: (state, action: PayloadAction<number>) => {
       const item = state.products.find(
         (product) => product.id === action.payload
       );

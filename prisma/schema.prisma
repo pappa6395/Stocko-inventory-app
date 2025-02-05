@@ -36,6 +36,7 @@ model User {
   // Foreign key to Role
   roleId       Int
   role         Role @relation(fields: [roleId], references: [id])
+  customers    Customers[]
 
   @@index([roleId], name: "idx_roleId")
 
@@ -198,6 +199,8 @@ model Products {
   brand             Brand @relation(fields:[brandId], references: [id])
   supplierId        Int?
   supplier          Supplier? @relation(fields:[supplierId], references: [id])
+  lineOrderItem     LineOrderItem[]
+  sale              Sale[]
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 }
@@ -214,3 +217,71 @@ model Products {
 //   @@unique([warehouseId, productId])
 // }
 
+model LineOrderItem {
+  id               Int   @id @default(autoincrement())
+  productId        Int   
+  orderId          Int  
+  name             String
+  price            Float
+  qty              Int
+  productThumbnail String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relationships
+  product   Products   @relation(fields: [productId], references: [id])
+  lineOrder LineOrder @relation(fields: [orderId], references: [id])
+}
+
+model LineOrder {
+  id           Int   @id @default(autoincrement())
+  customerId   String   
+  customerName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  lineOrderItems LineOrderItem[]
+  sales          Sale[]
+}
+
+model Sale {
+  id           Int   @id @default(autoincrement())
+  orderId      Int  
+  productId    Int  
+  qty          Int
+  salePrice    Float
+  productName  String
+  productImage String
+  customerName String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  product   Products   @relation(fields: [productId], references: [id])
+  lineOrder LineOrder @relation(fields: [orderId], references: [id])
+}
+
+model Address {
+  id         Int  @id @default(autoincrement())
+  street     String
+  city       String
+  state      String
+  postalCode String
+  country    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Customers {
+  id             Int  @id @default(autoincrement())
+  userId         Int  
+  additionalInfo String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relationships
+  user            User   @relation(fields: [userId], references: [id])
+  billingAddress  String
+  shippingAddress String
+}

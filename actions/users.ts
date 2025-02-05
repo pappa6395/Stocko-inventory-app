@@ -35,7 +35,7 @@ export async function createUser(data: UserProps) {
             return {
                 ok: false,
                 error: "Role already exists",
-                date: null
+                data: null
             }
         }
 
@@ -59,7 +59,7 @@ export async function createUser(data: UserProps) {
             return {
                 ok: true,
                 error: null,
-                date: newUser
+                data: newUser
             }
         }
     } catch (err) {
@@ -67,7 +67,7 @@ export async function createUser(data: UserProps) {
         return {
             ok: false,
             error: "Failed to create user",
-            date: null
+            data: null
         }
     }
 }
