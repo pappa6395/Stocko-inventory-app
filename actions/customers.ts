@@ -63,15 +63,20 @@ export async function createCustomer(customerData: CustomerDataProps) {
 }
 export async function updateCustomerById(
   customerId: number,
-  userId: string,
+  userId: number,
   customerData: CustomerDataProps
 ) {
+  console.log("CustomerData:", customerData);
+  console.log("Customer ID:", customerId);
+  console.log("User ID:", userId);
+  
   try {
     return await prismaClient.$transaction(async (transaction) => {
       // Update User
       const userData = {
         email: customerData.email,
-        password: customerData.password,
+        password: customerData.password || "",
+        confirmPassword: customerData.confirmPassword || "",
         firstName: customerData.firstName,
         lastName: customerData.lastName,
         name: `${customerData.firstName} ${customerData.lastName}`,
@@ -79,15 +84,14 @@ export async function updateCustomerById(
         profileImage: customerData.profileImage,
         roleId: Number(customerData.roleId),
         status: customerData.status,
-        confirmPassword: "",
-        inviteSent: false,
+        inviteSent: customerData?.inviteSent || true,
       };
-      const updatedUser = await updateUserById(userId, userData);
-      console.log("updatedUser:",updatedUser);
+      const updatedUser = await updateUserById(String(userId), userData);
+      console.log("updatedUser:", updatedUser?.data);
       // Update Customer
       const updatedCustomer = await transaction.customers.update({
         where: {
-          id: Number(customerId),
+          id: customerId,
         },
         data: {
           billingAddress: customerData.billingAddress,
@@ -96,10 +100,19 @@ export async function updateCustomerById(
         },
       });
       console.log("UpdatedCustomer:",updatedCustomer);
-      return updatedCustomer;
+      return {
+        ok: true,
+        data: updatedCustomer,
+        error: null,
+      }
     });
   } catch (error) {
     console.log(error);
+    return {
+      ok: false,
+      data: null,
+      error: "Failed to update customer",
+    }
   }
 }
 
@@ -110,14 +123,22 @@ export async function getAllCustomers() {
         createdAt: "desc",
       },
       include: {
-        user: true,
+        user: true,  
       },
-    });
+    })
 
-    return customers;
+    return {
+        ok: true,
+        data: customers as ICustomer[],
+        error: null,
+      };
   } catch (error) {
     console.log(error);
-    return null;
+    return {
+        ok: false,
+        data: null,
+        error: "Failed to get customers",
+    };
   }
 }
 
@@ -131,9 +152,18 @@ export async function getCustomerById(id: string) {
         user: true,
       },
     });
-    return customer as ICustomer;
+    return {
+        ok: true,
+        data: customer as ICustomer,
+        error: null,
+    }
   } catch (error) {
     console.log(error);
+    return {
+        ok: false,
+        data: null,
+        error: "Failed to get customer by ID",
+    };
   }
 }
 

@@ -3,12 +3,12 @@ import React from 'react'
 import { columns } from './columns'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
-import { getAllUsers } from '@/actions/users'
+import { getAllCustomers } from '@/actions/customers'
 
 
 const page = async () => {
 
-  const users = (await getAllUsers()).data || [];
+  const customers = (await getAllCustomers())?.data || [];
 
   return (
 
@@ -16,12 +16,12 @@ const page = async () => {
         <TableHeader
         title="Customers"
         linkTitle="Add Customer"
-        href="/dashboard/customers/new"
-        data={users}
+        href="/dashboard/sales/customers/new"
+        data={customers}
         model="customer"
       />
-         <div className="py-8">
-        <DataTable data={users} columns={columns} />
+      <div className="py-8">
+        <DataTable data={customers} columns={columns} />
       </div>
     </div>
 

@@ -17,7 +17,6 @@ import TextInput from '@/components/global/FormInputs/TextInputForm'
 import FormSelectInput from '@/components/global/FormInputs/FormSelectInput'
 import { Lock } from 'lucide-react'
 import PasswordInput from '@/components/global/FormInputs/PasswordInput'
-import { createUser, updateUserById } from '@/actions/users'
 import TextArea from '@/components/global/FormInputs/TextAreaInput'
 import { cn } from '@/lib/utils'
 import CloseBtn from '@/components/global/FormInputs/CloseBtn'
@@ -45,6 +44,8 @@ const CustomerForm = ({
     defaultValues: {
       firstName: initialData?.user.firstName || "",
       lastName: initialData?.user.lastName || "",
+      password: initialData?.user.password || "",
+      confirmPassword: initialData?.user.password || "",
       email: initialData?.user.email || "",
       phone: initialData?.user.phone || "",
       shippingAddress: initialData?.shippingAddress || "",
@@ -99,7 +100,11 @@ const CustomerForm = ({
 
   const saveCustomer = async(data: CustomerDataProps) => {
     
-    const customerId = initialData?.id || 0;
+    if (!initialData?.user?.id) {
+      throw new Error("User ID is required");
+    }
+    const userId = Number(editingId) 
+    const customerId = initialData?.userId || 0;
     data.profileImage = fileUrl || "/placeholder.svg";
     data.status = status?.value as boolean;
     data.roleId = Number(selectedRole.value || "");
@@ -107,8 +112,8 @@ const CustomerForm = ({
     setIsLoading(true);
     try {
 
-      if (editingId) {
-        const updateCustomer = await updateCustomerById(customerId, editingId, data)
+      if (customerId) {
+        const updateCustomer = await updateCustomerById(userId, customerId, data)
         console.log("Updated customer:", updateCustomer);
         
         if (updateCustomer) {

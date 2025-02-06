@@ -1,5 +1,6 @@
 
 import Logo from '@/components/global/Logo';
+import { cn } from '@/lib/utils';
 import {
     Body,
     Button,
@@ -56,7 +57,19 @@ import {
           <Body className="bg-white my-auto mx-auto font-sans px-2">
             <Container className="border border-solid border-[#eaeaea] rounded my-[40px] mx-auto p-[20px] max-w-[465px]">
               <Section className="mt-[32px] flex justify-center">
-                <Logo />
+                <Row className='flex items-center gap-2'>
+                    <Column className={'flex items-center flex-shrink-0 justify-center rounded-full text-slate-50'}>
+                        <Img 
+                          src={"/StockOnline.png"} 
+                          alt="logo" 
+                          width={50} height={50}
+                          className="size-8"
+                        />
+                    </Column>
+                    <Text className='font-bold text-xl'>
+                        Stocko-Online
+                    </Text>
+                </Row>
               </Section>
               <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
                 <span className='block'>Welcome to Stocko-Online</span>

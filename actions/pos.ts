@@ -1,13 +1,16 @@
 "use server"
 
 import { prismaClient } from "@/lib/db";
+import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { OrderLineItem } from "@/redux/slices/pointOfSale";
 import { revalidatePath } from "next/cache";
 
 
 interface CustomerData {
-    customerId: number;
-    customerName: string;
+  customerId: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
 }
 
 export async function createLineOrder(
@@ -30,6 +33,7 @@ export async function createLineOrder(
               data: {
                 customerId: customerData.customerId.toString(),
                 customerName: customerData.customerName,
+                orderNumber: generateOrderNumber(),
               },
             });
             for (const item of orderItems) {
@@ -40,6 +44,9 @@ export async function createLineOrder(
                     stockQty: {
                       decrement: item.qty,
                     },
+                    saleUnit: {
+                      increment: item.qty
+                    }
                   },
                 });
                 if (!updatedProduct) {
@@ -74,6 +81,8 @@ export async function createLineOrder(
               productName: item.name,
               productImage: item.productThumbnail ?? "/placeholder.svg",
               customerName: customerData.customerName,
+              customerEmail: customerData.customerEmail,
+              customerPhone: customerData.customerPhone,
             },
           });
           if (!sale) {
@@ -83,12 +92,19 @@ export async function createLineOrder(
   
         console.log(lineOrder);
         revalidatePath("/dashboard/sales");
-        return lineOrder;
+        return {
+          success: true,
+          data: lineOrder,
+          error: null,
+        }
       });
-    
 
     } catch (error) {
         console.error("Transaction error:", error);
-        throw error; // Propagate the error to the caller
+        return {
+          success: false,
+          data: null,
+          error: error,
+        };
     }
 }

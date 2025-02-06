@@ -56,6 +56,10 @@ const pointOfSaleSlice = createSlice({
       saveItemsToLocalStorage(state.products);
       toast.success("Item Removed Successfully");
     },
+    removeProductsfromLocalStorage: (state) => {
+      state.products = [];
+      saveItemsToLocalStorage(state.products);
+    },
     incrementQty: (state, action: PayloadAction<number>) => {
       const item = state.products.find(
         (product) => product.id === action.payload
@@ -86,6 +90,7 @@ const pointOfSaleSlice = createSlice({
 export const {
   addProductToOrderLine,
   removeProductFromOrderLine,
+  removeProductsfromLocalStorage,
   incrementQty,
   decrementQty,
 } = pointOfSaleSlice.actions;

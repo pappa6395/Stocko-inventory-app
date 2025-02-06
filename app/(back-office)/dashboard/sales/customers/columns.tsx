@@ -3,16 +3,14 @@
 import { Checkbox } from "@/components/ui/checkbox";
  
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
-import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColumn";
-import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-import { IUser } from "@/type/types";
+import { ICustomer } from "@/type/types";
+import Image from "next/image";
 
 
-
-export const columns: ColumnDef<IUser>[] = [
+export const columns: ColumnDef<ICustomer>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -38,25 +36,57 @@ export const columns: ColumnDef<IUser>[] = [
   {
     accessorKey: "profileImage",
     header: "Profile Image",
-    cell: ({ row }) => <ImageColumn row={row} accessorKey="profileImage" />,
+    cell: ({ row }) => {
+      const customer = row.original
+      const imageUrl = customer?.user?.profileImage || "/placeholder.svg"
+      return (
+        <div className="flex-shrink-0">
+            <Image 
+              src={imageUrl || "/placeholder.svg"} 
+              alt={customer?.user?.firstName || ""} 
+              width={50} 
+              height={50}
+              className="object-contain w-10 h-12" 
+            />
+        </div>
+      )
+    },
   },
   {
     accessorKey: "name",
-    header: ({ column }) => <SortableColumn column={column} title="Name" />,
+    header: "Name",
+    cell: ({ row }) => {
+      const customer = row.original
+      const fullName = customer?.user?.name || ""
+      return <p>{fullName}</p>
+    }
   },
   {
-    accessorKey: "role",
-    header: "Role",
+    accessorKey: "email",
+    header: "Email Address",
     cell: ({ row }) => {
-      const user = row.original?.role || null
-      const role = user.displayTitle
-      return <p>{role}</p>
+      const customer = row.original
+      const email = customer?.user?.email || ""
+      return <p>{email}</p>
+    }
+  },
+  {
+    accessorKey: "phone",
+    header: "Phone Number",
+    cell: ({ row }) => {
+      const customer = row.original
+      const phone = customer?.user?.phone || ""
+      return <p>{phone}</p>
     }
   },
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,
+    cell: ({ row }) => {
+      const customer = row.original
+      const status = customer?.user.status || false
+      return <p>{status? "Active" : "Inactive"}</p>
+    },
   },
   {
     accessorKey: "createdAt",
@@ -66,13 +96,13 @@ export const columns: ColumnDef<IUser>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const user = row.original;
+      const customer = row.original;
       return (
         <ActionColumn
           row={row}
-          model="user"
-          editEndpoint={`users/update/${user.id}`}
-          id={(user.id)}
+          model="customer"
+          editEndpoint={`customers/update/${customer.id}`}
+          id={(customer.id)}
         />
       );
     },

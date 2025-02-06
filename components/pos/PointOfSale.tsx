@@ -10,17 +10,31 @@ import ItemCard from './item-card'
 import OrderCard from './order-card'
 import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
-import { addProductToOrderLine, decrementQty, incrementQty, OrderLineItem, removeProductFromOrderLine } from '@/redux/slices/pointOfSale'
+import { addProductToOrderLine, decrementQty, incrementQty, OrderLineItem, removeProductFromOrderLine, removeProductsfromLocalStorage } from '@/redux/slices/pointOfSale'
 import SearchItems from './search-items'
+import FormSelectInput from '../global/FormInputs/FormSelectInput'
+import { ICustomer } from '@/type/types'
+import { createLineOrder } from '@/actions/pos'
+import { Loader, ShoppingBasket } from 'lucide-react'
+import toast from 'react-hot-toast'
+import ReceiptPrint from './receiptPrint'
 
+type CustomerOptionProps = {
+    value: string;
+    label: string;
+    email: string;
+    phone: string;
+}
 
 const PointOfSale = ({
     categories,
-    products, 
+    products,
+    customers, 
     cate
 }: {
     categories?: Category[]; 
     products?: Products[];
+    customers?: ICustomer[];
     cate: string;
 }) => {
     
@@ -39,6 +53,27 @@ const PointOfSale = ({
     const total = useMemo(() => (subTotal + Number(taxFee)).toFixed(2), [subTotal, taxFee])
     
     const [searchResults, setSearchResults] = useState(products);
+    const [processing, setProcessing] = useState(false);
+    
+    let customerOptions = [] as CustomerOptionProps[] 
+    if (!customers) {
+        return <p>No customer Found</p>
+    } else {
+        customerOptions = customers?.map((item) => {
+            return {
+              value: item.id.toString(),
+              label: item.user?.name ?? "Unknown",
+              email: item.user?.email ?? "",
+              phone: item.user?.phone ?? "",
+            }
+          });
+    }
+    const initialCustomerId = 1;
+    const initialCustomer = customerOptions?.find(
+    (item) => Number(item.value) === initialCustomerId
+    );
+    const [selectedCustomer, setSelectedCustomer] = 
+    useState<any>(initialCustomer);
 
     const handleAdd = (newOrderLineItems: Products) => {
         dispatch(
@@ -73,7 +108,33 @@ const PointOfSale = ({
         localStorage.setItem("posItem", JSON.stringify(orderLineItems.map(
             (item) => item.id === orderItemId? {...item, qty: item.qty - 1 } : item)));
     }
-    
+    const handleCreateOder = async () => {
+
+        setProcessing(true);
+        const customerData = {
+            customerId: Number(selectedCustomer.value),
+            customerName: selectedCustomer.label as string,
+            customerEmail: selectedCustomer.email as string,
+            customerPhone: selectedCustomer.phone as string,
+        }
+        const customerItem = orderLineItems;
+
+        try {
+            const res = await createLineOrder(customerItem, customerData)
+            const data = res.data
+            console.log("Order created", data);
+            if (res.success) {
+                setProcessing(false);
+                toast.success("Order placed successfully");
+                console.log("Order placed successfully");
+                // Clear the cart
+                dispatch(removeProductsfromLocalStorage());
+            }
+        } catch (error) {
+            console.log("Error creating order", error);
+            setProcessing(false);
+        }
+    }
 
   return (
 
@@ -129,7 +190,22 @@ const PointOfSale = ({
                 <div className='px-2 pt-2'>
                     {products && products.length > 0 ? (
                         <div>
-                            <SearchItems allProducts={products as Products[]} onSearch={setSearchResults} />
+                            <div className='grid grid-cols-3 items-center gap-3'>
+                                <SearchItems 
+                                    allProducts={products as Products[]} 
+                                    onSearch={setSearchResults} 
+                                />
+                                <FormSelectInput
+                                    label="Customer"
+                                    options={customerOptions}
+                                    option={selectedCustomer}
+                                    setOption={setSelectedCustomer}
+                                    toolTipText='Add new customer'
+                                    labelShown={false}
+                                    href={"/dashboard/sales/customers/new"}
+                                />
+                            </div>
+                            
                             <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
                                 {searchResults?.map((product,index) => {
                                     return (
@@ -206,13 +282,33 @@ const PointOfSale = ({
                                 </h3>
                             </div>
                             <div className='w-full py-4'>
-                                <Button variant={'shop'} className='w-full'>
-                                    Place an Order
-                                </Button>
+                                {processing ? (
+                                    <Button 
+                                        variant={"shop"} 
+                                        size={"sm"} 
+                                        className='w-full'
+                                        disabled
+                                    >
+                                        <Loader className='size-4 animate-spin' />
+                                        Processing...
+                                    </Button>
+                                ) : (
+                                    <Button 
+                                        variant={"shop"} 
+                                        size={"sm"} 
+                                        className='w-full'
+                                        onClick={handleCreateOder}
+                                    >   
+                                        <ShoppingBasket className='size-4'/>
+                                        Place an Order
+                                    </Button>
+                                )}
+                                <div className='pt-4'>
+                                    <ReceiptPrint />
+                                </div>
                             </div>
                         </div>
                 ) : ("")}
-                
             </div>
     </div>
 

@@ -1,9 +1,9 @@
 
 
 import { PageProps } from '@/.next/types/app/(back-office)/dashboard/inventory/categories/new/page';
+import { getCustomerById } from '@/actions/customers';
 import { getAllRoles } from '@/actions/roles';
-import { getUserById } from '@/actions/users';
-import UserForm from '@/components/dashboard/Forms/UserForm';
+import CustomerForm from '@/components/dashboard/Forms/CustomerForm';
 import React from 'react'
 
 
@@ -11,20 +11,19 @@ const page = async ({params: paramsPromise}: PageProps) => {
 
     const { id } = await paramsPromise;
 
-    const user = (await getUserById(id))?.data || null
+    const customer = (await getCustomerById(id))?.data || null
     const roles = (await getAllRoles())?.data || [];
 
   
     return (
   
       <div>
-          <UserForm 
-            initialData={user ?? null}
+          <CustomerForm 
+            initialData={customer ?? null}
             editingId={id ?? ""}
             roles={roles}
             />
       </div>
-  
   
     )
 }
