@@ -12,11 +12,18 @@ interface CustomerData {
   customerEmail: string;
   customerPhone: string;
 }
+interface NewOrderProps {
+  customerItems: OrderLineItem[];
+  orderAmount: number;
+  orderType: string;
+}
 
 export async function createLineOrder(
-    orderItems: OrderLineItem[],
+    newOrder: NewOrderProps,
     customerData: CustomerData
 ) {
+
+    const { customerItems, orderAmount, orderType } = newOrder
     
     try {
         // Transaction => If one of the process fail then they all will fail
@@ -33,10 +40,13 @@ export async function createLineOrder(
               data: {
                 customerId: customerData.customerId.toString(),
                 customerName: customerData.customerName,
+                customerEmail: customerData.customerEmail,
                 orderNumber: generateOrderNumber(),
+                orderAmount,
+                orderType,
               },
             });
-            for (const item of orderItems) {
+            for (const item of customerItems) {
                 // Update Product stock quantity
                 const updatedProduct = await transaction.products.update({
                   where: { id: item.id },
@@ -107,4 +117,34 @@ export async function createLineOrder(
           error: error,
         };
     }
+}
+
+export async function getOrders() {
+  try {
+    const orders = await prismaClient.lineOrder.findMany({
+      include: {
+        lineOrderItems: {
+          include: {
+            product: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    return {
+      ok: true,
+      data: orders,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Failed to get orders:", error);
+    return {
+      ok: false,
+      data: null,
+      error: "Failed to get orders",
+    };
+  }
 }

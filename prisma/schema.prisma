@@ -249,7 +249,10 @@ model LineOrder {
   updatedAt    DateTime @updatedAt
   orderNumber  String @unique
   status       OrderStatus @default(DELIVERED)
-  // Relationships
+  customerEmail String?
+  orderAmount   Int?
+  orderType     String?
+  //Relationships
   lineOrderItems LineOrderItem[]
   sales          Sale[]
 }

@@ -194,6 +194,9 @@ importers:
       react-tailwindcss-select:
         specifier: ^1.8.5
         version: 1.8.5(react@19.0.0)
+      react-to-print:
+        specifier: ^3.0.5
+        version: 3.0.5(react@19.0.0)
       recharts:
         specifier: ^2.15.1
         version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -3888,6 +3891,11 @@ packages:
     resolution: {integrity: sha512-x29IrLiqBT5FnkC9oFQReOr05tEOZHtDtZdha84nlSWcj3qD67yonKFHXIf69yc8ElFlKUxCEv0zCllN8jHBFA==}
     peerDependencies:
       react: ^18.2.0
+
+  react-to-print@3.0.5:
+    resolution: {integrity: sha512-Z15MwMOzYCHWi26CZeFNwflAg7Nr8uWD6FTj+EkfIOjYyjr0MXGbI0c7rF4Fgrbj3XG9hFndb1ourxpPz2RAiA==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ~19
 
   react-transition-group@4.4.5:
     resolution: {integrity: sha512-pZcd1MCJoiKiBR2NRxeCRg13uCXbydPnmB4EOeRrY7480qNWO8IIgQG6zlDkm6uRMsURXPuKq0GWtiM59a5Q6g==}
@@ -8120,6 +8128,10 @@ snapshots:
       '@types/react': 19.0.8
 
   react-tailwindcss-select@1.8.5(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+
+  react-to-print@3.0.5(react@19.0.0):
     dependencies:
       react: 19.0.0
 

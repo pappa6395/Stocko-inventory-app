@@ -2,9 +2,9 @@
 import { AnalyticsProps } from "@/actions/analytics";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
 import AnalyticCard from "./Analytics/AnalyticCard";
-import Analytics from "./Analytics/Analytics";
 import RecentSaleCard from "./RecentSaleCard";
 import TransactionList from "./TransactionList";
+import DashboardSummary from "./Analytics/DashboardSummary";
 
 
 export default function Dashboard({analytics}: {analytics: AnalyticsProps[]}) {
@@ -26,10 +26,7 @@ export default function Dashboard({analytics}: {analytics: AnalyticsProps[]}) {
           <section className="container py-2">
             <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-8">
               <div className="col-span-full">
-                <Analytics />
-              </div>
-              <div className="col-span-full">
-                <TransactionList />
+                <DashboardSummary />
               </div>
             </div>
           </section>

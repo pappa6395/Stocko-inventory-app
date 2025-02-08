@@ -94,8 +94,8 @@ const OrderCard = ({
                     onClick={() => handleRemove(product.id)} 
                     className=''
                 >
-                    <Trash2 className='size-4'/>
-                    <span className='font-semibold shadow-xs'>Remove</span>
+                    <Trash2 className='size-3'/>
+                    <span className='sr-only'>Remove</span>
                 </Button>
             </div>
     </div>

@@ -47,10 +47,10 @@ const PointOfSale = ({
       }, [orderLineItems]);
 
     const sumItems = useMemo(() => orderLineItems.reduce((sum, item) => sum + item.qty, 0), [clientOrderLineItems])
-    const subTotal = useMemo(() => orderLineItems.reduce((sum, item) => sum + item.price * item.qty, 0), [clientOrderLineItems])
+    const total = useMemo(() => orderLineItems.reduce((sum, item) => sum + item.price * item.qty, 0), [clientOrderLineItems])
     const taxRate = 7
-    const taxFee = useMemo(() => (subTotal * (taxRate / 100)).toFixed(2), [subTotal, taxRate])
-    const total = useMemo(() => (subTotal + Number(taxFee)).toFixed(2), [subTotal, taxFee])
+    const taxFee = useMemo(() => (total * (taxRate / 100)).toFixed(2), [total, taxRate])
+
     
     const [searchResults, setSearchResults] = useState(products);
     const [processing, setProcessing] = useState(false);
@@ -117,10 +117,15 @@ const PointOfSale = ({
             customerEmail: selectedCustomer.email as string,
             customerPhone: selectedCustomer.phone as string,
         }
-        const customerItem = orderLineItems;
-
+        const customerItems = orderLineItems;
+        const orderAmount = total
+        const newOrder = {
+            customerItems,
+            orderAmount,
+            orderType: "Sale"
+        }
         try {
-            const res = await createLineOrder(customerItem, customerData)
+            const res = await createLineOrder(newOrder, customerData)
             const data = res.data
             console.log("Order created", data);
             if (res.success) {
@@ -134,6 +139,11 @@ const PointOfSale = ({
             console.log("Error creating order", error);
             setProcessing(false);
         }
+    }
+    const clearAll = () => {
+        dispatch(
+            removeProductsfromLocalStorage()
+        )
     }
 
   return (
@@ -225,9 +235,20 @@ const PointOfSale = ({
                 </div>
             </div>
             <div className='col-span-full md:col-span-3 p-3'>
-                <h2 className="scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0">
-                    Order Item
-                </h2>
+                {clientOrderLineItems && clientOrderLineItems.length > 0 && (
+                    <div className='flex items-center justify-between'>
+                        <h2 className="scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0">
+                            Order Item
+                        </h2>
+                        <button 
+                            type="button" 
+                            onClick={clearAll} 
+                            className='border shadow-sm px-2 py-2 rounded text-muted-foreground active:scale-90'
+                        >
+                            Clear
+                        </button>
+                    </div>
+                )}
                 {
                     clientOrderLineItems && clientOrderLineItems.length > 0 ? (
                         <div>
@@ -261,11 +282,11 @@ const PointOfSale = ({
                                     <h3 className=' font-medium text-muted-foreground'>{sumItems} items</h3>
                                 </div>
                                 <div className='flex justify-between'>
-                                    <h3 className='text-muted-foreground'>Subtotal:</h3>
-                                    <h3 className='font-medium text-muted-foreground'>$ {subTotal}</h3>
+                                    <h3 className='text-muted-foreground'>Total:</h3>
+                                    <h3 className='font-medium text-muted-foreground'>$ {total.toLocaleString("en-us")}</h3>
                                 </div>
                                 <div className='flex justify-between'>
-                                    <h3 className='text-muted-foreground'>Tax {taxRate}%:</h3>
+                                    <h3 className='text-muted-foreground'>Tax:able {taxRate}%</h3>
                                     <h3 className='font-medium text-muted-foreground'>$ {taxFee}</h3>
                                 </div>
                             </div>

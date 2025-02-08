@@ -1,9 +1,6 @@
 "use client"
 
 import * as React from "react"
-import { Minus, Plus } from "lucide-react"
-import { Bar, BarChart, ResponsiveContainer } from "recharts"
-
 import { Button } from "@/components/ui/button"
 import {
   Drawer,
@@ -15,55 +12,29 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import { useAppSelector } from "@/redux/hooks/hooks"
+import { OrderLineItem } from "@/redux/slices/pointOfSale"
+import { useReactToPrint } from "react-to-print"
+import { getCurrentDateAndTime } from "@/lib/getCurrentDateTime"
 
-const data = [
-  {
-    goal: 400,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 239,
-  },
-  {
-    goal: 300,
-  },
-  {
-    goal: 200,
-  },
-  {
-    goal: 278,
-  },
-  {
-    goal: 189,
-  },
-  {
-    goal: 349,
-  },
-]
 
 export default function ReceiptPrint() {
-  const [goal, setGoal] = React.useState(350)
 
-  function onClick(adjustment: number) {
-    setGoal(Math.max(200, Math.min(400, goal + adjustment)))
-  }
+  const [clientOrderLineItems, setClientOrderLineItems] = React.useState<OrderLineItem[]>([]);
+  const orderLineItems = useAppSelector((state) => state.pos.products)
+
+  const sumItems = React.useMemo(() => orderLineItems.reduce((sum, item) => sum + item.qty, 0), [clientOrderLineItems])
+  const total = React.useMemo(() => orderLineItems.reduce((sum, item) => sum + item.price * item.qty, 0), [clientOrderLineItems])
+  const taxRate = 7
+  const taxFee = React.useMemo(() => (total * (taxRate / 100)).toFixed(2), [total, taxRate])
+  //const total = React.useMemo(() => (subTotal + Number(taxFee)).toFixed(2), [subTotal, taxFee])
+  const totals = total.toLocaleString("en-US")
+
+  const contentRef = React.useRef<HTMLDivElement>(null)
+  const handlePrint = useReactToPrint({
+    contentRef: contentRef,
+  })
+  const { currentDate, currentTime} = getCurrentDateAndTime()
 
   return (
     <Drawer>
@@ -73,8 +44,8 @@ export default function ReceiptPrint() {
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <DrawerTitle className="text-center">Stocko Online</DrawerTitle>
-            <div>
+            <div ref={contentRef} >
+                <DrawerTitle className="text-center mt-2 pt-2">Stocko Online</DrawerTitle>
                 <div className="flex flex-col items-center space-x-2 text-sm">
                     <p className="text-gray-700">Receipt / Tax INVOICE (ABB)</p>
                     <p className="text-gray-700">Stoko online market trading Company Branch No.024</p>
@@ -85,10 +56,10 @@ export default function ReceiptPrint() {
                 <div className="flex items-center pt-2 px-2 space-x-2 text-sm">
                   <p className="text-gray-700">Date:</p>
                   <p className="text-gray-500">
-                    {new Date().toLocaleDateString("en-US")}
+                    {currentDate}
                   </p>
                   <p className="text-gray-500">
-                    {new Date().toLocaleTimeString("en-US")}
+                    {currentTime}
                   </p>
                 </div>
                 <div className="flex items-center px-2 space-x-2 text-sm">
@@ -117,33 +88,29 @@ export default function ReceiptPrint() {
                     </div>
                     <div className="col-span-full border-dashed border-b border-gray-800"/>
                     <div className="grid grid-cols-12 items-center px-2 justify-between text-sm">
-                        <div className="text-gray-700 col-span-7">Handbag</div>
-                        <div className="flex col-span-5 justify-between">
-                            <div className="text-gray-500">1</div>
-                            <div className="text-gray-500">$120</div>   
-                        </div>
-                        <div className="text-gray-700 col-span-7">Wallet</div>
-                        <div className="flex col-span-5 justify-between">
-                            <div className="text-gray-500">1</div>
-                            <div className="text-gray-500">$50</div>   
-                        </div>
-                        <div className="text-gray-700 col-span-7">iPhone 16 (128GB)</div>
-                        <div className="flex col-span-5 justify-between">
-                            <div className="text-gray-500">1</div>
-                            <div className="text-gray-500">$990</div>   
-                        </div>
+                        {orderLineItems?.map((item,index) => {
+                          return (
+                            <React.Fragment key={index}>
+                              <div className="text-gray-700 col-span-7">{item.name}</div>
+                              <div className="flex col-span-5 justify-between">
+                                  <div className="text-gray-500">{item.qty}</div>
+                                  <div className="text-gray-500">${item.price.toLocaleString("en-US")}</div>   
+                              </div>
+                            </React.Fragment>
+                          )
+                        })}
                     </div>
                 </div>
                 <div className="col-span-full border-dashed border-b border-gray-800"/>
                 <div>
                     <div className="flex items-center px-2 justify-between space-x-2 text-sm">
                       <div className="text-gray-700">Total:</div>
-                      <div className="text-gray-500">$1,160.00</div>
+                      <div className="text-gray-500">${totals}</div>
                     </div>
                     <div className="col-span-full border-dashed border-b border-gray-800"/>
                     <div className="flex items-center px-2 justify-between space-x-2 text-sm">
                         <div className="text-gray-700">QRPayment</div>
-                        <div className="text-gray-500">$1,160.00</div>
+                        <div className="text-gray-500">${totals}</div>
                     </div>
                     <div className="flex items-center px-2 space-x-2 text-sm">
                         <div className="text-gray-700">PROMPTPAY ID:</div>
@@ -152,11 +119,11 @@ export default function ReceiptPrint() {
                     <div className="col-span-full border-dashed border-b border-gray-800"/>
                     <div className="flex items-center px-2 justify-between space-x-2 text-sm">
                         <div className="text-gray-700">VATable:</div>
-                        <div className="text-gray-500">$1,160.00</div>
+                        <div className="text-gray-500">${totals}</div>
                     </div>
                     <div className="flex items-center px-2 justify-between space-x-2 text-sm">
-                        <div className="text-gray-700">VAT:7.00%</div>
-                        <div className="text-gray-500">$81.20</div>
+                        <div className="text-gray-700">VAT:{taxRate.toFixed(2)}%</div>
+                        <div className="text-gray-500">${taxFee}</div>
                     </div>
                 </div>
                 <div className="col-span-full border-dashed border-b border-gray-800"/>
@@ -191,7 +158,7 @@ export default function ReceiptPrint() {
             </div>
           </DrawerHeader>
           <DrawerFooter>
-            <Button>Submit</Button>
+            <Button type="button" onClick={() => handlePrint()}>Print Receipt</Button>
             <DrawerClose asChild>
               <Button variant="outline">Cancel</Button>
             </DrawerClose>
