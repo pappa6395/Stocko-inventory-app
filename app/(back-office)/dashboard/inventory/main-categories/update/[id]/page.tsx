@@ -6,9 +6,8 @@ import MainCategoryForm from '@/components/dashboard/Forms/MainCategoryForm';
 import React from 'react'
 
 
-const page = async ({params: paramsPromise}: any) => {
+const page = async ({params: id}: {params: string}) => {
 
-    const { id } = await paramsPromise;
     const mainCategory = await getMainCategoryById(id) || null
 
     return (
