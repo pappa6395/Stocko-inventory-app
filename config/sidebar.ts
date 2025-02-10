@@ -103,8 +103,8 @@ export const sidebarLinks: ISidebarLink[] = [
       ]
     },
     {
-      label: 'Integration',
-      href: '/dashboard/integration',
+      label: 'API Integrations',
+      href: '/dashboard/api',
       icon: Cable,
       dropdown: false,
     },

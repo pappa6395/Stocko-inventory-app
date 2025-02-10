@@ -5,12 +5,13 @@ import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent }
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { File, ListFilter } from "lucide-react"
+import { ArrowUpRight, File, ListFilter } from "lucide-react"
 import BarChartCard from "./BarChartCard"
 import RecentSaleCard from "../RecentSaleCard"
 import OrderSummary from "../OrderSummary"
 import { getOrders } from "@/actions/pos"
 import { convertIsoToDateString } from "@/lib/convertISOtoDate"
+import Link from "next/link"
 
 export default async function DashboardSummary() {
 
@@ -53,8 +54,21 @@ export default async function DashboardSummary() {
                     <OrderSummary orders={orders} />
                     <Card x-chunk="dashboard-05-chunk-3" className="mt-2 pt-2">
                         <CardHeader className="px-7">
-                        <CardTitle>Recent Orders</CardTitle>
-                        <CardDescription>Recent orders from your store.</CardDescription>
+                            <div className="flex justify-between items-center">
+                                <CardTitle className="text-3xl">Recent Orders</CardTitle>
+                                <Button 
+                                    asChild 
+                                    size="lg" 
+                                    variant="default" 
+                                    className="gap-1 text-sm py-2.5 px-3">
+                                    <Link href="#" >
+                                        <span className="sr-only sm:not-sr-only">View All</span>
+                                        <ArrowUpRight className="h-4 w-4" />
+                                    </Link>
+                                </Button>
+                            </div>
+                            
+                            <CardDescription>Recent orders from your store.</CardDescription>
                         </CardHeader>
                         <CardContent>
                         <Table>
@@ -64,7 +78,8 @@ export default async function DashboardSummary() {
                                 <TableHead className="hidden sm:table-cell">Type</TableHead>
                                 <TableHead className="hidden sm:table-cell">Status</TableHead>
                                 <TableHead className="hidden md:table-cell">Date</TableHead>
-                                <TableHead className="text-right">Amount</TableHead>
+                                <TableHead className="hidden md:table-cell">Amount</TableHead>
+                                <TableHead className="text-right">Action</TableHead>
                             </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -80,12 +95,38 @@ export default async function DashboardSummary() {
                                             </TableCell>
                                             <TableCell className="hidden sm:table-cell">{order.orderType}</TableCell>
                                             <TableCell className="hidden sm:table-cell">
-                                            <Badge className="text-xs" variant="secondary">
+                                            {/* <Badge className="text-xs" variant="secondary">
                                                 {order.status}
-                                            </Badge>
+                                            </Badge> */}
+                                            {order.status === "DELIVERED" ? (
+                                                <button className="py-1.5 px-3 bg-emerald-400 
+                                                rounded-full font-semibold dark:text-slate-100">{order.status}</button>
+                                            ) : order.status === "PROCESSING" ? (
+                                                <button className="py-1.5 px-3 bg-sky-400 
+                                                rounded-full">{order.status}</button>
+                                            ) : order.status === "PENDING" ? (
+                                                <button className="py-1.5 px-3 bg-amber-400 
+                                                rounded-full">{order.status}</button>
+                                            ) : order.status === "SHIPPED" ? (
+                                                <button className="py-1.5 px-3 bg-emerald-400 
+                                                rounded-full">{order.status}</button>
+                                            ) : (<button className="py-1.5 px-3 bg-red-400 
+                                                rounded-full">{order.status}</button>)}
                                             </TableCell>
                                             <TableCell className="hidden md:table-cell">{date}</TableCell>
                                             <TableCell className="text-right">${order.orderAmount}</TableCell>
+                                            <TableCell className="text-right">
+                                                <Button 
+                                                    asChild 
+                                                    size="sm" 
+                                                    variant="outline" 
+                                                    className="gap-1 text-sm">
+                                                    <Link href="#" >
+                                                        <File className="h-3.5 w-3.5" />
+                                                        <span className="sr-only sm:not-sr-only">View</span>
+                                                    </Link>
+                                                </Button>
+                                            </TableCell>
                                         </TableRow>
                                     )
                                 })

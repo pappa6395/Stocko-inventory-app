@@ -1,7 +1,7 @@
 "use server"
 
 import { prismaClient } from "@/lib/db";
-import { CategoryProps, ExcelCategoryProps } from "@/type/types";
+import { CategoryProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 

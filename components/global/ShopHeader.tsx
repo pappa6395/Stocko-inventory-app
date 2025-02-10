@@ -21,8 +21,11 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
     const handleSignOut = async () => {
         try {
             await signOut();
-            router.push("/login")
-            toast.success("Signed out successfully")
+            localStorage.clear();
+            document.cookie = "";
+
+            router.push("/login");
+            toast.success("Signed out successfully");
         } catch (err) {
             console.error("Failed to sign out:", err);
             return;
@@ -68,36 +71,44 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
                         >
                             <ShoppingBasket className='size-6 rounded-full'/>
                         </Button>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button 
-                                    variant={"outline"} 
-                                    size={"icon"} 
-                                    className='rounded-full'>
-                                    <Avatar>
-                                        <AvatarImage src={user?.profileImage ?? "/profile.svg"} alt="profile" className='object-fit rounded' />
-                                        <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
-                                    </Avatar>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Link href="/dashboard">
-                                    Dashboard
+                        {user ? (
+                             <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button 
+                                        variant={"outline"} 
+                                        size={"icon"} 
+                                        className='rounded-full'>
+                                        <Avatar>
+                                            <AvatarImage src={user?.profileImage ?? "/profile.svg"} alt="profile" className='object-fit rounded' />
+                                            <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                    <Link href="/dashboard">
+                                        Dashboard
+                                    </Link>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>Settings</DropdownMenuItem>
+                                <DropdownMenuItem>Support</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                    <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
+                                        Log out
+                                    </Button>
+                                </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Button  asChild type="button" variant={"ghost"} size={"lg"}>
+                                <Link href="/login">
+                                    Login
                                 </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
-                                    Log out
-                                </Button>
-                            </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                            </Button>
+                        )}
                         
                     </div>
                 <ModeToggle />

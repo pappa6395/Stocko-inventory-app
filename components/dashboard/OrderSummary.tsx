@@ -2,8 +2,9 @@
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Delete, Trash } from 'lucide-react'
+import { Delete, File, Trash } from 'lucide-react'
 import { LineOrder } from '@prisma/client'
+import Link from 'next/link'
 
 const OrderSummary = ({orders}: {orders: LineOrder[]}) => {
 
@@ -41,13 +42,15 @@ const OrderSummary = ({orders}: {orders: LineOrder[]}) => {
                         <TableCell>500 in stock</TableCell>
                         <TableCell>
                         <div className="flex gap-2">
-                            <Button variant="outline" size="icon">
-                                <Delete className="h-4 w-4" />
-                                <span className="sr-only">Edit</span>
-                            </Button>
-                            <Button variant="outline" size="icon">
-                                <Trash className="h-4 w-4" />
-                                <span className="sr-only">Delete</span>
+                            <Button 
+                                asChild 
+                                size="sm" 
+                                variant="outline" 
+                                className="h-7 gap-1 text-sm">
+                                <Link href="#" >
+                                    <File className="h-3.5 w-3.5" />
+                                    <span className="sr-only sm:not-sr-only">View</span>
+                                </Link>
                             </Button>
                         </div>
                         </TableCell>

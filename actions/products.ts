@@ -70,7 +70,7 @@ export async function getAllProducts() {
                 createdAt: "desc"
             },
             include: {
-                category: true,
+                subCategory: true,
             }
         });
 
@@ -95,7 +95,7 @@ export async function getProductsByCategoryId(categoryId: string) {
         } else if (categoryId && categoryId !== 'all') {
             const products = await prismaClient.products.findMany({
                 where: {
-                    categoryId: Number(categoryId)
+                    subCategoryId: Number(categoryId)
                 },
             });
             return {

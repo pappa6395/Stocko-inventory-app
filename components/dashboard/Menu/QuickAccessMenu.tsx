@@ -4,14 +4,6 @@ import { DollarSign, HandCoins, Home, LayoutGrid, Plus } from 'lucide-react'
 import Link from 'next/link'
 
 
-const generalMenu = [
-    {
-
-    }
-
-]
-
-
 export default function QuickAccessMenu() {
   return (
     <Popover className="relative">

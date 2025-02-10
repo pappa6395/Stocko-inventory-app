@@ -19,17 +19,20 @@ import { createCategory, updateCategoryById } from '@/actions/category'
 import toast from 'react-hot-toast'
 import SubmitButton from '@/components/global/FormInputs/SubmitButton'
 import ImageInput from '@/components/global/FormInputs/ImageInput'
-import { Category } from '@prisma/client'
+import { Category, MainCategory } from '@prisma/client'
+import FormSelectInput from '@/components/global/FormInputs/FormSelectInput'
 
 
 type CategoryFormProps = {
   initialData?: Category | null;
   editingId?: string;
+  mainCategories: MainCategory[]
 }
 
 const CategoryForm = ({
   initialData,
   editingId,
+  mainCategories
 }: CategoryFormProps) => {
   
   const {
@@ -48,6 +51,21 @@ const CategoryForm = ({
   });
 
   const router = useRouter()
+
+  // Main Categories
+  const mainCategoryOptions = mainCategories?.map((item) => {
+      return {
+        value: item.id.toString(),
+        label: item.title,
+      }
+    });
+    const initialMainCategoryId = initialData?.mainCategoryId || 0;
+    const initialCategory = mainCategoryOptions?.find(
+      (item) => Number(item.value) === initialMainCategoryId);
+    const [selectedMainCategory, setSelectedMainCategory] =
+    useState<any>(initialCategory);
+
+  // Status
   const initialStatus = {
     value: initialData?.status ? true : false,
     label: initialData?.status ? "Active" : "Disabled"
@@ -123,12 +141,23 @@ const CategoryForm = ({
             {/* Category Status */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Category Status</CardTitle>
+                    <CardTitle>Category</CardTitle>
                     <CardDescription>Update the product details</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <div className="grid gap-3">
-                        <Label htmlFor="category">Category</Label>
+                  <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <div className="space-x-2">
+                      <FormSelectInput
+                      label="Main Categories"
+                      options={mainCategoryOptions}
+                      option={selectedMainCategory}
+                      setOption={setSelectedMainCategory}
+                      toolTipText='Add new main category'
+                      href={"/dashboard/inventory/main-categories/new"}
+                      />
+                    </div>
+                    <div className="grid gap-3 pt-1.5">
+                        <Label htmlFor="category">Status</Label>
                         <Select
                           value={status}
                           onChange={(value: any) => setStatus(value)}
@@ -136,6 +165,7 @@ const CategoryForm = ({
                           primaryColor={'primary'}
                         />
                     </div>
+                  </div>
                 </CardContent>
             </Card>
             {/* Category Details */}

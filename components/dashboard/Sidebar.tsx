@@ -6,19 +6,39 @@ import Link from 'next/link'
 import { Bell, ChevronDown, ChevronRight, Plus } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import Logo from '../global/Logo'
 import { sidebarLinks } from '@/config/sidebar'
+import { signOut } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
 const Sidebar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   
-
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
+  const router = useRouter();
+    const handleSignOut = async () => {
+        try {
+            const result = await signOut({ redirect: false, callbackUrl: "/login" });
+            console.log("Signed out result:", result);
+    
+            if (typeof window !== "undefined") {
+                localStorage.clear(); 
+                document.cookie = "";
+            }
+    
+            toast.success("✅ Signed out successfully");
+            router.push("/login");
+            
+        } catch (err) {
+            console.error("❌ Failed to sign out:", err);
+            toast.error("❌ Failed to sign out. Please try again.");
+        }
+    };
 
   return (
     <div className="hidden border-r bg-muted/40 md:block py-2">
@@ -97,7 +117,7 @@ const Sidebar = () => {
           
         </div>
         <div className="mt-auto p-4">
-            <Button size="sm" className="w-full">
+            <Button type="button" size="sm" className="w-full" onClick={handleSignOut}>
               Logout
             </Button>
           </div>

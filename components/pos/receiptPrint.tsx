@@ -6,7 +6,6 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
@@ -14,14 +13,25 @@ import {
 } from "@/components/ui/drawer"
 import { useAppSelector } from "@/redux/hooks/hooks"
 import { OrderLineItem } from "@/redux/slices/pointOfSale"
-import { useReactToPrint } from "react-to-print"
 import { getCurrentDateAndTime } from "@/lib/getCurrentDateTime"
 
+interface ReceiptPrintProps {
+  contentRef: React.RefObject<HTMLDivElement | null>;
+  handlePrint: () => void;
+  success: boolean;
+  setSuccess: (value: boolean) => void;
+  clearAll: () => void;
+}
 
-export default function ReceiptPrint() {
+
+export default function ReceiptPrint({contentRef, handlePrint, success, setSuccess, clearAll}: ReceiptPrintProps) {
 
   const [clientOrderLineItems, setClientOrderLineItems] = React.useState<OrderLineItem[]>([]);
   const orderLineItems = useAppSelector((state) => state.pos.products)
+
+  React.useEffect(() => {
+    setClientOrderLineItems(orderLineItems || []);
+  }, [orderLineItems]);
 
   const sumItems = React.useMemo(() => orderLineItems.reduce((sum, item) => sum + item.qty, 0), [clientOrderLineItems])
   const total = React.useMemo(() => orderLineItems.reduce((sum, item) => sum + item.price * item.qty, 0), [clientOrderLineItems])
@@ -30,16 +40,12 @@ export default function ReceiptPrint() {
   //const total = React.useMemo(() => (subTotal + Number(taxFee)).toFixed(2), [subTotal, taxFee])
   const totals = total.toLocaleString("en-US")
 
-  const contentRef = React.useRef<HTMLDivElement>(null)
-  const handlePrint = useReactToPrint({
-    contentRef: contentRef,
-  })
   const { currentDate, currentTime} = getCurrentDateAndTime()
 
   return (
-    <Drawer>
+    <Drawer open={success} onOpenChange={setSuccess} >
       <DrawerTrigger asChild>
-        <Button variant="receipt" className="w-full">Print Receipt</Button>
+        <Button variant="receipt" className="hidden w-full">Print Receipt</Button>
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
@@ -159,9 +165,7 @@ export default function ReceiptPrint() {
           </DrawerHeader>
           <DrawerFooter>
             <Button type="button" onClick={() => handlePrint()}>Print Receipt</Button>
-            <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DrawerClose>
+            <Button variant="outline" className="mt-2" onClick={() => clearAll()}>Cancel</Button>
           </DrawerFooter>
         </div>
       </DrawerContent>

@@ -1,3 +1,5 @@
+"use client"
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,29 +12,37 @@ import {
     SheetTitle,
     SheetTrigger,
   } from "@/components/ui/sheet"
-import { convertIsoToDateString } from "@/lib/convertISOtoDate"
 import { generateInitial } from "@/lib/generateInitial"
 import { User } from "@prisma/client"
 import { Headset, LogOut, Mail, MessageSquareMore, PhoneCall, Presentation, Settings, Users } from "lucide-react"
 import { signOut } from "next-auth/react"
+
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-  import React from 'react'
+  import React, { useEffect } from 'react'
 import toast from "react-hot-toast"
   
-  const AvatarMenu = ({user}: {user: User}) => {
+const AvatarMenu = ({user}: {user: User}) => {
 
     const router = useRouter();
     const handleSignOut = async () => {
         try {
-            await signOut();
-            router.push("/login")
-            toast.success("Signed out successfully")
+            const result = await signOut({ redirect: false, callbackUrl: "/login" });
+            console.log("Signed out result:", result);
+    
+            if (typeof window !== "undefined") {
+                localStorage.clear(); 
+                document.cookie = "";
+            }
+    
+            toast.success("✅ Signed out successfully");
+            router.push("/login");
+            
         } catch (err) {
-            console.error("Failed to sign out:", err);
-            return;
+            console.error("❌ Failed to sign out:", err);
+            toast.error("❌ Failed to sign out. Please try again.");
         }
-    }
+    };
     const menuLinks = [
         {
             name: "Settings",
@@ -106,7 +116,12 @@ import toast from "react-hot-toast"
                                     Manage Account
                                 </Link>
                             </Button>
-                            <Button variant={"outline"} size={"sm"} onClick={handleSignOut}>
+                            <Button 
+                                type="button" 
+                                variant={"outline"} 
+                                size={"sm"} 
+                                onClick={handleSignOut}
+                            >
                                 <LogOut />
                                 Sign out
                             </Button>
@@ -159,6 +174,6 @@ import toast from "react-hot-toast"
     </Sheet>      
 
     )
-  }
+}
   
-  export default AvatarMenu
+export default AvatarMenu

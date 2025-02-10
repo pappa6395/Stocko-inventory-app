@@ -90,6 +90,14 @@ createdAt      DateTime   @default(now())
 updatedAt      DateTime   @updatedAt
 }
 
+model MainCategory {
+  id           Int @id @default(autoincrement())
+  title        String
+  slug         String @unique
+  categories   Category[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
+}
 
 model Category {
   id          Int @id @default(autoincrement())
@@ -98,10 +106,22 @@ model Category {
   imageUrl    String?
   status      Boolean @default(true)
   slug        String @unique
-  products     Products[]
-
+  mainCategoryId  Int
+  mainCategory    MainCategory @relation(fields: [mainCategoryId], references: [id])
+  subCategories   SubCategory[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime? @updatedAt  
+}
+
+model SubCategory {
+  id           Int @id @default(autoincrement())
+  title        String
+  slug         String @unique
+  categoryId   Int
+  products     Products[]
+  category     Category @relation(fields: [categoryId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime? @updatedAt
 }
 
 model Brand {
@@ -193,8 +213,8 @@ model Products {
   alertQuantity     Int
   unitId            Int
   unit              Unit @relation(fields:[unitId], references: [id])
-  categoryId        Int
-  category          Category @relation(fields:[categoryId], references: [id])
+  subCategoryId     Int
+  subCategory       SubCategory @relation(fields:[subCategoryId], references: [id])
   brandId           Int
   brand             Brand @relation(fields:[brandId], references: [id])
   supplierId        Int?
@@ -255,6 +275,7 @@ model LineOrder {
   //Relationships
   lineOrderItems LineOrderItem[]
   sales          Sale[]
+  receipts       Receipt[]
 }
 
 model Sale {
@@ -298,4 +319,14 @@ model Customers {
   user            User   @relation(fields: [userId], references: [id])
   billingAddress  String
   shippingAddress String
+}
+
+model Receipt {
+  id          String   @id @default(uuid())
+  orderId     Int
+  imageUrl    String
+  email       String
+  createdAt   DateTime @default(now())
+
+  lineOrder LineOrder @relation(fields: [orderId], references: [id])
 }

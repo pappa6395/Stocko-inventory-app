@@ -22,6 +22,18 @@ export type CategoryProps = {
     description: string;
     imageUrl: string | null;
     status: boolean;
+    mainCategoryId: number
+}
+
+export type MainCategoryProps = {
+    title: string;
+    slug: string;
+}
+
+export type SubCategoryProps = {
+    title: string;
+    slug: string;
+    categoryId: number;
 }
 
 export type SelectOptionProps = {
@@ -87,7 +99,7 @@ export type ProductProps = {
     saleUnit?: number;
 
     brandId: number;
-    categoryId: number;
+    subCategoryId: number;
     supplierId: number;
     unitId: number;
 
@@ -209,4 +221,9 @@ export interface IUser extends User {
 
 export interface ICustomer extends Customers {
     user: IUser
+}
+
+export type ReceiptProps = {
+    imageUrl: string;
+    email: string;
 }

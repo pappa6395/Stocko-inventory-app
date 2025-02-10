@@ -1,9 +1,9 @@
 "use client"
 
-import { Category, Products } from '@prisma/client'
+import { Category, LineOrder, Products } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
 import ItemCard from './item-card'
@@ -18,6 +18,10 @@ import { createLineOrder } from '@/actions/pos'
 import { Loader, ShoppingBasket } from 'lucide-react'
 import toast from 'react-hot-toast'
 import ReceiptPrint from './receiptPrint'
+import { useReactToPrint } from 'react-to-print'
+import * as htmlToImage from 'html-to-image';
+import axios from "axios";
+import { toPng, toJpeg, toSvg, toCanvas } from "html-to-image";
 
 type CustomerOptionProps = {
     value: string;
@@ -39,12 +43,14 @@ const PointOfSale = ({
 }) => {
     
     const [clientOrderLineItems, setClientOrderLineItems] = useState<OrderLineItem[]>([]);
+    //const [newOrderId, setNewOrderId] = useState<number | undefined>(undefined)
+    //const [newCustomerEmail, setNewCustomerEmail] = useState<string | undefined | null>(null)
     const orderLineItems = useAppSelector((state) => state.pos.products)
     const dispatch = useAppDispatch()
 
     useEffect(() => {
         setClientOrderLineItems(orderLineItems || []);
-      }, [orderLineItems]);
+    }, [orderLineItems]);
 
     const sumItems = useMemo(() => orderLineItems.reduce((sum, item) => sum + item.qty, 0), [clientOrderLineItems])
     const total = useMemo(() => orderLineItems.reduce((sum, item) => sum + item.price * item.qty, 0), [clientOrderLineItems])
@@ -54,6 +60,8 @@ const PointOfSale = ({
     
     const [searchResults, setSearchResults] = useState(products);
     const [processing, setProcessing] = useState(false);
+    const [success, setSuccess] = useState(false);
+    
     
     let customerOptions = [] as CustomerOptionProps[] 
     if (!customers) {
@@ -108,7 +116,20 @@ const PointOfSale = ({
         localStorage.setItem("posItem", JSON.stringify(orderLineItems.map(
             (item) => item.id === orderItemId? {...item, qty: item.qty - 1 } : item)));
     }
-    const handleCreateOder = async () => {
+    const clearAll = () => {
+        dispatch(
+            removeProductsfromLocalStorage()
+        )
+        setSuccess(false);
+    }
+    
+    const contentRef = React.useRef<HTMLDivElement>(null)
+    const handlePrint = useReactToPrint({
+        contentRef: contentRef,
+        }
+    )
+
+    const handleCreateOrder = async () => {
 
         setProcessing(true);
         const customerData = {
@@ -124,27 +145,100 @@ const PointOfSale = ({
             orderAmount,
             orderType: "Sale"
         }
+        
         try {
             const res = await createLineOrder(newOrder, customerData)
             const data = res.data
             console.log("Order created", data);
-            if (res.success) {
+            
+            if (res.success) {                
+                const newOrderId = data?.id;
+                const newCustomerEmail = data?.customerEmail;
+
+                // setNewOrderId(newOrderId)
+                // setNewCustomerEmail(newCustomerEmail)
+                setSuccess(true);
                 setProcessing(false);
-                toast.success("Order placed successfully");
-                console.log("Order placed successfully");
-                // Clear the cart
-                dispatch(removeProductsfromLocalStorage());
+                // Wait for state updates to complete and content to render
+                await new Promise(resolve => setTimeout(resolve, 1000)); 
+
+                if (newOrderId && newCustomerEmail)
+
+                await handleSaveReceiptWithRetry(newOrderId, newCustomerEmail);
+                
             }
+            
         } catch (error) {
             console.log("Error creating order", error);
             setProcessing(false);
+        } 
+    }
+
+    // ✅ Function to save receipt with retry logic
+    const handleSaveReceiptWithRetry = async (orderId: number, customerEmail: string) => {
+        let retryCount = 0;
+        const maxRetries = 3;
+
+        while (retryCount < maxRetries) {
+            try {
+                const result = await handleSaveReceipt(orderId, customerEmail);
+                if (result?.data?.success) {
+                    toast.success("✅ Order placed and receipt sent successfully!");
+                    return;
+                } else {
+                    throw new Error("❌ Print failed");
+                }
+            } catch (error: any) {
+                console.error(`⚠️ Print attempt ${retryCount + 1} failed:`, error);
+
+                // Stop retrying if it's a client-side error (400-499)
+                if (error.response?.status >= 400 && error.response?.status < 500) {
+                    toast.error("❌ Order placed but failed to send receipt (Client Error)");
+                    break;
+                }
+
+                retryCount++;
+                if (retryCount === maxRetries) {
+                    toast.error("❌ Order placed but failed to send receipt after multiple attempts");
+                } else {
+                    // Exponential backoff delay (1s → 2s → 4s)
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+                }
+            }
+        }   
+
+        setProcessing(false); // Only setProcessing(false) after all retries
+    };
+
+    const handleSaveReceipt = async (orderId: number, customerEmail: string) => {
+        if (!contentRef.current) return;
+    
+        try {
+        // Convert div to image
+        const dataUrl = await htmlToImage.toPng(contentRef.current);
+        // Change dataUrl to base64 encoded
+        const base64Image = dataUrl.split(',')[1];
+
+        // Send to API
+        const response = await axios.post("/api/send-receipt", {
+          imageData: base64Image as string,
+          email: customerEmail as string,
+          orderId: orderId as number,
+        });
+
+        if (response.data.success) {
+            console.log(`✅ ${response.data.message} successfully!`);
+            toast.success("Receipt saved and emailed successfully!");
+            return response;
+        } else {
+            console.error("❌ Failed to save receipt:", response.data.error);
         }
-    }
-    const clearAll = () => {
-        dispatch(
-            removeProductsfromLocalStorage()
-        )
-    }
+
+        } catch (error) {
+            console.error("Error capturing image:", error);
+        }
+        
+    };
 
   return (
 
@@ -318,14 +412,20 @@ const PointOfSale = ({
                                         variant={"shop"} 
                                         size={"sm"} 
                                         className='w-full'
-                                        onClick={handleCreateOder}
+                                        onClick={handleCreateOrder}
                                     >   
                                         <ShoppingBasket className='size-4'/>
                                         Place an Order
                                     </Button>
                                 )}
                                 <div className='pt-4'>
-                                    <ReceiptPrint />
+                                    <ReceiptPrint 
+                                        contentRef={contentRef} 
+                                        handlePrint={handlePrint}
+                                        success={success}
+                                        setSuccess={setSuccess}
+                                        clearAll={clearAll} 
+                                    />
                                 </div>
                             </div>
                         </div>

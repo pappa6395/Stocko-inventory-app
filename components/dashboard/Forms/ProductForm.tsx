@@ -78,7 +78,7 @@ const ProductForm = ({
       label: item.title,
     }
   });
-  const initialProductCategoryId = initialData?.categoryId || 0;
+  const initialProductCategoryId = initialData?.subCategoryId || 0;
   const initialCategory = categoryOptions?.find(
     (item) => Number(item.value) === initialProductCategoryId);
   const [selectedMainCategory, setSelectedMainCategory] =
@@ -195,8 +195,8 @@ const ProductForm = ({
   const validate = (data: ProductProps) => {
     let newErrors: Partial<ProductProps> = {}
 
-    if (!data.categoryId) {
-      newErrors.categoryId?.toString() ? "Category is required" : "";
+    if (!data.subCategoryId) {
+      newErrors.subCategoryId?.toString() ? "Category is required" : "";
       toast.error("Category is required")
     }
     if (!data.brandId) {
@@ -233,7 +233,7 @@ const ProductForm = ({
     data.productCode = Number(productCode);
     data.barcodeImageUrl = barcodeUrl;
     data.brandId = Number(selectedBrand?.value);
-    data.categoryId = Number(selectedMainCategory?.value);
+    data.subCategoryId = Number(selectedMainCategory?.value);
     data.supplierId = Number(selectedSupplier?.value);
     data.productThumbnail = fileUrls[0]
     data.unitId = Number(selectedUnit?.value);

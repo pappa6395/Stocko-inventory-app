@@ -12,14 +12,16 @@ import AvatarMenu from './Menu/AvatarMenu'
 import QuickAccessMenu from './Menu/QuickAccessMenu'
 import { sidebarLinks } from '@/config/sidebar'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import Logo from '../global/Logo'
 import { User } from '@prisma/client'
 import { SidebarTrigger } from '../ui/sidebar'
 import { Separator } from '../ui/separator'
+import { signOut } from 'next-auth/react'
+import toast from 'react-hot-toast'
 
-const Navbar = ({user}: {user: User}) => {
+const Navbar = ({user}: {user?: User}) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,6 +32,26 @@ const Navbar = ({user}: {user: User}) => {
   const handleToggleMenuMobile = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const router = useRouter();
+    const handleSignOut = async () => {
+        try {
+            const result = await signOut({ redirect: false, callbackUrl: "/login" });
+            console.log("Signed out result:", result);
+    
+            if (typeof window !== "undefined") {
+                localStorage.clear(); 
+                document.cookie = "";
+            }
+    
+            toast.success("✅ Signed out successfully");
+            router.push("/login");
+            
+        } catch (err) {
+            console.error("❌ Failed to sign out:", err);
+            toast.error("❌ Failed to sign out. Please try again.");
+        }
+    };
 
   return (
 
@@ -111,7 +133,7 @@ const Navbar = ({user}: {user: User}) => {
               })}
           </nav>
           <div className="mt-auto">
-            <Button size="sm" className="w-full">
+            <Button type="button" size="sm" className="w-full" onClick={handleSignOut}>
               Logout
             </Button>
           </div>
@@ -133,7 +155,7 @@ const Navbar = ({user}: {user: User}) => {
       </div>
       <QuickAccessMenu />
       <ModeToggle />
-      <AvatarMenu user={user} />
+      {/* <AvatarMenu user={user} /> */}
     </header>
 
   )
