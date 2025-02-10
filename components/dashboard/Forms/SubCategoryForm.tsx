@@ -16,19 +16,13 @@ import { createSubCategory, updateSubCategoryById } from '@/actions/subCategorie
 
 
 type SubCategoryFormProps = {
-  initialData?: SubCategory;
+  initialData?: SubCategory | null;
   editingId?: string;
-  mainCategories: MainCategory[]
-}
-type SelectOptionProps = {
-  value: string;
-  label: string;
 }
 
 const SubCategoryForm = ({
   initialData,
   editingId,
-  mainCategories
 }: SubCategoryFormProps) => {
   
   const {
@@ -45,18 +39,6 @@ const SubCategoryForm = ({
   const router = useRouter()
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const mainCategoryOptions = mainCategories?.map((item) => {
-      return {
-        value: item.id.toString(),
-        label: item.title,
-      }
-  });
-  const initialMainCategoryId = initialData?.categoryId || 0;
-  const initialCategory = mainCategoryOptions?.find(
-    (item) => Number(item.value) === initialMainCategoryId);
-  const [selectedMainCategory, setSelectedMainCategory] =
-  useState<any>(initialCategory);
 
   const saveCategory = async(data: SubCategoryProps) => {
     

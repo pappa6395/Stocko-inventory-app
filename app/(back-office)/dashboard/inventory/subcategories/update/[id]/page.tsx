@@ -1,22 +1,22 @@
 
-import { PageProps } from '@/.next/types/app/(back-office)/dashboard/inventory/categories/new/page';
-import { getCategoryById } from '@/actions/category';
-import CategoryForm from '@/components/dashboard/Forms/CategoryForm';
+
+import { getSubCategoryById } from '@/actions/subCategories';
+import SubCategoryForm from '@/components/dashboard/Forms/SubCategoryForm';
 import React from 'react'
 
 
-const page = async ({params: paramsPromise}: PageProps) => {
+const page = async ({params: paramsPromise}: any) => {
 
     const { id } = await paramsPromise;
 
-    const category = await getCategoryById(id) || null
+    const subCategory = await getSubCategoryById(id) || null
 
   
     return (
   
       <div>
-          <CategoryForm 
-            initialData={category ?? null}
+          <SubCategoryForm 
+            initialData={subCategory ?? null}
             editingId={id ?? ""}
             />
       </div>
