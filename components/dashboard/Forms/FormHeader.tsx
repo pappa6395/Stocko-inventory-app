@@ -48,10 +48,10 @@ const FormHeader = ({
             <div className='mr-4 flex gap-2'>
                 <CloseBtn href={href} size="sm" parent={parent} />
                 <SubmitButton
-                    title={`Save ${title}`}
+                    title={editingId ? `Update ${title}` : `Save ${title}`}
                     size={"sm"}
                     loading={loading} 
-                    loadingTitle={loading ? `Saving ${title}` : `Save ${title}`}
+                    loadingTitle={editingId ? `Updating...` : `Saving...`}
                 />
             </div>
         </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { Category, LineOrder, Products } from '@prisma/client'
+import { Category, LineOrder, Products, SubCategory } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -31,12 +31,12 @@ type CustomerOptionProps = {
 }
 
 const PointOfSale = ({
-    categories,
+    subCategories,
     products,
     customers, 
     cate
 }: {
-    categories?: Category[]; 
+    subCategories?: SubCategory[]; 
     products?: Products[];
     customers?: ICustomer[];
     cate: string;
@@ -246,7 +246,7 @@ const PointOfSale = ({
         divide-gray-200 min-h-screen">
             <div className='col-span-full md:col-span-9 px-3'>
                 <ScrollArea className="w-full whitespace-nowrap">
-                    <div className='gap-2 space-x-1'>
+                    <div className='space-x-1 items-center flex mt-1'>
                         <Button 
                             variant={"outline"} 
                             size={"sm"} 
@@ -265,7 +265,7 @@ const PointOfSale = ({
                                 <h3 className='text-sm font-medium truncate'>All</h3>
                             </Link>
                         </Button>
-                        {categories && categories.map((category, index) => {
+                        {subCategories && subCategories.map((category, index) => {
                             return (
                                 <Button 
                                     key={index} 
@@ -276,13 +276,13 @@ const PointOfSale = ({
                                     cate === `${category.id}` ? "bg-slate-400" : "")}
                                 >
                                     <Link href={`/pos?cate=${category.id}`} className='flex gap-2'>
-                                        <Image 
+                                        {/* <Image 
                                             src={category?.imageUrl ?? "/placeholder.svg"}
                                             alt='category'
                                             width={200}
                                             height={200}
                                             className='size-6 rounded-full'
-                                        />
+                                        /> */}
                                         <h3 className='text-sm font-medium truncate'>{category.title}</h3>
                                     </Link>
                                 </Button>

@@ -11,13 +11,13 @@ import { ProductProps } from '@/type/types'
 import { generateSlug } from '@/lib/generateSlug'
 import toast from 'react-hot-toast'
 import SubmitButton from '@/components/global/FormInputs/SubmitButton'
-import { Brand, Category, Products, Supplier, Unit, Warehouse } from '@prisma/client'
+import { Brand, Category, Products, SubCategory, Supplier, Unit, Warehouse } from '@prisma/client'
 import TextInput from '@/components/global/FormInputs/TextInputForm'
 import FormSelectInput from '@/components/global/FormInputs/FormSelectInput'
 import { createProduct, updateProductById } from '@/actions/products'
 import TextArea from '@/components/global/FormInputs/TextAreaInput'
 import JsBarcode from 'jsbarcode'
-import { Barcode, Binary } from 'lucide-react'
+import { Barcode, Binary, ChevronLeft } from 'lucide-react'
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { Badge } from '@/components/ui/badge'
@@ -33,7 +33,7 @@ import CloseBtn from '@/components/global/FormInputs/CloseBtn'
 type ProductFormProps = {
   initialData?: Products | null;
   editingId?: string;
-  productCategories: Category[];
+  productSubCategories: SubCategory[];
   productBrands: Brand[];
   productSuppliers: Supplier[];
   productUnits: Unit[];
@@ -42,7 +42,7 @@ type ProductFormProps = {
 const ProductForm = ({
   initialData,
   editingId,
-  productCategories,
+  productSubCategories,
   productBrands,
   productSuppliers,
   productUnits
@@ -72,17 +72,17 @@ const ProductForm = ({
   const router = useRouter()
 
   // Categories
-  const categoryOptions = productCategories?.map((item) => {
+  const subCategoryOptions = productSubCategories?.map((item) => {
     return {
       value: item.id.toString(),
       label: item.title,
     }
   });
-  const initialProductCategoryId = initialData?.subCategoryId || 0;
-  const initialCategory = categoryOptions?.find(
-    (item) => Number(item.value) === initialProductCategoryId);
-  const [selectedMainCategory, setSelectedMainCategory] =
-  useState<any>(initialCategory);
+  const initialProductSubCategoryId = initialData?.subCategoryId || 0;
+  const initialSubCategory = subCategoryOptions?.find(
+    (item) => Number(item.value) === initialProductSubCategoryId);
+  const [selectedSubCategory, setSelectedSubCategory] =
+  useState<any>(initialSubCategory);
 
   // Brands
   const brandOptions = productBrands?.map((item) => {
@@ -155,6 +155,17 @@ const ProductForm = ({
   }
   const [status, setStatus] = useState<any>(initialStatus);
   
+  // IsFeatured
+  const isFeaturedOptions: any[] = [
+    { value: true },
+    { value: false },
+  ];
+  const initialIsFeaturedValue = initialData?.isFeatured || false;
+  const initialIsFeatured = isFeaturedOptions?.find(
+    (item) => item.value === initialIsFeaturedValue
+  );
+  const [isFeatured, setIsFeatured] = useState<any>(initialIsFeatured);
+
 
   // Tax Method
   const taxMethodOptions: any[] = [
@@ -233,7 +244,7 @@ const ProductForm = ({
     data.productCode = Number(productCode);
     data.barcodeImageUrl = barcodeUrl;
     data.brandId = Number(selectedBrand?.value);
-    data.subCategoryId = Number(selectedMainCategory?.value);
+    data.subCategoryId = Number(selectedSubCategory?.value);
     data.supplierId = Number(selectedSupplier?.value);
     data.productThumbnail = fileUrls[0]
     data.unitId = Number(selectedUnit?.value);
@@ -391,12 +402,25 @@ const ProductForm = ({
   return (
 
     <div>
-      <FormHeader 
-        title={"Product"} 
-        editingId={editingId}
-        href={"/products"}
-        loading={isLoading} 
-      />
+      <div className="grid flex-1 auto-rows-max gap-4">
+        <div className="flex items-center justify-between gap-4">
+            <div className='flex gap-3'>
+                <Button 
+                    onClick={handleBack}
+                    variant="outline" 
+                    type="button"
+                    size="icon" 
+                    className="h-7 w-7"
+                >
+                    <ChevronLeft className="h-4 w-4" />
+                    <span className="sr-only">Back</span>
+                </Button>
+                <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+                    {editingId ? "Update Product" : "Create Product"}
+                </h1>
+            </div>
+        </div>
+    </div>
       <div className={cn(step === 1 ? 'grid grid-cols-1 sm:grid-cols-12 py-4 w-full' : "")}>
         {step === 2 ? "" : (
           <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
@@ -424,12 +448,12 @@ const ProductForm = ({
                     <div className="grid md:grid-cols-2 gap-3">
                           <div className="flex space-x-2 items-end">
                             <FormSelectInput
-                            label="Categories"
-                            options={categoryOptions}
-                            option={selectedMainCategory}
-                            setOption={setSelectedMainCategory}
-                            toolTipText='Add new category'
-                            href={"/dashboard/inventory/categories/new"}
+                            label="Sub Categories"
+                            options={subCategoryOptions}
+                            option={selectedSubCategory}
+                            setOption={setSelectedSubCategory}
+                            toolTipText='Add new Subcategory'
+                            href={"/dashboard/inventory/subcategories/new"}
                             />
                           </div>
                           <div className="flex space-x-2 items-end">
@@ -497,6 +521,8 @@ const ProductForm = ({
                                     id="featured"
                                     name="isFeatured"
                                     type="checkbox"
+                                    checked={isFeatured}
+                                    onChange={(e) => setIsFeatured(e.target.checked)}
                                     className="col-start-1 row-start-1 appearance-none 
                                     rounded-sm border border-gray-300 bg-white 
                                     checked:border-indigo-600 checked:bg-indigo-600 

@@ -8,16 +8,16 @@ import React, { ReactNode } from 'react'
 
 const Layout = async({children}: {children: ReactNode}) => {
 
-  //const session = await getServerSession(authOptions)
-  //const userId = session?.user.id || "";
-  //const userById = (await getUserById(userId))?.data as User
+  const session = await getServerSession(authOptions)
+  const userId = session?.user.id || "";
+  const userById = (await getUserById(userId))?.data as User
 
   return (
 
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <Sidebar />
       <div className="flex flex-col">
-        <Navbar />
+        <Navbar user={userById}/>
         <div className='py-8 px-4 max-w-6xl mx-auto w-full my-4'>
         {children}
         </div>

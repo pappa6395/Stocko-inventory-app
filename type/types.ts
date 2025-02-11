@@ -1,5 +1,5 @@
 
-import { Customers, Role, User } from "@prisma/client";
+import { Category, Customers, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -221,6 +221,14 @@ export interface IUser extends User {
 
 export interface ICustomer extends Customers {
     user: IUser
+}
+
+export interface ICategory extends Category {
+    mainCategory: MainCategory
+}
+
+export interface ISubCategory extends SubCategory {
+    category: Category
 }
 
 export type ReceiptProps = {

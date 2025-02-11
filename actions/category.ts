@@ -39,6 +39,9 @@ export async function getAllCategories() {
             orderBy: {
                 title: "asc",
 
+            },
+            include: {
+                mainCategory: true
             }
         });
 

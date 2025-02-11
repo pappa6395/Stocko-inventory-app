@@ -1,9 +1,8 @@
 "use client"
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
-import { Upload } from 'lucide-react'
 import React, { useState } from 'react'
 import FormHeader from './FormHeader'
 import { useRouter } from 'next/navigation'
@@ -12,8 +11,6 @@ import Select from "react-tailwindcss-select";
 import { useForm } from 'react-hook-form';
 import { CategoryProps } from '@/type/types'
 import TextInput from '@/components/global/FormInputs/TextInputForm'
-import { uploadFile } from '@/utils/uploadFile'
-import Image from 'next/image'
 import { generateSlug } from '@/lib/generateSlug'
 import { createCategory, updateCategoryById } from '@/actions/category'
 import toast from 'react-hot-toast'
@@ -89,6 +86,7 @@ const CategoryForm = ({
       data.imageUrl = fileUrl;
       data.status = status?.value as boolean;
       data.slug = generateSlug(data.title);
+      data.mainCategoryId = Number(selectedMainCategory.value);
       if (editingId) {
         const updateCategory = await updateCategoryById(editingId, data)
         console.log("Updated category:", updateCategory);

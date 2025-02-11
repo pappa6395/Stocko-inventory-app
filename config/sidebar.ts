@@ -31,12 +31,12 @@ export const sidebarLinks: ISidebarLink[] = [
       dropdown: true,
       dropdownMenu: [
         {
-          label: 'Categories',
-          href: '/dashboard/inventory/categories',
-        },
-        {
           label: 'Main Categories',
           href: '/dashboard/inventory/main-categories',
+        },
+        {
+          label: 'Categories',
+          href: '/dashboard/inventory/categories',
         },
         {
           label: 'SubCategories',

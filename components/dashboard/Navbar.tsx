@@ -21,7 +21,7 @@ import { Separator } from '../ui/separator'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
 
-const Navbar = ({user}: {user?: User}) => {
+const Navbar = ({user}: {user: User}) => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -155,7 +155,7 @@ const Navbar = ({user}: {user?: User}) => {
       </div>
       <QuickAccessMenu />
       <ModeToggle />
-      {/* <AvatarMenu user={user} /> */}
+      <AvatarMenu user={user} />
     </header>
 
   )

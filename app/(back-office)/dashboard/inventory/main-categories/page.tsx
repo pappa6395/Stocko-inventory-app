@@ -2,14 +2,15 @@
 import { getAllCategories } from '@/actions/category'
 import React from 'react'
 import { columns } from './columns'
-import { Category } from '@prisma/client'
+import { Category, MainCategory } from '@prisma/client'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
+import { getAllMainCategories } from '@/actions/main-categories'
 
 
 const page = async () => {
 
-  const categories = await getAllCategories() as Category[]
+  const mainCategories = await getAllMainCategories() as MainCategory[]
 
   return (
 
@@ -18,11 +19,11 @@ const page = async () => {
         title="Main Categories"
         linkTitle="Add Main Category"
         href="/dashboard/inventory/main-categories/new"
-        data={categories}
+        data={mainCategories}
         model="mainCategory"
       />
          <div className="py-8">
-        <DataTable data={categories} columns={columns} />
+        <DataTable data={mainCategories} columns={columns} />
       </div>
     </div>
 

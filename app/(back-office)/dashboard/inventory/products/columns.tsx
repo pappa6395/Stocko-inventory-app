@@ -1,8 +1,5 @@
 "use client";
  
-import Image from "next/image";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
  
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
@@ -10,7 +7,7 @@ import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColu
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Category, Products } from "@prisma/client";
+import { Products } from "@prisma/client";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
 
 export interface IProducts extends Products {
@@ -58,11 +55,11 @@ export const columns: ColumnDef<IProducts>[] = [
   },
   {
     //accessorFn: (row) => row.category.title,   // Etracting string from array
-    accessorKey: "category",
-    header: "Category",
+    accessorKey: "subCategory",
+    header: "Sub Category",
     cell: ({ row }) => {
-      const product = row.original?.subCategory.title || "N/A"
-      return <p>{product}</p>
+      const subCategory = row.original?.subCategory.title || "N/A"
+      return <p>{subCategory}</p>
     }
   },
   {

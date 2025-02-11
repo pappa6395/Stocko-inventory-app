@@ -4,6 +4,7 @@ import { PageProps } from '@/.next/types/app/(back-office)/dashboard/inventory/c
 import { getAllBrands } from '@/actions/brand';
 import { getAllCategories } from '@/actions/category';
 import { getProductById } from '@/actions/products';
+import { getAllSubCategories } from '@/actions/subCategories';
 import { getAllSuppliers } from '@/actions/suppliers';
 import { getAllUnits } from '@/actions/units';
 import ProductForm from '@/components/dashboard/Forms/ProductForm';
@@ -14,7 +15,7 @@ const page = async ({params: paramsPromise}: PageProps) => {
     const { id } = await paramsPromise;
 
     const product = await getProductById(id) || null;
-    const categories = await getAllCategories() || [];
+    const subCategories = await getAllSubCategories() || [];
     const brands = await getAllBrands() || [];
     const suppliers = await getAllSuppliers() || []
     const units = await getAllUnits() || []
@@ -25,7 +26,7 @@ const page = async ({params: paramsPromise}: PageProps) => {
           <ProductForm 
             initialData={product ?? null}
             editingId={id ?? ""}
-            productCategories={categories ?? []}
+            productSubCategories={subCategories ?? []}
             productBrands={brands ?? []}
             productSuppliers={suppliers ?? []}
             productUnits={units ?? []}

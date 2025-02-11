@@ -82,20 +82,20 @@ export async function getAllProducts() {
     }
 }
 
-export async function getProductsByCategoryId(categoryId: string) {
+export async function getProductsBySubCategoryId(subCategoryId: string) {
     
     try {
-        if (categoryId && categoryId === 'all') {
+        if (subCategoryId && subCategoryId === 'all') {
             const products = await prismaClient.products.findMany();
             return {
                 ok: true,
                 data: products,
                 error: null
             }
-        } else if (categoryId && categoryId !== 'all') {
+        } else if (subCategoryId && subCategoryId !== 'all') {
             const products = await prismaClient.products.findMany({
                 where: {
-                    subCategoryId: Number(categoryId)
+                    subCategoryId: Number(subCategoryId)
                 },
             });
             return {

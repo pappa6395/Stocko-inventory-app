@@ -31,6 +31,8 @@ import { deleteUnitById } from "@/actions/units";
 import { deleteProductById } from "@/actions/products";
 import { deleteRoleById } from "@/actions/roles";
 import { deleteUserById } from "@/actions/users";
+import { deleteMainCategoryById } from "@/actions/main-categories";
+import { deleteSubCategoryById } from "@/actions/subCategories";
  
 type ActionColumnProps = {
   row: any;
@@ -52,6 +54,18 @@ export default function ActionColumn({
     try {
       if (model === "category") {
         const res = await deleteCategoryById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "mainCategory") {
+        const res = await deleteMainCategoryById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "subCategory") {
+        const res = await deleteSubCategoryById(id);
         if (res?.ok) {
           window.location.reload();
         }

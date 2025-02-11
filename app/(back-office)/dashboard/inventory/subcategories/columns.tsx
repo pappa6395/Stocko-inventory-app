@@ -1,18 +1,14 @@
 "use client";
  
-import Image from "next/image";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
  
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
-import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColumn";
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Category } from "@prisma/client";
-import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-export const columns: ColumnDef<Category>[] = [
+import { ISubCategory } from "@/type/types";
+
+export const columns: ColumnDef<ISubCategory>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,20 +32,18 @@ export const columns: ColumnDef<Category>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "imageUrl",
-    header: "Category Image",
-    cell: ({ row }) => <ImageColumn row={row} accessorKey="imageUrl" />,
-  },
-  {
     accessorKey: "title",
     header: ({ column }) => <SortableColumn column={column} title="Title" />,
   },
   {
-    accessorKey: "status",
-    header: "Status",
-    cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,
+    //accessorFn: (row) => row.category.title,   // Etracting string from array
+    accessorKey: "category",
+    header: "Category",
+    cell: ({ row }) => {
+      const subCategory = row.original.category?.title || "N/A"
+      return <p>{subCategory}</p>
+    }
   },
- 
   {
     accessorKey: "createdAt",
     header: "Date Created",
@@ -58,13 +52,13 @@ export const columns: ColumnDef<Category>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const category = row.original;
+      const subCategory = row.original;
       return (
         <ActionColumn
           row={row}
-          model="category"
-          editEndpoint={`categories/update/${category.id}`}
-          id={(category.id)}
+          model="subCategory"
+          editEndpoint={`subcategories/update/${subCategory.id}`}
+          id={(subCategory.id)}
         />
       );
     },

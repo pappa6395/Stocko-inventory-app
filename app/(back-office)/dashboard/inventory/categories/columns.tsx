@@ -12,7 +12,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import { Category } from "@prisma/client";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-export const columns: ColumnDef<Category>[] = [
+import { ICategory } from "@/type/types";
+
+export const columns: ColumnDef<ICategory>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -43,6 +45,15 @@ export const columns: ColumnDef<Category>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => <SortableColumn column={column} title="Title" />,
+  },
+  {
+    //accessorFn: (row) => row.category.title,   // Etracting string from array
+    accessorKey: "mainCategory",
+    header: "Main Category",
+    cell: ({ row }) => {
+      const mainCategory = row.original.mainCategory?.title || "N/A"
+      return <p>{mainCategory}</p>
+    }
   },
   {
     accessorKey: "status",
