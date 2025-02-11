@@ -10,7 +10,6 @@ import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColu
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Category } from "@prisma/client";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
 import { ICategory } from "@/type/types";
 
