@@ -2,7 +2,6 @@
 
 import { PageProps } from '@/.next/types/app/(back-office)/dashboard/inventory/categories/new/page';
 import { getAllBrands } from '@/actions/brand';
-import { getAllCategories } from '@/actions/category';
 import { getProductById } from '@/actions/products';
 import { getAllSubCategories } from '@/actions/subCategories';
 import { getAllSuppliers } from '@/actions/suppliers';

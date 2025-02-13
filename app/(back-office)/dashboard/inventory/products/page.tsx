@@ -1,6 +1,6 @@
 
 import React from 'react'
-import { columns, IProducts } from './columns'
+import { columns } from './columns'
 import { Products, Supplier } from '@prisma/client'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
