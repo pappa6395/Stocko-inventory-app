@@ -9,58 +9,43 @@ import { useRouter } from 'next/navigation'
 import TextArea from '@/components/global/FormInputs/TextAreaInput'
 import Select from "react-tailwindcss-select";
 import { useForm } from 'react-hook-form';
-import { CategoryProps } from '@/type/types'
+import { BannerProps, CategoryProps } from '@/type/types'
 import TextInput from '@/components/global/FormInputs/TextInputForm'
 import { generateSlug } from '@/lib/generateSlug'
 import { createCategory, updateCategoryById } from '@/actions/category'
 import toast from 'react-hot-toast'
 import SubmitButton from '@/components/global/FormInputs/SubmitButton'
 import ImageInput from '@/components/global/FormInputs/ImageInput'
-import { Category, MainCategory } from '@prisma/client'
+import { Banner, Category, MainCategory } from '@prisma/client'
 import FormSelectInput from '@/components/global/FormInputs/FormSelectInput'
+import { createBanner, updateBannerById } from '@/actions/banners'
 
 
-type CategoryFormProps = {
-  initialData?: Category | null;
+type BannerFormProps = {
+  initialData?: Banner | null;
   editingId?: string;
-  mainCategories: MainCategory[]
 }
 
-const CategoryForm = ({
+const BannerForm = ({
   initialData,
   editingId,
-  mainCategories
-}: CategoryFormProps) => {
+}: BannerFormProps) => {
   
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<CategoryProps>({
+  } = useForm<BannerProps>({
     defaultValues: {
       title: initialData?.title?? "",
-      description: initialData?.description?? "",
-      imageUrl: initialData?.imageUrl?? "",
-      status: initialData?.status?? true,
-      slug: initialData?.slug?? "",
+      bannerLink: initialData?.bannerLink?? "",
+      position: initialData?.position?? "",
+      
     }
   });
 
   const router = useRouter()
-
-  // Main Categories
-  const mainCategoryOptions = mainCategories?.map((item) => {
-      return {
-        value: item.id.toString(),
-        label: item.title,
-      }
-    });
-    const initialMainCategoryId = initialData?.mainCategoryId || 0;
-    const initialCategory = mainCategoryOptions?.find(
-      (item) => Number(item.value) === initialMainCategoryId);
-    const [selectedMainCategory, setSelectedMainCategory] =
-    useState<any>(initialCategory);
 
   // Status
   const initialStatus = {
@@ -78,38 +63,32 @@ const CategoryForm = ({
     { value: false, label: "Disabled" },
   ];
 
-  const saveCategory = async(data: CategoryProps) => {
-
-    if (!selectedMainCategory) {
-      toast.error("Please select a main category");
-      return;
-    }
+  const saveBanner = async(data: BannerProps) => {
     
     try {
       setIsLoading(true);
       
       data.imageUrl = fileUrl;
       data.status = status?.value as boolean;
-      data.slug = generateSlug(data.title);
-      data.mainCategoryId = Number(selectedMainCategory.value);
+
       if (editingId) {
-        const updateCategory = await updateCategoryById(editingId, data)
-        console.log("Updated category:", updateCategory);
+        const updateBanner = await updateBannerById(editingId, data)
+        console.log("Updated banner:", updateBanner);
         
-        if (updateCategory) {
+        if (updateBanner) {
           toast.success("Successfully updated");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/categories`);
+          router.push(`/dashboard/inventory/banners`);
         }
       } else {
-        const newCategory = await createCategory(data);
+        const newBanner = await createBanner(data);
         
-        if (newCategory) {
+        if (newBanner) {
           toast.success("Successfully created");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/categories`);
+          router.push(`/dashboard/inventory/banners`);
         }
       }
       
@@ -125,12 +104,12 @@ const CategoryForm = ({
   return (
 
     <div>
-      <FormHeader title={"Category"} editingId={editingId} href={"/categories"} loading={isLoading} />
+      <FormHeader title={"Banner"} editingId={editingId} href={"/banners"} loading={isLoading} />
       <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
         <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>
           <ImageInput 
-            title="Category Image"
-            description="Update the category image"
+            title="Banner Image"
+            description="Update the banner image"
             fileUrl={fileUrl}
             setFileUrl={setFileUrl}
             file={file}
@@ -138,29 +117,19 @@ const CategoryForm = ({
           /> 
         </div>  
         <form 
-          onSubmit={handleSubmit(saveCategory)} 
+          onSubmit={handleSubmit(saveBanner)} 
           className='grid md:col-span-8 col-span-full gap-4'>
           <div className='space-y-4 px-4'>
             {/* Category Status */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Category</CardTitle>
-                    <CardDescription>Update the product details</CardDescription>
+                    <CardTitle>Banner</CardTitle>
+                    <CardDescription>Update the banner details</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                    <div className="space-x-2">
-                      <FormSelectInput
-                        label="Main Categories"
-                        options={mainCategoryOptions}
-                        option={selectedMainCategory}
-                        setOption={setSelectedMainCategory}
-                        toolTipText='Add new main category'
-                        href={"/dashboard/inventory/main-categories/new"}
-                      />
-                    </div>
                     <div className="grid gap-3 pt-1.5">
-                        <Label htmlFor="category">Status</Label>
+                        <Label htmlFor="banner">Status</Label>
                         <Select
                           value={status}
                           onChange={(value: any) => setStatus(value)}
@@ -174,8 +143,8 @@ const CategoryForm = ({
             {/* Category Details */}
             <Card>
                 <CardHeader>
-                    <CardTitle>Category Details</CardTitle>
-                    <CardDescription>Update the Category details</CardDescription>
+                    <CardTitle>Banner Details</CardTitle>
+                    <CardDescription>Update the banner details</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div className="grid gap-6">
@@ -188,11 +157,19 @@ const CategoryForm = ({
                           />
                         </div>
                         <div className="grid gap-3">
-                          <TextArea
+                        <TextInput
                             register={register}
                             errors={errors}
-                            label="Description"
-                            name="description"
+                            label="Position"
+                            name="position"
+                          />
+                        </div>
+                        <div className="grid gap-3">
+                        <TextInput
+                            register={register}
+                            errors={errors}
+                            label="Banner Link"
+                            name="bannerLink"
                           />
                         </div>
                     </div>
@@ -210,7 +187,7 @@ const CategoryForm = ({
                 </Button>
                 <SubmitButton
                   size={"sm"}
-                  title={editingId ? "Update Category" : "Save Category"}
+                  title={editingId ? "Update Banner" : "Save Banner"}
                   loading={isLoading}
                 />
               </div>
@@ -219,8 +196,8 @@ const CategoryForm = ({
         </form>
         <div className='hidden md:grid sm:col-span-4 col-span-full space-y-6'>
           <ImageInput 
-            title="Category Image"
-            description="Update the category image"
+            title="Banner Image"
+            description="Update the banner image"
             fileUrl={fileUrl}
             setFileUrl={setFileUrl}
             file={file}
@@ -233,4 +210,4 @@ const CategoryForm = ({
   )
 }
 
-export default CategoryForm
+export default BannerForm

@@ -55,16 +55,17 @@ const ProductForm = ({
     formState: { errors },
   } = useForm<ProductProps>({
     defaultValues: {
-      name: initialData?.name || "Hello World",
-      stockQty: initialData?.stockQty || 100,
+      name: initialData?.name || "",
+      stockQty: initialData?.stockQty || 50,
       saleUnit: initialData?.saleUnit || 0,
       productCost: initialData?.productCost || 50,
       productPrice: initialData?.productPrice || 100,
-      alertQuantity: initialData?.alertQuantity || 20,
-      productDetails: initialData?.productDetails || "Product details",
+      alertQuantity: initialData?.alertQuantity || 10,
+      productDetails: initialData?.productDetails || "",
       productTax: initialData?.productTax,
       taxMethod: initialData?.taxMethod || "Tax Method",
       batchNumber: initialData?.batchNumber || "",
+      isFeatured: initialData?.isFeatured || false,
       expiryDate: convertIsoToDateString(initialData?.expiryDate || new Date()),
     }
   });
@@ -136,6 +137,7 @@ const ProductForm = ({
   const initialBarcodeImageUrl = initialData?.barcodeImageUrl || ""
   const [barcodeImage, setBarcodeImage] = useState<string>("");
   const [barcodeUrl, setBarcodeUrl] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
 
   // Code Symbology
   const initialSymbology = initialData && initialData?.codeSymbology || "CODE128";
@@ -156,15 +158,8 @@ const ProductForm = ({
   const [status, setStatus] = useState<any>(initialStatus);
   
   // IsFeatured
-  const isFeaturedOptions: any[] = [
-    { value: true },
-    { value: false },
-  ];
   const initialIsFeaturedValue = initialData?.isFeatured || false;
-  const initialIsFeatured = isFeaturedOptions?.find(
-    (item) => item.value === initialIsFeaturedValue
-  );
-  const [isFeatured, setIsFeatured] = useState<any>(initialIsFeatured);
+  const [isFeatured, setIsFeatured] = useState(initialIsFeaturedValue);
 
 
   // Tax Method
@@ -172,7 +167,7 @@ const ProductForm = ({
     { value: "exclusive", label: "Exclusive" },
     { value: "inclusive", label: "Inclusive" },
   ];
-  const initialTaxMethodValue = initialData?.taxMethod || "";
+  const initialTaxMethodValue = initialData?.taxMethod || "inclusive";
   const initialTaxMethod = taxMethodOptions?.find(
     (item) => item.value === initialTaxMethodValue
   );
@@ -183,7 +178,7 @@ const ProductForm = ({
     { value: 7, label: "VAT 7%" },
     { value: 10, label: "VAT 10%" },
   ];
-  const initialProductTaxValue = initialData?.productTax || 0;
+  const initialProductTaxValue = initialData?.productTax || 7;
   const initialProductTax = productTaxOptions?.find(
     (item) => item.value === initialProductTaxValue
   );
@@ -646,9 +641,9 @@ const ProductForm = ({
                                   </Button>
                                 </div>
                                 {barcodeImage && (
-                                  <Dialog>
+                                  <Dialog open={isOpen}>
                                   <DialogTrigger asChild>
-                                    <Button variant="outline">
+                                    <Button variant="outline" onClick={() => setIsOpen(true)}>
                                       <Barcode />
                                     </Button>
                                   </DialogTrigger>
@@ -666,6 +661,7 @@ const ProductForm = ({
                                         file={base64ToFile(barcodeImage, "barcode.png")}
                                         isLoading={isLoading}
                                         initialBarcode={initialData?.barcodeImageUrl || ""}
+                                        setIsOpen={setIsOpen}
                                       />
                                       <p>Product Code: <strong>{productCode}</strong></p>
                                     </div>

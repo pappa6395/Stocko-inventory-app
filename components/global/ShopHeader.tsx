@@ -3,7 +3,7 @@
 import React from 'react'
 import Logo from './Logo'
 import { Button } from '../ui/button'
-import { LayoutGrid, ShoppingBasket } from 'lucide-react'
+import { HelpCircle, LayoutGrid, ShoppingBasket, ShoppingCart } from 'lucide-react'
 import { ModeToggle } from './mode-toggle'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -13,6 +13,9 @@ import { signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+import HelpMenu from '../frontend/HelpMenu'
+import CartMenu from '../frontend/CartMenu'
+import { MobileMenu } from '../frontend/MobileMenu'
 
 const ShopHeader = ({user}: {user: User | undefined | null}) => {
 
@@ -35,84 +38,93 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
 
   return (
     <header className='py-3'>
-        <div className='container'>
-            <div className='flex items-center justify-between gap-2'>
+        <div className='container max-w-6xl pb-3 border-b'>
+            {/* Desktop Version */}
+            <nav className='hidden sm:flex items-center justify-between gap-6'>
                 <div className="flex items-center gap-2">
                     <Logo
                         classNameFrame='size-12'
                         classNameLogo='size-10'
                         classNameText='text-xl' 
                     />
-                    <Button variant={"outline"} className='rounded-lg'>
-                        <LayoutGrid className='size-4' />
-                        <span className='text-xs'>Catalog</span>
-                    </Button>
                 </div>
                 <div className="flex-1">
-                        <input 
-                            type="search" 
-                            name="search" 
-                            id="search" 
-                            autoComplete="search"
-                            placeholder='Search here...' 
-                            required 
-                            className="block w-full rounded-md bg-white px-3 
-                            py-1.5 text-base text-gray-900 outline outline-1 
-                            -outline-offset-1 outline-gray-300 placeholder:text-gray-400 
-                            focus:outline focus:outline-2 focus:-outline-offset-2 
-                            focus:outline-indigo-600 sm:text-sm/6" 
-                        />
-                    </div>
-                    <div className="flex gap-1">
-                        <Button 
-                            variant={"outline"} 
-                            size={"icon"} 
-                            className='rounded-full'
-                        >
-                            <ShoppingBasket className='size-6 rounded-full'/>
-                        </Button>
-                        {user ? (
-                             <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                    <Button 
-                                        variant={"outline"} 
-                                        size={"icon"} 
-                                        className='rounded-full'>
-                                        <Avatar>
-                                            <AvatarImage src={user?.profileImage ?? "/profile.svg"} alt="profile" className='object-fit rounded' />
-                                            <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
-                                        </Avatar>
-                                    </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Link href="/dashboard">
-                                        Dashboard
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>Settings</DropdownMenuItem>
-                                <DropdownMenuItem>Support</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
-                                        Log out
-                                    </Button>
-                                </DropdownMenuItem>
-                                </DropdownMenuContent>
-                            </DropdownMenu>
-                        ) : (
-                            <Button  asChild type="button" variant={"ghost"} size={"lg"}>
-                                <Link href="/login">
-                                    Login
+                    <input 
+                        type="search" 
+                        name="search" 
+                        id="search" 
+                        autoComplete="search"
+                        placeholder='Search here...' 
+                        required 
+                        className="block w-full rounded-md bg-white px-3 
+                        py-1.5 text-base text-gray-900 outline outline-1 
+                        -outline-offset-1 outline-gray-300 placeholder:text-gray-400 
+                        focus:outline focus:outline-2 focus:-outline-offset-2 
+                        focus:outline-indigo-600 sm:text-sm/6" 
+                    />
+                </div>
+                <div>
+                    <HelpMenu />
+                </div>  
+                <div className="flex gap-1">
+                    {user ? (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button 
+                                    variant={"outline"} 
+                                    size={"icon"} 
+                                    className='rounded-full'>
+                                    <Avatar>
+                                        <AvatarImage src={user?.profileImage ?? "/profile.svg"} alt="profile" className='object-cover rounded' />
+                                        <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
+                                    </Avatar>
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Link href="/dashboard">
+                                    Dashboard
                                 </Link>
-                            </Button>
-                        )}
-                        
-                    </div>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>Settings</DropdownMenuItem>
+                            <DropdownMenuItem>Support</DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                                <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
+                                    Log out
+                                </Button>
+                            </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    ) : (
+                        <Button  asChild type="button" variant={"ghost"} size={"lg"}>
+                            <Link href="/login">
+                                Login
+                            </Link>
+                        </Button>
+                    )}
+                    
+                </div>
+                <CartMenu />
                 <ModeToggle />
-            </div>
+            </nav>
+            {/* Mobile  Version */}
+            <nav className="sm:hidden flex items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                    <MobileMenu />
+                    <div className="">
+                    <Logo
+                        classNameFrame='size-12'
+                        classNameLogo='size-10'
+                        classNameText='text-xl' 
+                    />
+                    </div>
+                </div>
+                <CartMenu />
+            </nav>
+           
         </div>
     </header>
   )

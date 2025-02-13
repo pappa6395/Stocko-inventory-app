@@ -33,6 +33,8 @@ import { deleteRoleById } from "@/actions/roles";
 import { deleteUserById } from "@/actions/users";
 import { deleteMainCategoryById } from "@/actions/main-categories";
 import { deleteSubCategoryById } from "@/actions/subCategories";
+import { deleteBannerById } from "@/actions/banners";
+import { deleteAdvertById } from "@/actions/adverts";
  
 type ActionColumnProps = {
   row: any;
@@ -72,6 +74,18 @@ export default function ActionColumn({
         toast.success(`${model} Deleted Successfully`);
       } else if (model === "brand") {
         const res = await deleteBrandById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "banner") {
+        const res = await deleteBannerById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "advert") {
+        const res = await deleteAdvertById(id);
         if (res?.ok) {
           window.location.reload();
         }

@@ -1,17 +1,16 @@
 "use client";
  
-import { Checkbox } from "@/components/ui/checkbox";
- 
+
+import { Checkbox } from "@/components/ui/checkbox"; 
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
 import ImageColumn from "@/components/dashboard/Table/dataTableColumns/ImageColumn";
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-import { IProducts } from "@/type/types";
+import { Banner } from "@prisma/client";
 
-
-export const columns: ColumnDef<IProducts>[] = [
+export const columns: ColumnDef<Banner>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -35,41 +34,20 @@ export const columns: ColumnDef<IProducts>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "productThumbnail",
-    header: "Product Image",
-    cell: ({ row }) => <ImageColumn row={row} accessorKey="productThumbnail" />,
+    accessorKey: "imageUrl",
+    header: "Category Image",
+    cell: ({ row }) => <ImageColumn row={row} accessorKey="imageUrl" />,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => <SortableColumn column={column} title="Name" />,
-  },
-  {
-    //accessorFn: (row) => row.category.title,   // Etracting string from array
-    accessorKey: "brand",
-    header: "Brand Name",
-    cell: ({ row }) => {
-      const brand = row.original?.brand.title || "N/A"
-      return <p>{brand}</p>
-    }
-  },
-  {
-    accessorKey: "productCode",
-    header: ({ column }) => <SortableColumn column={column} title="Product code" />,
-  },
-  {
-    //accessorFn: (row) => row.category.title,   // Etracting string from array
-    accessorKey: "subCategory",
-    header: "Sub Category",
-    cell: ({ row }) => {
-      const subCategory = row.original?.subCategory.title || "N/A"
-      return <p>{subCategory}</p>
-    }
+    accessorKey: "title",
+    header: ({ column }) => <SortableColumn column={column} title="Title" />,
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,
   },
+ 
   {
     accessorKey: "createdAt",
     header: "Date Created",
@@ -78,13 +56,13 @@ export const columns: ColumnDef<IProducts>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const product = row.original;
+      const banner = row.original;
       return (
         <ActionColumn
           row={row}
-          model="product"
-          editEndpoint={`products/update/${product.id}`}
-          id={(product.id)}
+          model="banner"
+          editEndpoint={`banners/update/${banner.id}`}
+          id={(banner.id)}
         />
       );
     },

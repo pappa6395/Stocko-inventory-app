@@ -14,6 +14,7 @@ export type BarcodeImageInputProps = {
     file: File | null;
     isLoading: boolean;
     initialBarcode: string;
+    setIsOpen: (isOpen: boolean) => void;
 }
 
 const BarcodeImageInput = ({
@@ -21,7 +22,8 @@ const BarcodeImageInput = ({
     setFileUrl,
     file,
     initialBarcode,
-    isLoading
+    isLoading,
+    setIsOpen
     
 }: BarcodeImageInputProps) => {
 
@@ -36,6 +38,7 @@ const BarcodeImageInput = ({
           const result = await uploadFile(file, "/api/sign");
           if (result && result.secure_url) {
             toast.success("Uploaded Image Successful!");
+            setIsOpen(false)
             console.log("Barcode ImageUrl,", result);
           } 
           setFileUrl(result.secure_url);

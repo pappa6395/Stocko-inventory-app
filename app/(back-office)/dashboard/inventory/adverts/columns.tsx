@@ -1,5 +1,8 @@
 "use client";
  
+import Image from "next/image";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
  
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
@@ -8,10 +11,11 @@ import SortableColumn from "@/components/dashboard/Table/dataTableColumns/Sortab
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
-import { IProducts } from "@/type/types";
+import { ICategory } from "@/type/types";
+import { Advert } from "@prisma/client";
+import { Badge } from "@/components/ui/badge";
 
-
-export const columns: ColumnDef<IProducts>[] = [
+export const columns: ColumnDef<Advert>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -35,34 +39,20 @@ export const columns: ColumnDef<IProducts>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "productThumbnail",
-    header: "Product Image",
-    cell: ({ row }) => <ImageColumn row={row} accessorKey="productThumbnail" />,
+    accessorKey: "imageUrl",
+    header: "Category Image",
+    cell: ({ row }) => <ImageColumn row={row} accessorKey="imageUrl" />,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => <SortableColumn column={column} title="Name" />,
+    accessorKey: "title",
+    header: ({ column }) => <SortableColumn column={column} title="Title" />,
   },
   {
-    //accessorFn: (row) => row.category.title,   // Etracting string from array
-    accessorKey: "brand",
-    header: "Brand Name",
+    accessorKey: "size",
+    header: "Advert Size",
     cell: ({ row }) => {
-      const brand = row.original?.brand.title || "N/A"
-      return <p>{brand}</p>
-    }
-  },
-  {
-    accessorKey: "productCode",
-    header: ({ column }) => <SortableColumn column={column} title="Product code" />,
-  },
-  {
-    //accessorFn: (row) => row.category.title,   // Etracting string from array
-    accessorKey: "subCategory",
-    header: "Sub Category",
-    cell: ({ row }) => {
-      const subCategory = row.original?.subCategory.title || "N/A"
-      return <p>{subCategory}</p>
+      const size = row.original.size || "N/A"
+      return <Badge variant={"outline"}>{size}</Badge>
     }
   },
   {
@@ -78,13 +68,13 @@ export const columns: ColumnDef<IProducts>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const product = row.original;
+      const advert = row.original;
       return (
         <ActionColumn
           row={row}
-          model="product"
-          editEndpoint={`products/update/${product.id}`}
-          id={(product.id)}
+          model="advert"
+          editEndpoint={`adverts/update/${advert.id}`}
+          id={(advert.id)}
         />
       );
     },

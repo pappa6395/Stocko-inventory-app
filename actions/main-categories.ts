@@ -50,6 +50,57 @@ export async function getAllMainCategories() {
     }
 }
 
+export async function getPopulatedMainCategories() {
+    type SubCategoryProps = {
+      title: string;
+      slug: string;
+    };
+  
+    type CategoryProps = {
+      title: string;
+      slug: string;
+      subCategories: SubCategoryProps[];
+    };
+  
+    type MainCategoryProps = {
+      title: string;
+      slug: string;
+      categories: CategoryProps[];
+    };
+    try {
+      const categories = await prismaClient.mainCategory.findMany({
+        orderBy: {
+          createdAt: "desc",
+        },
+        include: {
+          categories: {
+            include: {
+              subCategories: true,
+            },
+          },
+        },
+      });
+      const mainCategories: MainCategoryProps[] = categories.map((category) => ({
+        title: category.title,
+        slug: category.slug,
+        categories: category.categories.map((subCategory) => ({
+          title: subCategory.title,
+          slug: subCategory.slug,
+          subCategories: subCategory.subCategories.map((subSubCategory) => ({
+            title: subSubCategory.title,
+            slug: subSubCategory.slug,
+          })),
+        })),
+      }));
+  
+      return mainCategories;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+  
+
 export async function getMainCategoryById(id: string) {
 
     if (id) {

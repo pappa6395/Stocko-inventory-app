@@ -1,9 +1,9 @@
 "use client"
 
-import { Category, LineOrder, Products, SubCategory } from '@prisma/client'
+import { Products, SubCategory } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Button } from '../ui/button'
 import { cn } from '@/lib/utils'
 import ItemCard from './item-card'
@@ -21,7 +21,7 @@ import ReceiptPrint from './receiptPrint'
 import { useReactToPrint } from 'react-to-print'
 import * as htmlToImage from 'html-to-image';
 import axios from "axios";
-import { toPng, toJpeg, toSvg, toCanvas } from "html-to-image";
+
 
 type CustomerOptionProps = {
     value: string;

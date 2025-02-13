@@ -78,7 +78,6 @@ const SubCategoryForm = ({
           toast.success("Successfully created");
           reset();
           setIsLoading(false);
-          router.push(`/dashboard/inventory/subcategories`);
         }
       }
       

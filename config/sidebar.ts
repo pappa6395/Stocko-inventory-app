@@ -47,6 +47,14 @@ export const sidebarLinks: ISidebarLink[] = [
           href: '/dashboard/inventory/brands',
         },
         {
+          label: 'Banners',
+          href: '/dashboard/inventory/banners',
+        },
+        {
+          label: 'Adverts',
+          href: '/dashboard/inventory/adverts',
+        },
+        {
           label: 'Units',
           href: '/dashboard/inventory/units',
         },

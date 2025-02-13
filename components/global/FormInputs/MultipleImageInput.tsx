@@ -199,7 +199,7 @@ const MultipleImageInput = ({
                                         </span>
                                     </div>
                                     <div className=''>
-                                        <button disabled={isLoading} onClick={() => handleRemoveFile(i)}>
+                                        <button type="button" disabled={isLoading} onClick={() => handleRemoveFile(i)}>
                                             <X className="text-slate-600 w-5 h-5" />
                                         </button>
                                     </div>

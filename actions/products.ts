@@ -65,16 +65,17 @@ export async function createProduct(data: ProductProps) {
 export async function getAllProducts() {
     
     try {
-        const products: IProducts[] = await prismaClient.products.findMany({
+        const products  = await prismaClient.products.findMany({
             orderBy: {
                 createdAt: "desc"
             },
             include: {
                 subCategory: true,
+                brand: true,
             }
         });
 
-        return products;
+        return products as IProducts[];
 
     } catch (err) {
         console.error("Failed to get products:",err);

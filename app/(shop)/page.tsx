@@ -1,27 +1,54 @@
 
+import { getAllAdverts } from '@/actions/adverts'
+import { getAllBanners } from '@/actions/banners'
+import { getAllProducts } from '@/actions/products'
+import CategoryList from '@/components/frontend/CategoryList'
+import Hero from '@/components/frontend/Hero'
+import ProductListing from '@/components/frontend/listings/ProductListing'
 import React from 'react'
 
-const Home = () => {
+const Home = async () => {
+
+  const banners = await getAllBanners() || []
+  const adverts = await getAllAdverts() || []
+  const products = await getAllProducts() || []
 
   return (
 
-    <div className='py-3'>
-      <div className='container'>
-        <p>
-          Lorem, ipsum dolor sit amet consectetur adipisicing elit. A ea, ab 
-        nostrum neque repudiandae est at sit. Nam amet aliquam eum dolorum 
-        expedita quos nesciunt obcaecati nemo officia? Dolorem blanditiis 
-        reprehenderit perspiciatis molestias quos similique exercitationem 
-        incidunt ea sunt consequuntur, nisi quidem obcaecati. Corporis illum 
-        tempora, consectetur doloribus dolor odio in, minima numquam, eaque
-        impedit deserunt? Eos, perferendis excepturi hic nesciunt quisquam 
-        blanditiis modi ea autem in fugit nam tempora dolorum animi reprehenderit 
-        dolor? Vel suscipit sint libero amet animi totam nesciunt voluptate natus? 
-        Totam unde laboriosam minima modi, animi nostrum consequatur quibusdam accusantium. 
-        Id quaerat delectus quos fuga dicta.
-        </p>
-      </div>  
-    </div>
+    <main className='p-4'>
+      <div className='sm:container'>
+        <Hero banners={banners} adverts={adverts}/>
+        <div className='py-3 space-y-3'>
+          <CategoryList />
+          <ProductListing 
+            title="Today's Deals" 
+            detailLink={"#"} 
+            products={products.slice(0,6)} 
+            cardType='horizontal'
+          />
+          <ProductListing 
+            title="Sponsored Products" 
+            detailLink={"#"} 
+            products={products.slice(7,17)}
+            cardType='vertical'
+            scrollable
+          />
+          <ProductListing 
+            title="Flash Sales" 
+            detailLink={"#"} 
+            products={products.slice(12,20)}
+            cardType='carousel'
+            carousel
+          />
+          <ProductListing 
+            title="Products" 
+            detailLink={"#"} 
+            products={products.slice(21,33)}
+            cardType='cart'
+          />
+        </div>
+      </div>
+    </main>
 
   )
 }

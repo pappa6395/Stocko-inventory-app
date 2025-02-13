@@ -181,11 +181,31 @@ model Supplier {
 }
 
 model Banner {
-  id Int @id @default(autoincrement())
-  imageUrl   String
+  id         Int @id @default(autoincrement())
+  title      String @default("")
+  imageUrl   String?
   bannerLink String
   position   String
   status     Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AdvertSize {
+  SMALL
+  MEDIUM
+  LARGE
+  EXTRA_LARGE
+}
+
+model Advert {
+  id         Int @id @default(autoincrement())
+  title      String
+  imageUrl   String?
+  advertLink String
+  size       AdvertSize @default(SMALL)
+  position   String
+  status     Boolean @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

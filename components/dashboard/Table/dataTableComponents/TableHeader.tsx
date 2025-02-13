@@ -264,7 +264,7 @@ export default function TableHeader({
     <div className=" mb-3">
       <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-600 py-3">
         <h2 className="scroll-m-20  text-2xl font-semibold tracking-tight first:mt-0">
-          {title}
+          {title} ({data.length})
         </h2>
         <div className="ml-auto flex items-center gap-2">
           <Button

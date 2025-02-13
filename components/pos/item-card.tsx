@@ -39,11 +39,11 @@ const ItemCard = ({
             alt="product"
             width={200}
             height={280}
-            className='border h-[250px] w-full object-contain' 
+            className='border h-[200px] w-full object-contain' 
         />
         <div>
         <div className='py-2'>
-            <h3 className='pb-2 font-bold text-lg'>{product.name}</h3>
+            <h3 className='pb-2 font-bold text-lg w-[16ch] truncate'>{product.name}</h3>
             <p className='text-sm line-clamp-3 overflow-scroll'>
                 {product.productDetails}
             </p>
@@ -54,7 +54,7 @@ const ItemCard = ({
                 className='text-sm font-semibold shadow-sm 
                 text-indigo-500 rounded-lg'
             >
-                Price: ${product.productPrice}
+                ${product.productPrice.toLocaleString("en-US")}
             </Badge>
             <Badge 
                 variant={"outline"} 

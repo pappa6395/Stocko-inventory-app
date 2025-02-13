@@ -1,5 +1,5 @@
 
-import { Category, Customers, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
+import { AdvertSize, Category, Customers, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -121,10 +121,20 @@ export type ProductProps = {
 }
 
 export type BannerProps = {
-    imageUrl: string;
+    title: string;
+    imageUrl: string | null;
     bannerLink: string;
     position: string;
     status: boolean;
+}
+
+export type AdvertProps = {
+    title: string;
+    imageUrl: string | null;
+    advertLink: string;
+    position: string;
+    status: boolean;
+    size: AdvertSize;
 }
 
 export type WarehouseProductProps = {
@@ -231,7 +241,20 @@ export interface ISubCategory extends SubCategory {
     category: Category
 }
 
+export interface IProducts extends Products {
+    id: number;
+    name: string;
+    subCategory: { title: string };
+    brand: { title: string };
+}
+
 export type ReceiptProps = {
     imageUrl: string;
     email: string;
 }
+
+// export type BannerProps = {
+//     title: string;
+//     link: string;
+//     imageUrl: string;
+// }
