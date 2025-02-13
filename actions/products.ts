@@ -1,8 +1,8 @@
 "use server"
 
-import { IProducts } from "@/app/(back-office)/dashboard/inventory/products/columns";
+
 import { prismaClient } from "@/lib/db";
-import { ProductProps, WarehouseProductProps } from "@/type/types";
+import { IProducts, ProductProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 
