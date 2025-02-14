@@ -1,8 +1,9 @@
 "use server"
 
 
+import { AddProductToCartProps, IProductCarts } from "@/components/frontend/listings/AddToCartButton";
 import { prismaClient } from "@/lib/db";
-import { IProducts, ProductProps } from "@/type/types";
+import { GroupProducts, IProducts, ProductProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 
@@ -128,6 +129,121 @@ export async function getProductById(id: string) {
             return null;
         }
     }
+}
+
+export async function getProductsByBrandId(brandId: string) {
+
+    if (brandId) {
+
+        try {
+            const products = await prismaClient.products.findMany({
+                where: {
+                    brandId: Number(brandId)
+                },
+                orderBy: {
+                    createdAt: "desc"
+                },
+                include: {
+                    subCategory: true,
+                    brand: true,
+                }
+            });
+            return products
+        } catch (err) {
+            console.error("Failed to find product by ID:",err);
+            return null;
+        }
+    }
+}
+
+export async function getGroupedProductsByBrandId(brandId: string) {
+
+    if (brandId) {
+
+        try {
+            const products = await prismaClient.products.findMany({
+                where: {
+                    brandId: Number(brandId)
+                },
+                orderBy: {
+                    subCategoryId: "asc"
+                },
+                include: {
+                    subCategory: true,
+                }
+            });
+
+            const groupProducts = products.reduce<Record<string, GroupProducts>>((acc, product) => { 
+                const subCategory = product.subCategory;
+                if (!acc[subCategory.id]) {
+                    acc[subCategory.id] = {
+                        subCategory,
+                        products: [],
+                    }
+                }
+                acc[subCategory.id].products.push(product);
+                return acc
+            }, {})
+        
+            return Object.values(groupProducts)
+        } catch (err) {
+            console.error("Failed to find product by ID:",err);
+            return null;
+        }
+    }
+}
+
+
+export async function getProductBySlug(slug: string) {
+
+    if (!slug) return null;
+        try {
+            const product = await prismaClient.products.findUnique({
+                where: {
+                    slug,
+                },
+                include: {
+                    brand: true,
+                    subCategory: {
+                        include: {
+                            category: {
+                                include: {
+                                    mainCategory: true,
+                                },
+                            }
+                        }
+                    }
+                }
+            });
+            return product as IProductCarts;
+        } catch (err) {
+            console.error("Failed to find product by ID:",err);
+            return null;
+        }
+}
+
+export async function getSimilarProducts(subCategoryId: number, productId: number) {
+
+    if (!subCategoryId || !productId) return null;
+        try {
+            const product = await prismaClient.products.findMany({
+                where: {
+                    subCategoryId,
+                    id: {
+                        not: productId
+                    }
+                },
+                take: 5,
+                include: {
+                    subCategory: true,
+                    brand: true,
+                }
+            });
+            return product
+        } catch (err) {
+            console.error("Failed to find product by ID:",err);
+            return null;
+        }
 }
 
 export async function updateProductById(id: string, data: ProductProps) {

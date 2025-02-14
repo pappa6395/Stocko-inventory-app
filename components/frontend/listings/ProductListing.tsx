@@ -11,7 +11,7 @@ import { cn } from '@/lib/utils'
 
 
 type ProductListingProps = {
-    title: string;
+    title?: string;
     detailLink: string;
     products: IProducts[];
     cardType?: "horizontal" | "vertical" | "cart" | "carousel";
@@ -35,17 +35,18 @@ const ProductListing = ({
 
   return (
 
-    <div className='py-3'>
-        <div className={cn('flex items-center justify-between border-b border-gray-400 py-3', className)}>
+    <div className=''>
+        <div className={cn('flex items-center justify-between border-gray-400 py-3', className)}>
             {/* Heading */}
-            <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight lg:text-3xl">
-            {title}
+            <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight 
+            lg:text-3xl px-4 text-white">
+            {title ?? ""}
             </h1>
             <Button asChild variant={"outline"} className='mr-2'>
                 <Link href={detailLink}>See All</Link>
             </Button>   
         </div>
-        <div className='bg-gradient-to-r from-white to-sky-300 gap-2 rounded-lg'>
+        <div className='bg-gradient-to-r from-white dark:from-slate-200 to-sky-300 gap-2 rounded-lg'>
             {carousel ? (
                     <div className='max-w-5xl mx-auto pt-3 pb-3'>
                         <CarouselListing products={products} />

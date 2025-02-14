@@ -1,9 +1,12 @@
 
 import { getAllAdverts } from '@/actions/adverts'
 import { getAllBanners } from '@/actions/banners'
+import { getAllBrands } from '@/actions/brand'
 import { getAllProducts } from '@/actions/products'
 import CategoryList from '@/components/frontend/CategoryList'
 import Hero from '@/components/frontend/Hero'
+import BrandList from '@/components/frontend/listings/BrandList'
+import HistoryProductListing from '@/components/frontend/listings/HistoryProductListing'
 import ProductListing from '@/components/frontend/listings/ProductListing'
 import React from 'react'
 
@@ -12,6 +15,7 @@ const Home = async () => {
   const banners = await getAllBanners() || []
   const adverts = await getAllAdverts() || []
   const products = await getAllProducts() || []
+  const brands = await getAllBrands() || []
 
   return (
 
@@ -25,6 +29,7 @@ const Home = async () => {
             detailLink={"#"} 
             products={products.slice(0,6)} 
             cardType='horizontal'
+            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
           />
           <ProductListing 
             title="Sponsored Products" 
@@ -32,20 +37,25 @@ const Home = async () => {
             products={products.slice(7,17)}
             cardType='vertical'
             scrollable
+            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
           />
+          <BrandList brands={brands.slice(0,12)} title={"Brands"} link={`/brands`} />
           <ProductListing 
             title="Flash Sales" 
             detailLink={"#"} 
             products={products.slice(12,20)}
             cardType='carousel'
             carousel
+            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
           />
           <ProductListing 
             title="Products" 
             detailLink={"#"} 
             products={products.slice(21,33)}
             cardType='cart'
+            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
           />
+          <HistoryProductListing />
         </div>
       </div>
     </main>

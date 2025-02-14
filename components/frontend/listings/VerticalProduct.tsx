@@ -1,3 +1,7 @@
+"use client"
+
+import { useAppDispatch } from '@/redux/hooks/hooks';
+import { addProductToHistory } from '@/redux/slices/historySlice';
 import { IProducts } from '@/type/types';
 import { Star } from 'lucide-react'
 import Image from 'next/image'
@@ -12,10 +16,31 @@ const VerticalProduct = ({product}: {product: IProducts}) => {
     const discount = product.productPrice * discountRate / 100
     const discountedPrice = product.productPrice - discount
 
+    const dispatch = useAppDispatch()
+        
+    const handleAdd = () => {
+        const newHistoryItem = {
+            id: product?.id || 0,
+            name: product?.name || "",
+            slug: product?.slug || "",
+            productPrice: product?.productPrice || 0,
+            productDetails: product?.productDetails || "",
+            productThumbnail: product?.productThumbnail || "/placeholder.svg",
+            stockQty: product?.stockQty || 0,
+        };
+        dispatch(
+            addProductToHistory(newHistoryItem)
+        )
+    };
+
   return (
 
     <div className='border shadow bg-white rounded-lg p-3'>
-        <Link href={"#"} className='flex flex-col gap-2 space-x-2 justify-center items-center'>
+        <Link 
+            href={`/product/${product.slug}`}
+            onClick={handleAdd} 
+            className='flex flex-col gap-2 space-x-2 justify-center items-center'
+        >
             <Image 
                 src={product.productThumbnail ?? "/placeholder.svg"} 
                 alt={product.name}

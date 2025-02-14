@@ -1,5 +1,5 @@
 
-import { AdvertSize, Category, Customers, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
+import { AdvertSize, Brand, Category, Customers, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -244,8 +244,8 @@ export interface ISubCategory extends SubCategory {
 export interface IProducts extends Products {
     id: number;
     name: string;
-    subCategory: { title: string };
-    brand: { title: string };
+    subCategory: SubCategory;
+    brand: Brand;
 }
 
 export type ReceiptProps = {
@@ -258,3 +258,8 @@ export type ReceiptProps = {
 //     link: string;
 //     imageUrl: string;
 // }
+
+export type GroupProducts = {
+    subCategory: SubCategory;
+    products: Products[];
+}

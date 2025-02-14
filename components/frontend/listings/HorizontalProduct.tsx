@@ -1,3 +1,7 @@
+"use client"
+
+import { useAppDispatch } from '@/redux/hooks/hooks';
+import { addProductToHistory } from '@/redux/slices/historySlice';
 import { IProducts } from '@/type/types';
 import Image from 'next/image'
 import Link from 'next/link';
@@ -11,10 +15,31 @@ const HorizontalProduct = ({product}: {product: IProducts}) => {
     const discount = product.productPrice * discountRate / 100
     const discountedPrice = product.productPrice - discount
 
+    const dispatch = useAppDispatch()
+
+    const handleAdd = () => {
+        const newHistoryItem = {
+            id: product?.id || 0,
+            name: product?.name || "",
+            slug: product?.slug || "",
+            productPrice: product?.productPrice || 0,
+            productDetails: product?.productDetails || "",
+            productThumbnail: product?.productThumbnail || "/placeholder.svg",
+            stockQty: product?.stockQty || 0,
+        };
+        dispatch(
+            addProductToHistory(newHistoryItem)
+        )
+    };
+
   return (
 
     <div className='border shadow bg-white rounded-lg p-3'>
-        <Link href={"#"} className='flex gap-2 space-x-2'>
+        <Link 
+            href={`/product/${product.slug}`} 
+            className='flex gap-2 space-x-2'
+            onClick={handleAdd}
+        >
             <Image 
                 src={product.productThumbnail ?? "/placeholder.svg"} 
                 alt={product.name} 

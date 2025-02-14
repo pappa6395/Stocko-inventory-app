@@ -1,10 +1,8 @@
 
 import React from 'react'
 import { columns } from './columns'
-import { Products, Supplier } from '@prisma/client'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
-import { getAllSuppliers } from '@/actions/suppliers'
 import { getAllProducts } from '@/actions/products'
 
 

@@ -1,201 +1,181 @@
-"use client"
+"use client";
+import { Button } from "@/components/ui/button";
 
-import { Button } from "@/components/ui/button"
 import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-  } from "@/components/ui/sheet"
-import { Headset, HelpCircle, LogOut, Mail, MessageSquareMore, Minus, PhoneCall, Plus, Presentation, Settings, ShoppingCart, Trash, Users } from "lucide-react"
-import { signOut } from "next-auth/react"
-import Image from 'next/image'
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-  import React from 'react'
-import toast from "react-hot-toast"
-  
-const CartMenu = () => {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
+import { CartItem, decrementQty, incrementQty, removeProductFromCart } from "@/redux/slices/cartSlice";
+import {
+  Headset,
+  HelpCircle,
+  LogOut,
+  Mail,
+  MessageSquareMore,
+  Minus,
+  PhoneCall,
+  Plus,
+  Presentation,
+  Settings,
+  ShoppingCart,
+  Trash,
+  User,
+  UserRound,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
-    const router = useRouter();
-    const handleSignOut = async () => {
-        try {
-            const result = await signOut({ redirect: false, callbackUrl: "/login" });
-            console.log("Signed out result:", result);
+export function CartMenu() {
+
+    const [allCartItems, setAllCartItems] = useState<CartItem[]>([]);
+    const cartItems = useAppSelector((state) => state.cart.cartItems);
+    console.log(cartItems);
+    const dispatch = useAppDispatch();
     
-            if (typeof window !== "undefined") {
-                localStorage.clear(); 
-                document.cookie = "";
-            }
+    function handleRemove(id: number) {
+        dispatch(removeProductFromCart(id));
+    }
+    function handleDecrement(id: number) {
+        dispatch(
+            decrementQty(id)
+        );
+    }
+    function handleIncrement(id: number) {
+        dispatch(
+            incrementQty(id)
+        );
+    }
+
+    const sumItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.qty, 0), [allCartItems]).toString().padStart(2,'0')
+    const totalSum = cartItems.reduce(
+        (sum, item) => sum + item.price * item.qty,0
+    );
     
-            toast.success("✅ Signed out successfully");
-            router.push("/login");
-            
-        } catch (err) {
-            console.error("❌ Failed to sign out:", err);
-            toast.error("❌ Failed to sign out. Please try again.");
-        }
-    };
-    const menuLinks = [
-        {
-            name: "Settings",
-            icon: Settings,
-            href: "/dashboard/settings"
-        },
-        {
-            name: "Profile",
-            icon: Users,
-            href: "/dashboard/profile"
-        },
-        {
-            name: "POS",
-            icon: Presentation,
-            href: "/dashboard/pos"
-        },
-    ]
-    const assistedLinks = [
-        {
-            name: "Free 2 hours set-up assistance",
-            icon: Headset,
-            href: "/dashboard/settings"
-        },
-        {
-            name: "Chat with our experts",
-            icon: MessageSquareMore,
-            href: "/dashboard/profile"
-        },
-        {
-            name: "Send an email",
-            icon: Mail,
-            href: "/dashboard/pos"
-        },
-        {
-            name: "Talk to us - 123 456 7890",
-            icon: PhoneCall,
-            href: "/dashboard/profile"
-        },
-    ]
-
-    return (
-
+    useEffect(() => {
+        setAllCartItems(cartItems || []);
+    }, [cartItems]);
+    
+  return (
     <Sheet>
-        <SheetTrigger className="relative inline-flex items-center p-3 
-        text-sm font-medium text-center text-white bg-transparent rounded-lg "
-        >
-            <ShoppingCart className="text-lime-700 dark:text-lime-500" />
-            <span className="sr-only">Cart</span>
-            <div className="absolute inline-flex items-center justify-center w-6 h-6 
-            text-xs font-bold text-white bg-red-500  rounded-full -top-0 end-6 
-            dark:border-gray-900"
-            >
-                0
-            </div>
-        </SheetTrigger>
-        <SheetContent>
-        <SheetHeader className="w-[400px] sm:w-[540px]">
-          <SheetTitle className="scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 border-b pb-3">
-                Shopping Cart (2)
-          </SheetTitle>
-        </SheetHeader>
-            {/* CONTENT HWRE */}
-        <div className="">
-            <div className="flex justify-between gap-4 py-3 border-b ">
-                <Image
-                width={200}
-                height={200}
-                alt="cart image"
-                src="/macbook4 Small.jpeg"
-                className="w-16 h-16 rounded-lg"
-                />
-                <div className="space-y-2">
-                <h2 className="text-xs font-medium">
-                    Best Nice laptop i have seen
-                </h2>
-                <button className="text-xs flex items-center text-red-500">
-                    <Trash className="w-4 h-4 mr-1" />
-                    <span>Remove</span>
-                </button>
-                </div>
-                <div className="space-y-2">
-                <h2 className="text-sx">$199.00</h2>
-                <div className="flex items-center space-x-3">
-                    <button className="border shadow rounded flex items-center justify-center w-10 h-7">
-                    <Minus className="w-4 h-4" />
+      <SheetTrigger asChild>
+        <button className="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-transparent rounded-lg ">
+          <ShoppingCart className="text-lime-700 dark:text-lime-500" />
+          <span className="sr-only">Cart</span>
+          <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500  rounded-full -top-0 end-6 dark:border-gray-900">
+            {sumItems}
+          </div>
+        </button>
+      </SheetTrigger>
+      {cartItems && cartItems.length > 0 ? (
+        <SheetContent className="w-[400px] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle className="scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 border-b pb-3">
+              Shopping Cart ({sumItems})
+            </SheetTitle>
+          </SheetHeader>
+          {/* CONTENT HWRE */}
+          <div className="">
+            {cartItems.map((item, i) => {
+              return (
+                <div
+                  key={i}
+                  className="flex justify-between gap-4 py-3 border-b "
+                >
+                  <Image
+                    width={200}
+                    height={200}
+                    alt="cart image"
+                    src={item.image}
+                    className="w-16 h-16 rounded-lg"
+                  />
+                  <div className="space-y-2">
+                    <h2 className="text-xs font-medium">{item.name}</h2>
+                    <button
+                      onClick={() => handleRemove(item.id)}
+                      className="text-xs flex items-center text-red-500"
+                    >
+                      <Trash className="w-4 h-4 mr-1" />
+                      <span>Remove</span>
                     </button>
+                  </div>
+                  <div className="space-y-2">
+                    <h2 className="text-sx">${item.price}</h2>
+                    <div className="flex items-center space-x-3">
+                      <button
+                        onClick={() => handleDecrement(item.id)}
+                        className="border shadow rounded flex items-center 
+                        justify-center w-10 h-7"
+                        >
+                        <Minus className="w-4 h-4" />
+                      </button>
 
-                    <p>1</p>
-                    <button className="border shadow rounded flex items-center justify-center w-10 h-7 bg-slate-800 text-white">
-                    <Plus className="w-4 h-4" />
-                    </button>
+                      <p>{item.qty}</p>
+                      <button
+                        onClick={() => handleIncrement(item.id)}
+                        className="border shadow rounded flex items-center 
+                        justify-center w-10 h-7 bg-slate-800 text-white"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                </div>
-            </div>
-            <div className="flex justify-between gap-4 py-3 border-b ">
-                <Image
-                width={200}
-                height={200}
-                alt="cart image"
-                src="/macbook4 Small.jpeg"
-                className="w-16 h-16 rounded-lg"
-                />
-                <div className="space-y-2">
-                <h2 className="text-xs font-medium">
-                    Best Nice laptop i have seen
-                </h2>
-                <button className="text-xs flex items-center text-red-500">
-                    <Trash className="w-4 h-4 mr-1" />
-                    <span>Remove</span>
-                </button>
-                </div>
-                <div className="space-y-2">
-                <h2 className="text-sx">$199.00</h2>
-                <div className="flex items-center space-x-3">
-                    <button className="border shadow rounded flex items-center justify-center w-10 h-7">
-                    <Minus className="w-4 h-4" />
-                    </button>
+              );
+            })}
 
-                    <p>1</p>
-                    <button className="border shadow rounded flex items-center justify-center w-10 h-7 bg-slate-800 text-white">
-                    <Plus className="w-4 h-4" />
-                    </button>
-                </div>
-                </div>
-            </div>
             <div className="space-y-1 py-3 border-b mb-3">
-                <div className="flex items-center justify-between text-sm">
-                <h2 className="font-medium">Subtotal</h2>
-                <p>$1930.00</p>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                <h2 className="font-medium">Tax</h2>
-                <p>$10.00</p>
-                </div>
-                <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center justify-between text-sm">
                 <h2 className="font-medium">Total</h2>
-                <p>$1930.00</p>
-                </div>
+                <p>${totalSum.toFixed(2)}</p>
+              </div>
             </div>
-        </div>
-        <SheetFooter>
-          <SheetClose asChild>
-            <Button variant={"outline"} type="submit">
-              Continue Shopping
+          </div>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button variant={"outline"} type="submit">
+                Continue Shopping
+              </Button>
+            </SheetClose>
+            <Button asChild>
+              <Link href="/checkout">
+                <span>Proceed to Checkout</span>
+              </Link>
             </Button>
-          </SheetClose>
-          <Button asChild>
-            <Link href="/checkout">
-              <span>Proceed to Checkout</span>
-            </Link>
-          </Button>
-        </SheetFooter>
+          </SheetFooter>
         </SheetContent>
-    </Sheet>      
-
-    )
+      ) : (
+        <SheetContent className="w-[400px] sm:w-[540px]">
+          <SheetHeader>
+            <SheetTitle className="scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 border-b pb-3">
+              Empty Cart
+            </SheetTitle>
+          </SheetHeader>
+          {/* CONTENT HWRE */}
+          <div className="min-h-80  flex-col space-y-4 flex items-center justify-center">
+            <Image
+              src="/empty-cart.png"
+              width={300}
+              height={300}
+              alt="empty cart"
+              className="w-36 h-36 object-cover"
+            />
+            <h2>Your Cart Empty</h2>
+            <SheetClose asChild>
+              <Button asChild size={"sm"} variant={"outline"} type="submit">
+                <Link href="/">Continue Shopping to add Items</Link>
+              </Button>
+            </SheetClose>
+          </div>
+        </SheetContent>
+      )}
+    </Sheet>
+  );
 }
-  
-export default CartMenu

@@ -3,7 +3,6 @@
 import React from 'react'
 import Logo from './Logo'
 import { Button } from '../ui/button'
-import { HelpCircle, LayoutGrid, ShoppingBasket, ShoppingCart } from 'lucide-react'
 import { ModeToggle } from './mode-toggle'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
@@ -14,8 +13,9 @@ import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
 import HelpMenu from '../frontend/HelpMenu'
-import CartMenu from '../frontend/CartMenu'
+
 import { MobileMenu } from '../frontend/MobileMenu'
+import { CartMenu } from '../frontend/CartMenu'
 
 const ShopHeader = ({user}: {user: User | undefined | null}) => {
 
