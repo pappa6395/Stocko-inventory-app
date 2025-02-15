@@ -34,7 +34,7 @@ const HorizontalProduct = ({product}: {product: IProducts}) => {
 
   return (
 
-    <div className='border shadow bg-white rounded-lg p-3'>
+    <div className='border shadow bg-white dark:bg-slate-800 rounded-lg p-3'>
         <Link 
             href={`/product/${product.slug}`} 
             className='flex gap-2 space-x-2'
@@ -48,23 +48,23 @@ const HorizontalProduct = ({product}: {product: IProducts}) => {
                 className='w-24 h-32 object-contain flex-shrink-0' 
             />
             <div className=''>
-                <h2 className="text-sm font-semibold text-gray-700">
+                <h2 className="text-sm font-semibold text-gray-700 dark:text-slate-50">
                     {product.brand.title} {product.name}
                 </h2>
                 <div>
-                    <p className="text-lg font-bold text-gray-500">
+                    <p className="text-lg font-bold text-gray-500 dark:text-slate-50">
                         ${discountedPrice}
                         <span className='line-through px-2 text-gray-400'>
                             ${product.productPrice}
                         </span>
                     </p>
                     <p>
-                        <span className="text-sm font-semibold text-teal-500 bg-green-50 px-2 py-1 rounded-lg">
+                        <span className="text-xs font-semibold text-teal-500 bg-green-50 px-2 py-0.5 rounded-lg">
                             - {discountRate}% Off
                         </span>
                     </p>
                     <p>
-                        <span className="text-sm font-medium text-gray-500">
+                        <span className="text-sm font-medium text-gray-500 dark:text-slate-50">
                             Free shipping
                         </span>
                     </p>
@@ -74,9 +74,9 @@ const HorizontalProduct = ({product}: {product: IProducts}) => {
                     <FaStar className='size-4 text-amber-200'/>
                     <FaStar className='size-4 text-amber-200'/>
                     <FaStar className='size-4 text-amber-200'/>
-                    <IoMdStarHalf className='size-4 text-amber-200'/>
-                    <span className="text-sm font-medium text-gray-500">
-                        4.5 (50 reviews)
+                    <IoMdStarHalf className='size-5 text-amber-200'/>
+                    <span className="text-sm font-medium text-gray-500 dark:text-slate-50">
+                        (50 reviews)
                     </span>
                 </div>
             </div>

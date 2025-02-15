@@ -18,7 +18,8 @@ const HistoryProductListing = () => {
                 detailLink={"#"} 
                 products={historyItems as IProducts[]} 
                 cardType='cart'
-                className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
+                className='bg-gradient-to-r from-sky-500 to-white 
+                dark:from-slate-700 dark:to-slate-500 rounded-lg'
           />
         )}
     </div>

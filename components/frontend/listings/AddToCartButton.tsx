@@ -65,26 +65,26 @@ const AddToCartButton = ({product}: AddProductToCartProps) => {
             <Button 
                 type="button" 
                 size={"icon"} 
-                variant={"outline"}
+                variant={"cart"}
                 onClick={handleDecrement}
                 className='size-8'
             >
                 <Minus className='size-4' />
             </Button>
-            <div className='border px-3 py-1 bg-white rounded-md'>
+            <div className='border px-3 py-1 bg-white dark:bg-slate-800 rounded-md'>
                 <p className='text-base'>{quantity || 1}</p>
             </div>
             <Button 
                 type="button" 
                 size={"icon"} 
-                variant={"outline"}
+                variant={"cart"}
                 onClick={handleIncrement}
                 className='size-8'
             >
                 <Plus className='size-4'/>
             </Button>
         </div>
-        <Button className='ml-2' onClick={handleAdd}>
+        <Button className='ml-2' variant="receipt" onClick={handleAdd}>
             <span>Add to Cart</span>
         </Button>
     </div>

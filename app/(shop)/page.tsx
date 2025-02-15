@@ -29,7 +29,8 @@ const Home = async () => {
             detailLink={"#"} 
             products={products.slice(0,6)} 
             cardType='horizontal'
-            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
+            className='bg-gradient-to-r from-sky-500 to-white 
+            dark:from-slate-700 dark:to-slate-500 rounded-lg'
           />
           <ProductListing 
             title="Sponsored Products" 
@@ -37,23 +38,32 @@ const Home = async () => {
             products={products.slice(7,17)}
             cardType='vertical'
             scrollable
-            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
+            className='bg-gradient-to-r from-sky-500 to-white 
+            dark:from-slate-700 dark:to-slate-500 rounded-lg'
           />
-          <BrandList brands={brands.slice(0,12)} title={"Brands"} link={`/brands`} />
+          <BrandList 
+            brands={brands.slice(0,12)} 
+            title={"Brands"} 
+            link={`/brands`}
+            className='bg-gradient-to-r from-sky-500 to-white 
+            dark:from-slate-700 dark:to-slate-500 rounded-lg' 
+          />
           <ProductListing 
             title="Flash Sales" 
             detailLink={"#"} 
             products={products.slice(12,20)}
             cardType='carousel'
             carousel
-            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
+            className='bg-gradient-to-r from-sky-500 to-white 
+            dark:from-slate-700 dark:to-slate-500 rounded-lg'
           />
           <ProductListing 
             title="Products" 
             detailLink={"#"} 
             products={products.slice(21,33)}
             cardType='cart'
-            className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
+            className='bg-gradient-to-r from-sky-500 to-white 
+            dark:from-slate-700 dark:to-slate-500 rounded-lg'
           />
           <HistoryProductListing />
         </div>

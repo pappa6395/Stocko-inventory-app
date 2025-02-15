@@ -201,7 +201,7 @@ export function CategoryHeader({
                     return (
                         <NavigationMenuItem key={i}>
                             <NavigationMenuTrigger>
-                                <Link href={"#"}>
+                                <Link href={`/categories/${m.slug}?type=main`}>
                                     {m.title}
                                 </Link>
                             </NavigationMenuTrigger>
@@ -210,13 +210,13 @@ export function CategoryHeader({
                                 {m.categories.map((c, j) => (
                                     <div key={j}>
                                         <li>
-                                            <Link href={`/${c.slug}`}>
+                                            <Link href={`/categories/${c.slug}?type=cate`}>
                                                 <span className="font-bold text-base">{c.title}</span>
                                             </Link>
                                         </li>
                                         {c.subCategories.map((s, k) => (
                                         <li key={k}>
-                                            <Link href={`/${c.slug}/${s.slug}`}>
+                                            <Link href={`/categories/${s.slug}?type=sub`}>
                                                 <span className="hover:text-blue-500 text-sm">{s.title}</span>
                                             </Link>
                                         </li>

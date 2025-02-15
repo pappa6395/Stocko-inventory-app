@@ -35,18 +35,19 @@ const ProductListing = ({
 
   return (
 
-    <div className=''>
+    <div className='space-y-3'>
         <div className={cn('flex items-center justify-between border-gray-400 py-3', className)}>
             {/* Heading */}
             <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight 
             lg:text-3xl px-4 text-white">
             {title ?? ""}
             </h1>
-            <Button asChild variant={"outline"} className='mr-2'>
+            <Button asChild variant={"receipt"} className='mr-2'>
                 <Link href={detailLink}>See All</Link>
             </Button>   
         </div>
-        <div className='bg-gradient-to-r from-white dark:from-slate-200 to-sky-300 gap-2 rounded-lg'>
+        <div className='bg-gradient-to-r from-white to-sky-300 
+        dark:from-slate-500 dark:to-slate-700 gap-2 rounded-lg'>
             {carousel ? (
                     <div className='max-w-5xl mx-auto pt-3 pb-3'>
                         <CarouselListing products={products} />

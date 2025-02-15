@@ -4,6 +4,7 @@
 import { AddProductToCartProps, IProductCarts } from "@/components/frontend/listings/AddToCartButton";
 import { prismaClient } from "@/lib/db";
 import { GroupProducts, IProducts, ProductProps } from "@/type/types";
+import { Products } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 
@@ -293,5 +294,123 @@ export async function createBulkProducts(products: ProductProps[]) {
         }
     } catch (err) {
         console.error("Failed to create bulk products:",err);
+    }
+}
+
+type BriefCategory = {
+    title: string;
+    slug: string;
+    type: string;
+}
+export async function getProductsByCategorySlug(slug: string, type: string, sort?: "asc" | "desc") {
+    
+    let products = [] as Products[];
+    let categories = [] as BriefCategory[];
+    try {
+        if ( type === "main") {
+            const productsInMainCategory  = await prismaClient.mainCategory.findUnique({
+                where: {
+                    slug,
+                },
+                include: {
+                    categories: {
+                        include: {
+                            subCategories: {
+                                include: {
+                                    products: sort ? {
+                                        include: {
+                                            brand: true,
+                                        },
+                                        orderBy: {
+                                            productPrice: sort,
+                                        },   
+                                    } : {
+                                        include: {
+                                            brand: true,
+                                        },
+                                    },
+                                },
+                            }
+                        }
+                    }
+                }
+            });
+            if (productsInMainCategory) {
+                products = productsInMainCategory.categories.flatMap(
+                    (category) => category.subCategories.flatMap(
+                        (subCategory) => subCategory.products))
+
+                categories = productsInMainCategory.categories.map((c) => ({
+                    title: c.title,
+                    slug: c.slug,
+                    type: "cate"
+                }));
+            };
+            
+        } else if ( type === "cate") {
+            const productsInCategory  = await prismaClient.category.findUnique({
+                where: {
+                    slug,
+                },
+                include: {
+                    subCategories: {
+                        include: {
+                            products: sort ? {
+                                include: {
+                                    brand: true,
+                                },
+                                orderBy: {
+                                    productPrice: sort,
+                                },
+                            } : {
+                                include: {
+                                    brand: true,
+                                },
+                            },
+                        }
+                    }
+                }
+            });
+            if (productsInCategory) {
+                products = productsInCategory.subCategories.flatMap(
+                    (sub) => sub.products)
+                categories = productsInCategory.subCategories.map((c) => ({
+                    title: c.title,
+                    slug: c.slug,
+                    type: "sub"
+                }));
+            }
+        } else if ( type === "sub" ) {
+            const productsInSubCategory  = await prismaClient.subCategory.findUnique({
+                where: {
+                    slug,
+                },
+                include: {
+                    products: sort ? {
+                        include: {
+                            brand: true,
+                        },
+                        orderBy: {
+                            productPrice: sort,
+                        },
+                    } : {
+                        include: {
+                            brand: true,
+                        },
+                    },
+                }
+            });
+            if (productsInSubCategory) {
+                products = productsInSubCategory.products;
+                categories = [];
+            }
+        }
+        return {
+            products,
+            categories
+        }
+    } catch (err) {
+        console.error("Failed to get products or categories:",err);
+        return null;
     }
 }
