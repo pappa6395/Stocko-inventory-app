@@ -144,11 +144,13 @@ export function CartMenu() {
                 Continue Shopping
               </Button>
             </SheetClose>
-            <Button asChild>
-              <Link href="/checkout">
-                <span>Proceed to Checkout</span>
-              </Link>
-            </Button>
+            <SheetClose asChild>
+              <Button asChild>
+                <Link href="/checkout">
+                  <span>Proceed to Checkout</span>
+                </Link>
+              </Button>
+            </SheetClose>
           </SheetFooter>
         </SheetContent>
       ) : (

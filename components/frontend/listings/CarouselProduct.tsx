@@ -49,7 +49,7 @@ export default function CarouselProduct({ product }: { product: IProducts}) {
           </h2>
         </Link>
         <div className="flex items-center justify-between gap-2 pb-3 dark:text-slate-200 text-slate-800">
-          <p>US$ {product.productPrice}</p>
+          <p>US$ {product.productPrice.toLocaleString("ex-US")}</p>
           <AddToCartButton product={product} />
         </div>
       </div>

@@ -28,7 +28,13 @@ import Image from 'next/image'
 import { convertDateToIso } from '@/lib/convertDatetoISO'
 import { convertIsoToDateString } from '@/lib/convertISOtoDate'
 import CloseBtn from '@/components/global/FormInputs/CloseBtn'
-import NovelEditor from '@/components/global/FormInputs/NovelEditor'
+import dynamic from 'next/dynamic'
+const QuillEditor = dynamic(
+  () => import("@/components/global/FormInputs/QuillEditor"),
+  {
+    ssr: false,
+  }
+);
 
 
 type ProductFormProps = {
@@ -199,8 +205,9 @@ const ProductForm = ({
   }
 
   // Novel Content Editor
-  const [content, setContent] = useState<string | undefined>(initialData?.content || "")
-  console.log(content);
+  
+  const initialContent = initialData?.content || undefined;
+  const [content, setContent] = useState(initialContent)
   
   // Validate Data
   const validate = (data: ProductProps) => {
@@ -591,9 +598,6 @@ const ProductForm = ({
                               name="productDetails"
                             />
                           </div>
-                          <div className='col-span-full'>
-                          <NovelEditor content={content} setContent={setContent}/>
-                          </div>
                       </div>
                   </CardContent>
                 </Card>
@@ -734,11 +738,14 @@ const ProductForm = ({
                   >
                     Previous
                   </Button>
-                  <SubmitButton
-                    size={"sm"}
-                    title={editingId ? "Update Product" : "Save Product"}
-                    loading={isLoading}
-                  />
+                  <Button
+                    type='button'
+                    onClick={nextStep} 
+                    variant={"outline"} 
+                    size="lg"
+                  >
+                    Next
+                  </Button>
                 </div>
               </div>
             )}
@@ -798,6 +805,41 @@ const ProductForm = ({
                   </Card>
               ) : ("")}
               <div className='md:hidden flex justify-between gap-4 py-4'>
+                  <Button
+                    type='button'
+                    onClick={prevStep} 
+                    variant={"outline"} 
+                    size="lg"
+                  >
+                    Previous
+                  </Button>
+                  <SubmitButton
+                    size={"sm"}
+                    title={editingId ? "Update Product" : "Save Product"}
+                    loading={isLoading}
+                  />
+                </div>
+            </div>
+          )}
+          {step === 3 && (
+            <div className='grid md:col-span-12 gap-4 col-span-full'>
+              <Card>
+                <CardHeader>
+                    <CardTitle>Product Stock</CardTitle>
+                    <CardDescription>Update the product stocks</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className='col-span-full'>
+                      <QuillEditor
+                        label="Write the Content of product"
+                        className=""
+                        value={content}
+                        onChange={setContent}
+                      />
+                    </div>
+                </CardContent>
+              </Card>
+               <div className='hidden md:flex justify-between gap-4 py-4'>
                   <Button
                     type='button'
                     onClick={prevStep} 

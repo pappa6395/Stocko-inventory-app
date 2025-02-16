@@ -3,13 +3,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import PointOfSale from "./slices/pointOfSale";
 import cartSlice from "./slices/cartSlice";
 import historySlice from "./slices/historySlice";
+import stepSlice from "./slices/stepSlice";
+import checkoutSlice from "./slices/checkoutSlice";
 
  
 const store = configureStore({
   reducer: {
     pos: PointOfSale,
     cart: cartSlice,
-    history: historySlice
+    history: historySlice,
+    step: stepSlice,
+    checkout: checkoutSlice,
   },
 });
  

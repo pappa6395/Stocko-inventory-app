@@ -56,7 +56,7 @@ const VerticalProduct = ({product}: {product: IProducts}) => {
                     <p className="text-lg font-bold text-gray-500 dark:text-slate-50">
                         ${discountedPrice}
                         <span className='line-through px-2 text-gray-400 dark:text-slate-400'>
-                            ${product.productPrice}
+                            ${product.productPrice.toLocaleString("ex-US")}
                         </span>
                     </p>
                     <p>
