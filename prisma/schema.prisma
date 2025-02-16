@@ -226,6 +226,7 @@ model Products {
   productThumbnail  String?
   barcodeImageUrl   String?
   productDetails    String
+  content           String?
   batchNumber       String
   expiryDate        DateTime
   isFeatured        Boolean @default(false)

@@ -14,14 +14,14 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
+          "border border-input bg-background dark:bg-slate-900 shadow-sm hover:bg-accent hover:text-accent-foreground",
         shop:
           "border border-input bg-gradient-to-r from-emerald-400 to-lime-400 shadow-sm active:scale-90  hover:bg-accent hover:text-accent-foreground",
         receipt:
           "border border-input bg-gradient-to-r from-sky-400 to-teal-400 dark:from-sky-800 dark:to-teal-800 shadow-sm active:scale-90 text-slate-50 hover:bg-accent hover:text-accent-foreground",
         cart:
           "border border-input bg-slate-50 dark:bg-slate-900 shadow-sm active:scale-90  hover:bg-accent hover:text-accent-foreground",
-          secondary:
+        secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",

@@ -18,7 +18,7 @@ const layout = async ({children}: {children: ReactNode}) => {
   const mainCategories = await getPopulatedMainCategories() || []
 
   return (
-    <div className=''>
+    <div className='dark:bg-slate-900'>
       <ShopHeader user={userById} />
       <div className='hidden sm:block sm:container max-w-6xl mx-auto py-4'>
        {mainCategories && mainCategories.length > 0 && (

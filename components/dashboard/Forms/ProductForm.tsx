@@ -28,6 +28,7 @@ import Image from 'next/image'
 import { convertDateToIso } from '@/lib/convertDatetoISO'
 import { convertIsoToDateString } from '@/lib/convertISOtoDate'
 import CloseBtn from '@/components/global/FormInputs/CloseBtn'
+import NovelEditor from '@/components/global/FormInputs/NovelEditor'
 
 
 type ProductFormProps = {
@@ -197,6 +198,10 @@ const ProductForm = ({
       }
   }
 
+  // Novel Content Editor
+  const [content, setContent] = useState<string | undefined>(initialData?.content || "")
+  console.log(content);
+  
   // Validate Data
   const validate = (data: ProductProps) => {
     let newErrors: Partial<ProductProps> = {}
@@ -249,6 +254,7 @@ const ProductForm = ({
     data.alertQuantity = Number(data.alertQuantity);
     data.saleUnit = Number(data.saleUnit);
     data.expiryDate = convertDateToIso(data?.expiryDate);
+    data.content = content
 
     console.log("Product Data:", data);
 
@@ -532,7 +538,7 @@ const ProductForm = ({
                               <div>
                                 <label 
                                     htmlFor="comments" 
-                                    className="font-medium text-gray-900">
+                                    className="font-medium text-primary">
                                     Featured
                                   </label>
                                   <p id="comments-description" className="text-gray-500">
@@ -540,7 +546,6 @@ const ProductForm = ({
                                   </p>
                               </div>
                           </div>
-                          
                     </div>
                 </CardContent>
               </Card>
@@ -552,7 +557,7 @@ const ProductForm = ({
                   <Button
                     type='button'
                     onClick={nextStep} 
-                    variant={"default"} 
+                    variant={"outline"} 
                     size="lg"
                   >
                     Next
@@ -585,6 +590,9 @@ const ProductForm = ({
                               label="Description"
                               name="productDetails"
                             />
+                          </div>
+                          <div className='col-span-full'>
+                          <NovelEditor content={content} setContent={setContent}/>
                           </div>
                       </div>
                   </CardContent>

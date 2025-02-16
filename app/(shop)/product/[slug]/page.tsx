@@ -1,5 +1,4 @@
 
-
 import { PageProps } from '@/.next/types/app/(shop)/product/[slug]/page'
 import { getProductBySlug, getSimilarProducts } from '@/actions/products'
 import CustomBreadCrumb from '@/components/frontend/CustomBreadCrumb'
@@ -20,6 +19,7 @@ import {
 import { FaCopy, FaFacebook } from 'react-icons/fa'
 import { FaLine, FaXTwitter } from 'react-icons/fa6'
 import ProductListing from '@/components/frontend/listings/ProductListing'
+import ProductContent from '@/components/frontend/ProductContent'
 
 
 const page = async ({params: paramsPromise}: PageProps) => {
@@ -176,13 +176,17 @@ const page = async ({params: paramsPromise}: PageProps) => {
         </div>
         {/* Product Detail */}
         <div className='pt-4 border-t'>
-            <Tabs defaultValue="description" className="w-[400px]">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="description">Product Description</TabsTrigger>
-                    <TabsTrigger value="review">Product Reviews</TabsTrigger>
+            <Tabs defaultValue="description">
+                <TabsList className="grid grid-cols-3 w-[400px]">
+                    <TabsTrigger value="description">Description</TabsTrigger>
+                    <TabsTrigger value="content">Content</TabsTrigger>
+                    <TabsTrigger value="review">Reviews</TabsTrigger>
                 </TabsList>
                 <TabsContent value="description">
                     {products?.productDetails}
+                </TabsContent>
+                <TabsContent value="content">
+                    <ProductContent codeString={products?.content ?? ""} />
                 </TabsContent>
                 <TabsContent value="review">
                     <div>

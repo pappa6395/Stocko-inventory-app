@@ -302,45 +302,251 @@ type BriefCategory = {
     slug: string;
     type: string;
 }
-export async function getProductsByCategorySlug(slug: string, type: string, sort?: "asc" | "desc") {
+// export async function getProductsByCategorySlug(
+//     slug: string, 
+//     type: string,
+//     page: string, 
+//     sort?: "asc" | "desc",
+//     min?: string,
+//     max?: string,
+// ) {
+//     const minPrice = Number(min);
+//     const maxPrice = Number(max);
+//     const pageNumber = Number(page);
+//     const pageSize = 5;
+//     let totalCount = 0;
+    
+//     let products = [] as Products[];
+//     let categories = [] as BriefCategory[];
+//     try {
+//         if ( type === "main") {
+//             const productsInMainCategory  = await prismaClient.mainCategory.findUnique({
+//                 where: {
+//                     slug,
+//                 },
+//                 include: {
+//                     categories: {
+//                         include: {
+//                             subCategories: {
+//                                 include: {
+//                                     products: sort ? {
+//                                         include: {
+//                                             brand: true,
+//                                         },
+//                                         orderBy: {
+//                                             productPrice: sort,
+//                                         },
+//                                         where: {
+//                                             productPrice: {
+//                                                 gte: minPrice || 0,
+//                                                 lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                                             }
+//                                         },
+//                                         skip: (pageNumber - 1) * pageSize,
+//                                         take: pageSize,   
+//                                     } : {
+//                                         include: {
+//                                             brand: true,
+//                                         },
+//                                         where: {
+//                                             productPrice: {
+//                                                 gte: minPrice || 0,
+//                                                 lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                                             }
+//                                         },
+//                                         skip: (pageNumber - 1) * pageSize,
+//                                         take: pageSize,     
+//                                     },
+//                                 },
+//                             }
+//                         }
+//                     }
+//                 }
+//             });
+//             if (productsInMainCategory) {
+//                 products = productsInMainCategory.categories.flatMap(
+//                     (category) => category.subCategories.flatMap(
+//                         (subCategory) => subCategory.products)
+//                     );
+
+//                 totalCount = await prismaClient.products.count({
+//                     where: {
+//                         subCategory: {
+//                             category: {
+//                                 mainCategoryId: productsInMainCategory.id,
+//                             },
+//                         },
+//                         productPrice: {
+//                             gte: minPrice || 0,
+//                             lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                         }
+//                     }
+//                 });
+
+//                 categories = productsInMainCategory.categories.map((c) => ({
+//                     title: c.title,
+//                     slug: c.slug,
+//                     type: "cate"
+//                 }));
+//             };
+            
+//         } else if ( type === "cate") {
+//             const productsInCategory  = await prismaClient.category.findUnique({
+//                 where: {
+//                     slug,
+//                 },
+//                 include: {
+//                     subCategories: {
+//                         include: {
+//                             products: sort ? {
+//                                 include: {
+//                                     brand: true,
+//                                 },
+//                                 orderBy: {
+//                                     productPrice: sort,
+//                                 },
+//                                 where: {
+//                                     productPrice: {
+//                                         gte: minPrice || 0,
+//                                         lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                                     }
+//                                 }   
+//                             } : {
+//                                 include: {
+//                                     brand: true,
+//                                 },
+//                                 where: {
+//                                     productPrice: {
+//                                         gte: minPrice || 0,
+//                                         lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                                     }
+//                                 }   
+//                             },
+//                         }
+//                     }
+//                 }
+//             });
+//             if (productsInCategory) {
+//                 products = productsInCategory.subCategories.flatMap(
+//                     (sub) => sub.products)
+//                 categories = productsInCategory.subCategories.map((c) => ({
+//                     title: c.title,
+//                     slug: c.slug,
+//                     type: "sub"
+//                 }));
+//             }
+//         } else if ( type === "sub" ) {
+//             const productsInSubCategory  = await prismaClient.subCategory.findUnique({
+//                 where: {
+//                     slug,
+//                 },
+//                 include: {
+//                     products: sort ? {
+//                         include: {
+//                             brand: true,
+//                         },
+//                         orderBy: {
+//                             productPrice: sort,
+//                         },
+//                         where: {
+//                             productPrice: {
+//                                 gte: minPrice || 0,
+//                                 lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                             }
+//                         }   
+//                     } : {
+//                         include: {
+//                             brand: true,
+//                         },
+//                         where: {
+//                             productPrice: {
+//                                 gte: minPrice || 0,
+//                                 lte: maxPrice || Number.MAX_SAFE_INTEGER,
+//                             }
+//                         }   
+//                     },
+//                 }
+//             });
+//             if (productsInSubCategory) {
+//                 products = productsInSubCategory.products;
+//                 categories = [];
+//             }
+//         }
+//         return {
+//             products,
+//             categories,
+//             totalPages: Math.ceil(totalCount / pageSize),
+//         }
+//     } catch (err) {
+//         console.error("Failed to get products or categories:",err);
+//         return null;
+//     }
+// }
+
+export async function getProductsByCategorySlug(
+    slug: string, 
+    type: string,
+    page: string,
+    pageSize: number, 
+    sort?: "asc" | "desc",
+    min?: string,
+    max?: string,
+) {
+    const minPrice = Number(min);
+    const maxPrice = Number(max);
+    const pageNumber = Number(page);
+    
     
     let products = [] as Products[];
     let categories = [] as BriefCategory[];
+    let totalCount = 0;
+
+    const priceFilter = {
+        gte: minPrice || 0,
+        lte: maxPrice || Number.MAX_SAFE_INTEGER,
+    }
+
     try {
         if ( type === "main") {
-            const productsInMainCategory  = await prismaClient.mainCategory.findUnique({
+            const mainCategory  = await prismaClient.mainCategory.findUnique({
                 where: {
                     slug,
                 },
                 include: {
-                    categories: {
-                        include: {
-                            subCategories: {
-                                include: {
-                                    products: sort ? {
-                                        include: {
-                                            brand: true,
-                                        },
-                                        orderBy: {
-                                            productPrice: sort,
-                                        },   
-                                    } : {
-                                        include: {
-                                            brand: true,
-                                        },
-                                    },
-                                },
-                            }
-                        }
-                    }
+                    categories: true,
                 }
             });
-            if (productsInMainCategory) {
-                products = productsInMainCategory.categories.flatMap(
-                    (category) => category.subCategories.flatMap(
-                        (subCategory) => subCategory.products))
+            if (mainCategory) {
+                totalCount = await prismaClient.products.count({
+                    where: {
+                        subCategory: {
+                            category: {
+                                mainCategoryId: mainCategory.id,
+                            },
+                        },
+                        productPrice: priceFilter,
+                    },
+                });
 
-                categories = productsInMainCategory.categories.map((c) => ({
+                products = await prismaClient.products.findMany({
+                    where: {
+                        subCategory: {
+                            category: {
+                                mainCategoryId: mainCategory.id,
+                            },
+                        },
+                        productPrice: priceFilter,
+                    },
+                    include: {
+                        brand: true,
+                    },
+                    orderBy: sort ? {
+                        productPrice: sort } : undefined,
+                    skip: (pageNumber - 1) * pageSize,
+                    take: pageSize,
+                })
+
+                categories = mainCategory.categories.map((c) => ({
                     title: c.title,
                     slug: c.slug,
                     type: "cate"
@@ -348,67 +554,84 @@ export async function getProductsByCategorySlug(slug: string, type: string, sort
             };
             
         } else if ( type === "cate") {
-            const productsInCategory  = await prismaClient.category.findUnique({
+            const category  = await prismaClient.category.findUnique({
                 where: {
                     slug,
                 },
                 include: {
-                    subCategories: {
-                        include: {
-                            products: sort ? {
-                                include: {
-                                    brand: true,
-                                },
-                                orderBy: {
-                                    productPrice: sort,
-                                },
-                            } : {
-                                include: {
-                                    brand: true,
-                                },
-                            },
-                        }
-                    }
-                }
+                    subCategories: true,
+                },
             });
-            if (productsInCategory) {
-                products = productsInCategory.subCategories.flatMap(
-                    (sub) => sub.products)
-                categories = productsInCategory.subCategories.map((c) => ({
-                    title: c.title,
-                    slug: c.slug,
+            if (category) {
+                totalCount = await prismaClient.products.count({
+                    where: {
+                        subCategory: {
+                            categoryId: category.id,
+                        },
+                        productPrice: priceFilter,
+                    },
+                })
+
+                products = await prismaClient.products.findMany({
+                    where: {
+                        subCategory: {
+                            categoryId: category.id,
+                        },
+                        productPrice: priceFilter,
+                    },
+                    include: {
+                        brand: true,
+                    },
+                    orderBy: sort ? {
+                        productPrice: sort } : undefined,
+                    skip: (pageNumber - 1) * pageSize,
+                    take: pageSize,
+                })
+
+                categories = category.subCategories.map((s) => ({
+                    title: s.title,
+                    slug: s.slug,
                     type: "sub"
                 }));
             }
         } else if ( type === "sub" ) {
-            const productsInSubCategory  = await prismaClient.subCategory.findUnique({
+            const subCategory  = await prismaClient.subCategory.findUnique({
                 where: {
                     slug,
                 },
-                include: {
-                    products: sort ? {
-                        include: {
-                            brand: true,
-                        },
-                        orderBy: {
-                            productPrice: sort,
-                        },
-                    } : {
-                        include: {
-                            brand: true,
-                        },
-                    },
-                }
+                
             });
-            if (productsInSubCategory) {
-                products = productsInSubCategory.products;
+            if (subCategory) {
+                totalCount = await prismaClient.products.count({
+                    where: {
+                        subCategoryId: subCategory.id,
+                        productPrice: priceFilter,
+                    },
+                });
+
+                products = await prismaClient.products.findMany({
+                    where: {
+                        subCategoryId: subCategory.id,
+                        productPrice: priceFilter,
+                    },
+                    include: {
+                        brand: true,
+                    },
+                    orderBy: sort ? {
+                        productPrice: sort } : undefined,
+                    skip: (pageNumber - 1) * pageSize,
+                    take: pageSize,
+                });
+
                 categories = [];
             }
         }
         return {
             products,
-            categories
-        }
+            categories,
+            totalCount,
+            totalPages: Math.ceil(totalCount / pageSize),
+        };
     } catch (err) {
         console.error("Failed to get products or categories:",err);
         return null;

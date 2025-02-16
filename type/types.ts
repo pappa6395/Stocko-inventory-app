@@ -118,6 +118,7 @@ export type ProductProps = {
     productThumbnail: string | null;
     
     productDetails: string;
+    content?: string;
 }
 
 export type BannerProps = {
