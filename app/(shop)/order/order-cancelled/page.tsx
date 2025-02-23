@@ -11,7 +11,7 @@ import { AlertCircle, Minus, Plus, Send, Trash } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import Image from 'next/image'
-import { decrementQty, incrementQty, loadCart, removeAllProductsFromCart, removeProductFromCart } from '@/redux/slices/cartSlice'
+import { CartItem, decrementQty, incrementQty, removeAllProductsFromCart } from '@/redux/slices/cartSlice'
 import { useSession } from 'next-auth/react'
 import { createFeedback } from '@/actions/feedback'
 import toast from 'react-hot-toast'
@@ -20,12 +20,20 @@ import { useRouter } from 'next/navigation'
 const page = () => {
 
     const {data: session, status} = useSession()
-    const userId = session?.user.id
+    const userId = session?.user.id || 0;
+    const [allCartItems, setAllCartItems] = useState<CartItem[]>([]);
     const cartItems = useAppSelector((state) => state.cart.cartItems);
     const dispatch = useAppDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const totalSum = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0)
     const router = useRouter();
+
+    useEffect(() => {
+      const allCartItems = localStorage.getItem('cart');
+      if (allCartItems) {
+          setAllCartItems(JSON.parse(allCartItems));
+      }
+    },[cartItems])
 
     const handleQtyIncrement = (cartItemId: number) => {
         dispatch(
@@ -39,9 +47,9 @@ const page = () => {
         )
     };
 
-    const handleRemove = (cartItemId: number) => {
+    const handleRemove = () => {
         dispatch(
-            removeProductFromCart(cartItemId)
+            removeAllProductsFromCart()
         )
     };
 
@@ -54,7 +62,7 @@ const page = () => {
     
     const submitFeedback = async (data: FeedbackProps) => {
         setIsLoading(true)
-        data.orderItemIds = cartItems.map(item => item.id)
+        data.orderItemIds = allCartItems.map(item => item.id)
         data.userId = userId ?? "";
         console.log(data);
 
@@ -77,9 +85,6 @@ const page = () => {
     
     }
 
-    useEffect(() => {
-      dispatch(loadCart());
-    }, []);
     
   return (
 
@@ -105,7 +110,7 @@ const page = () => {
         </h2>
         <div className="py-4">
           <div className="">
-            {cartItems.map((item, i) => {
+            {allCartItems.map((item, i) => {
               return (
                 <div
                   key={i}
@@ -121,7 +126,7 @@ const page = () => {
                   <div className="flex flex-col justify-start items-start space-y-2">
                     <h2 className="text-xs w-[30ch] truncate font-medium">{item.brand} {item.name}</h2>
                     <button
-                      onClick={() => handleRemove(item.id)}
+                      onClick={() => handleRemove}
                       className="text-xs flex items-center text-red-500"
                     >
                       <Trash className="w-4 h-4 mr-1" />
