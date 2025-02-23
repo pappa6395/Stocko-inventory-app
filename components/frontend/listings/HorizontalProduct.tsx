@@ -48,7 +48,7 @@ const HorizontalProduct = ({product}: {product: IProducts}) => {
                 className='w-24 h-32 object-contain flex-shrink-0' 
             />
             <div className=''>
-                <h2 className="text-sm font-semibold text-gray-700 dark:text-slate-50">
+                <h2 className="text-sm font-semibold w-[24ch] truncate text-gray-700 dark:text-slate-50">
                     {product.brand.title} {product.name}
                 </h2>
                 <div>

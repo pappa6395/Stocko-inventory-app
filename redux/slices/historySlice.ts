@@ -17,19 +17,22 @@ interface HistoryState {
 
 // Safely retrieve cart items from localStorage
 const getInitialhistoryItems = (): HistoryItem[] => {
-  try {
-    const storedHistory = localStorage.getItem("cart");
-    if (storedHistory) {
-      return JSON.parse(storedHistory);
+  if (typeof window !== "undefined" && window.localStorage) {
+    try {
+      const storedHistory = localStorage.getItem("cart");
+      if (storedHistory) {
+        return JSON.parse(storedHistory);
+      }
+    } catch (error) {
+      console.error("Failed to parse history item from localStorage", error);
     }
-  } catch (error) {
-    console.error("Failed to parse history item from localStorage", error);
   }
+  
   return [];
 };
 
 const initialState: HistoryState = {
-  historyItems: getInitialhistoryItems(),
+  historyItems: [],
 };
 const saveItemsToLocalStorage = (items: HistoryItem[]) => {
   localStorage.setItem("history", JSON.stringify(items));
@@ -38,6 +41,9 @@ const historySlice = createSlice({
   name: "history",
   initialState,
   reducers: {
+    loadHistory: (state) => {
+          state.historyItems = getInitialhistoryItems();
+        },
     addProductToHistory: (state, action: PayloadAction<HistoryItem>) => {
       const existingItem = state.historyItems.find((item) => item.id === action.payload.id);
       if (existingItem) {
@@ -59,6 +65,7 @@ const historySlice = createSlice({
 });
 
 export const {
+  loadHistory,
   addProductToHistory,
   removeProductFromHistory,
 } = historySlice.actions;

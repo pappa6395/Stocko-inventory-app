@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 export interface OrderLineItem {
   id: number;
   name: string;
+  brand: string;
   price: number;
   qty: number;
   productThumbnail: string | null;
@@ -15,18 +16,21 @@ interface OrderLineItems {
 }
 
 const getInitialOrderLineItems = (): OrderLineItem[] => {
-  try {
-    const storedItems = localStorage.getItem("posItems");
-    if (storedItems) {
-      return JSON.parse(storedItems);
+  if (typeof window !== "undefined" && window.localStorage) {
+    try {
+      const storedItems = localStorage.getItem("posItems");
+      if (storedItems) {
+        return JSON.parse(storedItems);
+      }
+    } catch (error) {
+      console.error("Failed to parse cart items from localStorage", error);
     }
-  } catch (error) {
-    console.error("Failed to parse cart items from localStorage", error);
   }
+  
   return [];
 };
 const initialState: OrderLineItems = {
-  products: getInitialOrderLineItems(),
+  products: [],
 };
 const saveItemsToLocalStorage = (items: OrderLineItem[]) => {
   localStorage.setItem("posItems", JSON.stringify(items));
@@ -35,6 +39,9 @@ const pointOfSaleSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
+    loadOrderLineItem: (state) => {
+          state.products = getInitialOrderLineItems();
+        },
     addProductToOrderLine: (state, action: PayloadAction<OrderLineItem>) => {
       const existingItem = state.products.find(
         (product) => product.id === action.payload.id
@@ -88,6 +95,7 @@ const pointOfSaleSlice = createSlice({
 });
 
 export const {
+  loadOrderLineItem,
   addProductToOrderLine,
   removeProductFromOrderLine,
   removeProductsfromLocalStorage,

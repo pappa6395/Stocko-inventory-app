@@ -34,7 +34,7 @@ export default function SubmitButton({
           variant={"default"}
           disabled
           className={cn(
-            "items-center flex justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-950 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-not-allowed",
+            "items-center flex justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-800 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-not-allowed",
             className
           )}
         >
@@ -47,7 +47,7 @@ export default function SubmitButton({
           size={size}
           variant={"default"}
           className={cn(
-            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-950 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
+            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-800 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
             className
           )}
         >

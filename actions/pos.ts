@@ -4,6 +4,7 @@
 import { prismaClient } from "@/lib/db";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { OrderLineItem } from "@/redux/slices/pointOfSale";
+import { ILineOrder } from "@/type/types";
 import { LineOrder } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -12,12 +13,23 @@ interface CustomerData {
   customerId: number;
   customerName: string;
   customerEmail: string;
-  customerPhone: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  streetAddress: string;
+  unitNumber: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  method: string;
 }
 interface NewOrderProps {
-  customerItems: OrderLineItem[];
+  orderItems: OrderLineItem[];
   orderAmount: number;
   orderType: string;
+  source: string;
 }
 
 
@@ -26,7 +38,8 @@ export async function createLineOrder(
     customerData: CustomerData,
 ) {
 
-    const { customerItems, orderAmount, orderType } = newOrder
+    const { orderItems, orderAmount, orderType, source } = newOrder
+    console.log("Payload checked:", customerData, orderItems, orderAmount, orderType);
     
     try {
         // Transaction => If one of the process fail then they all will fail
@@ -36,20 +49,37 @@ export async function createLineOrder(
         // For each item create LineOrderItem
         // Combine all items to Create a line order
         // For each item we need to create a Sale
-
-        return await prismaClient.$transaction(async (transaction) => {
+        
+        const lineOrderId = await prismaClient.$transaction(async (transaction) => {
             // Create the Line Order
             const lineOrder = await transaction.lineOrder.create({
               data: {
-                customerId: customerData.customerId.toString(),
+                customerId: customerData.customerId,
                 customerName: customerData.customerName,
                 customerEmail: customerData.customerEmail,
+                // Personal details
+                firstName: customerData.firstName,
+                lastName: customerData.lastName,
+                email: customerData.email,
+                phone: customerData.phone,
+                // Shipping Address
+                streetAddress: customerData.streetAddress,
+                unitNumber: customerData.unitNumber,
+                city: customerData.city,
+                state: customerData.state,
+                zipCode: customerData.zipCode,
+                country: customerData.country,
+                // Payment Method
+                paymentMethod: customerData.method,
+                // Line Order details
                 orderNumber: generateOrderNumber(),
+                status: "DELIVERED",
                 orderAmount,
                 orderType,
+                source,
               },
             });
-            for (const item of customerItems) {
+            for (const item of orderItems) {
               // Update Product stock quantity
               const updatedProduct = await transaction.products.update({
                 where: { id: item.id },
@@ -58,7 +88,7 @@ export async function createLineOrder(
                     decrement: item.qty,
                   },
                   saleUnit: {
-                    increment: item.qty
+                    increment: item.qty,
                   }
                 },
               });
@@ -71,7 +101,7 @@ export async function createLineOrder(
                   data: {
                   orderId: lineOrder.id,
                   productId: item.id,
-                  name: item.name,
+                  name: `${item.brand} ${item.name}`,
                   price: item.price,
                   qty: item.qty,
                   productThumbnail: item.productThumbnail ?? "/placeholder.svg",
@@ -95,7 +125,7 @@ export async function createLineOrder(
                   productImage: item.productThumbnail ?? "/placeholder.svg",
                   customerName: customerData.customerName,
                   customerEmail: customerData.customerEmail,
-                  customerPhone: customerData.customerPhone,
+                  customerPhone: customerData.phone,
                 },
               });
               if (!sale) {
@@ -103,15 +133,23 @@ export async function createLineOrder(
               }              
             };
 
-        console.log(lineOrder);
-        revalidatePath("/dashboard/sales");
+            revalidatePath("/dashboard/sales");
+            return lineOrder.id;
+        });
+        const savedLineOrder = await prismaClient.lineOrder.findUnique({
+          where: {
+            id: lineOrderId,
+          },
+          include: {
+            lineOrderItems: true,
+          }
+        });
+        console.log(savedLineOrder);
         return {
           success: true,
-          data: lineOrder as LineOrder,
+          data: savedLineOrder as ILineOrder,
           error: null,
         }
-      });
-
     } catch (error) {
         console.error("Transaction error:", error);
         return {
@@ -152,3 +190,47 @@ export async function getOrders() {
   }
 }
 
+export async function deleteManySale () {
+
+  try {
+    await prismaClient.sale.deleteMany()
+
+  } catch (error) {
+    console.error("Failed to delete bulk sale:", error);
+    return {
+      ok: false,
+      data: null,
+      error: "Failed to delete bulk sale",
+    };
+  }
+}
+
+export async function deleteManylineOrderItem () {
+
+  try {
+    await prismaClient.lineOrderItem.deleteMany()
+
+  } catch (error) {
+    console.error("Failed to delete bulk sale:", error);
+    return {
+      ok: false,
+      data: null,
+      error: "Failed to delete bulk sale",
+    };
+  }
+}
+
+export async function deleteManylineOrder () {
+
+  try {
+    await prismaClient.lineOrder.deleteMany()
+
+  } catch (error) {
+    console.error("Failed to delete bulk sale:", error);
+    return {
+      ok: false,
+      data: null,
+      error: "Failed to delete bulk sale",
+    };
+  }
+}

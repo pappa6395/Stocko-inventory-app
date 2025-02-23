@@ -1,14 +1,16 @@
 "use client";
 
 
-import { FormEvent, useState } from "react";
+import { useEffect, useState } from "react";
 import { Description, Label, RadioGroup } from "@headlessui/react";
-import { Check, CreditCard, Handshake } from "lucide-react";
+import { Check, CreditCard, Handshake, Loader2 } from "lucide-react";
 import PreviousButton from "./PreviousButton";
 import NextButton from "./NextButton";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks/hooks";
-import { setActiveStep } from "@/redux/slices/stepSlice";
 import { setPaymentMethod } from "@/redux/slices/checkoutSlice";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { CartItem } from "@/redux/slices/cartSlice";
 
 
 const plans = [
@@ -29,16 +31,25 @@ const plans = [
 const PaymentMethod = () => {
 
     const [selected, setSelected] = useState(plans[0]);
-
+    const [isLoading, setIsLoading] = useState(false);
+    const [allCartItems, setAllCartItems] = useState<CartItem[]>([]);
+    
+    const router = useRouter();
     const cartItems = useAppSelector((state) => state.cart.cartItems)
-    const activeStep = useAppSelector((state) => state.step.activeStep);
     const personalDetails = useAppSelector((state) => state.checkout.personalDetails)
     const shippingAddress = useAppSelector((state) => state.checkout.shippingAddress)
-    const paymentMethod = useAppSelector((state) => state.checkout.paymentMethod)
+
     const dispatch = useAppDispatch();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
     
+    useEffect(() => {
+        const allCartItems = localStorage.getItem('cart');
+        if (allCartItems) {
+            setAllCartItems(JSON.parse(allCartItems));
+        }
+    },[cartItems])
   
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         const method = selected.method
@@ -54,10 +65,35 @@ const PaymentMethod = () => {
             method,
         }
         console.log(checkoutData);
-        
+        router.push("order/order-success")
         // Sending to API endpoint
+
+        try {
+            const response = await fetch(`${baseUrl}/api/checkout`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ products: allCartItems }),
+            });
+       
+            const data = await response.json();
+            console.log("Stripe Data:",data);
+       
+            if (data?.url) {
+              // console.log(response.url);
+              const url = data?.url;
+              setIsLoading(false);
+              console.log(url);
+              window.location.href = url;
+              // router.replace(url);
+            }
+          } catch (error) {
+            console.error("Error:", error);
+            setIsLoading(false);
+          }
     }
-  
+
 
   return (
 
@@ -132,7 +168,14 @@ const PaymentMethod = () => {
             </div>
             <div className='flex justify-between mt-6 px-2'>
                 <PreviousButton />
-                <NextButton />
+                {isLoading ? (
+                    <Button disabled>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Processing Please wait
+                    </Button>
+                    ) : (
+                        <NextButton />
+                    )}
             </div>
         </form>
     </div>

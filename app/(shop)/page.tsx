@@ -28,7 +28,8 @@ const Home = async () => {
             title="Today's Deals" 
             detailLink={"#"} 
             products={products.slice(0,6)} 
-            cardType='horizontal'
+            cardType='carousel'
+            carousel
             className='bg-gradient-to-r from-sky-500 to-white 
             dark:from-slate-700 dark:to-slate-500 rounded-lg'
           />
@@ -52,7 +53,7 @@ const Home = async () => {
             title="Flash Sales" 
             detailLink={"#"} 
             products={products.slice(12,20)}
-            cardType='carousel'
+            cardType='horizontal'
             carousel
             className='bg-gradient-to-r from-sky-500 to-white 
             dark:from-slate-700 dark:to-slate-500 rounded-lg'

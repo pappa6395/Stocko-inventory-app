@@ -5,8 +5,8 @@ import Image from 'next/image'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Minus, Plus, Trash2 } from 'lucide-react'
-import { OrderLineItem } from '@/redux/slices/pointOfSale'
-import { useAppSelector } from '@/redux/hooks/hooks'
+import { loadOrderLineItem, OrderLineItem } from '@/redux/slices/pointOfSale'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
 
 const OrderCard = ({
     product,
@@ -21,6 +21,7 @@ const OrderCard = ({
 }) => {
 
     const orderLineItems = useAppSelector((state) => state.pos.products)
+    const dispatch = useAppDispatch()
 
     useEffect(() => {
             if (typeof window !== "undefined") {
@@ -28,6 +29,11 @@ const OrderCard = ({
             }
     }, [orderLineItems]);
 
+    useEffect(() => {
+        dispatch(
+            loadOrderLineItem(),
+        );
+    }, []);
     
   return (
 

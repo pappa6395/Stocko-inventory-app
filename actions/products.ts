@@ -2,6 +2,7 @@
 
 
 import { AddProductToCartProps, IProductCarts } from "@/components/frontend/listings/AddToCartButton";
+import { ProductwithBrand } from "@/components/pos/PointOfSale";
 import { prismaClient } from "@/lib/db";
 import { GroupProducts, IProducts, ProductProps } from "@/type/types";
 import { Products } from "@prisma/client";
@@ -89,10 +90,14 @@ export async function getProductsBySubCategoryId(subCategoryId: string) {
     
     try {
         if (subCategoryId && subCategoryId === 'all') {
-            const products = await prismaClient.products.findMany();
+            const products = await prismaClient.products.findMany({
+                include: {
+                    brand: true,
+                }
+            });
             return {
                 ok: true,
-                data: products,
+                data: products as ProductwithBrand[],
                 error: null
             }
         } else if (subCategoryId && subCategoryId !== 'all') {
@@ -100,10 +105,13 @@ export async function getProductsBySubCategoryId(subCategoryId: string) {
                 where: {
                     subCategoryId: Number(subCategoryId)
                 },
+                include: {
+                    brand: true,
+                }
             });
             return {
                 ok: true,
-                data: products,
+                data: products as ProductwithBrand[],
                 error: null
             }
         }
@@ -171,14 +179,17 @@ export async function getGroupedProductsByBrandId(brandId: string) {
                 },
                 include: {
                     subCategory: true,
+                    brand: true,
                 }
             });
 
             const groupProducts = products.reduce<Record<string, GroupProducts>>((acc, product) => { 
                 const subCategory = product.subCategory;
+                const brand = product.brand;
                 if (!acc[subCategory.id]) {
                     acc[subCategory.id] = {
                         subCategory,
+                        brand,
                         products: [],
                     }
                 }

@@ -20,7 +20,7 @@ const ShippingAddressForm = () => {
     const router = useRouter()
     const activeStep = useAppSelector((state) => state.step.activeStep)
     const dispatch = useAppDispatch()
-    const shippingAddress = useAppSelector((state) => state.checkout.shippingAddress) as ShippingAddress | null;
+    const shippingAddress = useAppSelector((state) => state.checkout.shippingAddress)
 
     const {
       register,
@@ -40,7 +40,9 @@ const ShippingAddressForm = () => {
 
     const saveUser = async(data: ShippingAddress) => {
       dispatch(setActiveStep(activeStep + 1))
-      dispatch(setShippingAddress(data))
+      dispatch(
+        setShippingAddress(data)
+      )
     }
 
   return (

@@ -38,6 +38,7 @@ const AddToCartButton = ({product}: AddProductToCartProps) => {
         name: product?.name || "",
         price: product?.productPrice || 0,
         qty: quantity,
+        brand: product?.brand.title || "",
         image: product?.productThumbnail || "/placeholder.svg",
       };
       dispatch(addProductToCart(newCartItem));
@@ -58,10 +59,11 @@ const AddToCartButton = ({product}: AddProductToCartProps) => {
       setExisting(isExisting);
     }, [cartItems]);
 
+      
   return (
 
     <div className='flex justify-evenly items-center mt-5'>
-        <div className='flex items-center gap-1'>
+        <div className='hidden sm:flex items-center gap-1'>
             <Button 
                 type="button" 
                 size={"icon"} 

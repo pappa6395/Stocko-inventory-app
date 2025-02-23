@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 export interface CartItem {
   id: number;
   name: string;
+  brand: string;
   price: number;
   image: string;
   qty: number;
@@ -15,7 +16,7 @@ interface CartState {
 }
 
 // Safely retrieve cart items from localStorage
-const getInitialCartItems = (): CartItem[] => {
+export const getInitialCartItems = (): CartItem[] => {
   try {
     const storedCart = localStorage.getItem("cart");
     if (storedCart) {
@@ -28,10 +29,11 @@ const getInitialCartItems = (): CartItem[] => {
 };
 
 const initialState: CartState = {
-  cartItems: getInitialCartItems(),
+  cartItems: [],
 };
-const saveItemsToLocalStorage = (items: CartItem[]) => {
+export const saveItemsToLocalStorage = (items: CartItem[]) => {
   localStorage.setItem("cart", JSON.stringify(items));
+  return []
 };
 const cartSlice = createSlice({
   name: "cart",

@@ -35,7 +35,7 @@ const ProductListing = ({
 
   return (
 
-    <div className='space-y-3'>
+    <div className='space-y-3 grid grid-col-1'>
         <div className={cn('flex items-center justify-between border-gray-400 py-3', className)}>
             {/* Heading */}
             <h1 className="scroll-m-20 text-xl font-extrabold tracking-tight 
@@ -49,12 +49,12 @@ const ProductListing = ({
         <div className='bg-gradient-to-r from-white to-sky-300 
         dark:from-slate-500 dark:to-slate-700 gap-2 rounded-lg'>
             {carousel ? (
-                    <div className='max-w-5xl mx-auto pt-3 pb-3'>
+                    <div className='max-w-xs md:max-w-5xl mx-auto pt-3 pb-3'>
                         <CarouselListing products={products} />
                     </div>
                 ) : cardType === "horizontal" ? (
                     scrollable ? (
-                        <ScrollArea className='w-[400px] sm::w-[600px] md:w-[780px] lg:w-[980px]
+                        <ScrollArea className='w-[350px] sm::w-[600px] md:w-[780px] lg:w-[980px]
                         whitespace-nowrap mx-auto'>
                             <div className='flex gap-4 py-3 items-center'>
                                 {products.map((product,i) => {
@@ -76,7 +76,7 @@ const ProductListing = ({
                     )
                 ) : cardType === "vertical" ? (
                     scrollable ? (
-                        <ScrollArea className='w-[400px] sm::w-[600px] md:w-[780px] lg:w-[980px]
+                        <ScrollArea className='w-[330px] sm::w-[600px] md:w-[780px] lg:w-[980px]
                         whitespace-nowrap mx-auto'>
                             <div className='flex gap-4 py-3 items-center'>
                                 {products.map((product,i) => {
@@ -88,7 +88,7 @@ const ProductListing = ({
                             <ScrollBar orientation='horizontal'/>
                         </ScrollArea>
                     ) : (
-                        <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 p-4 gap-2'>
+                        <div className='grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 sm:p-4 gap-2'>
                             {products.map((product,i) => {
                                 return (
                                     <VerticalProduct key={i} product={product} />
@@ -98,7 +98,7 @@ const ProductListing = ({
                     )         
                 ) : cardType === "cart" ? (
                     scrollable ? (
-                        <ScrollArea className='w-[400px] sm::w-[600px] md:w-[780px] lg:w-[980px]
+                        <ScrollArea className='w-[350px] sm::w-[600px] md:w-[780px] lg:w-[980px]
                         whitespace-nowrap mx-auto'>
                             <div className='flex gap-4 py-3 items-center'>
                                 {products.map((product,i) => {

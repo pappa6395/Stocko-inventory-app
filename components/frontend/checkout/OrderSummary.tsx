@@ -1,29 +1,40 @@
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+"use client"
+
+
+import { Card, CardContent, CardTitle } from '@/components/ui/card'
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import PreviousButton from './PreviousButton'
 import Image from 'next/image'
 import NextButton from './NextButton'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
 import { setActiveStep } from '@/redux/slices/stepSlice'
+import { CartItem } from '@/redux/slices/cartSlice'
+
 
 const OrderSummary = () => {
-
+    
+    const [allCartItems, setAllCartItems] = useState<CartItem[]>([]);
     const cartItems = useAppSelector((state) => state.cart.cartItems);
     const activeStep = useAppSelector((state) => state.step.activeStep);
     const dispatch = useAppDispatch();
 
+    useEffect(() => {
+        const allCartItems = localStorage.getItem('cart');
+        if (allCartItems) {
+          setAllCartItems(JSON.parse(allCartItems));
+        }
+    },[cartItems])
 
-    const sumItems = cartItems.reduce((
+    const sumItems = allCartItems.reduce((
         sum, item) => sum + item.qty, 0)
-    const totalSum = cartItems.reduce(
+    const totalSum = allCartItems.reduce(
         (sum, item) => sum + item.price * item.qty,0).toFixed(2);
-
 
     const handleSubmit = () => {
         dispatch(setActiveStep(activeStep + 1));
     }
+
 
   return (
 
@@ -40,7 +51,7 @@ const OrderSummary = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {cartItems.map((item, i) => {
+                    {allCartItems.map((item, i) => {
                         return (
                             <TableRow key={i}>
                                 <TableCell>
@@ -67,7 +78,7 @@ const OrderSummary = () => {
                         )
                     })}   
                 </TableBody>
-                <TableFooter>
+                <TableFooter className='dark:bg-slate-900 rounded-lg shadow-lg'>
                     <TableRow>
                         <TableCell className='translate-x-5 sm:translate-x-10 font-semibold'>
                             Total Items:
@@ -86,7 +97,7 @@ const OrderSummary = () => {
                                     </CardTitle>
                                     <p className='text-lg font-bold sm:mr-3'>${totalSum}</p>
                                 </CardContent>
-                                <p className='sm:hidden text-gray-400 text-sm'>(VAT fee 7% included)</p>
+                                <p className='sm:hidden text-gray-400 text-sm pb-2'>(VAT fee 7% included)</p>
                             </Card>
                         </TableCell>
                     </TableRow>

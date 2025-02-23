@@ -52,7 +52,7 @@ export default function CategoryCarousel({
       removeArrowOnDeviceType={["tablet", "mobile"]}
       // deviceType={}
       dotListClass="custom-dot-list-style"
-      itemClass="px-4"
+      itemClass="px-2 sm:px-4"
     >
       {products.map((product, i) => {
         return (

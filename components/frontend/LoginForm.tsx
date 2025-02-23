@@ -4,14 +4,13 @@ import { Eye, EyeOff, Lock, LogIn, Mail } from 'lucide-react'
 import Link from 'next/link'
 import React, { useState } from 'react'
 import { signIn } from "next-auth/react";
-import { Button } from '../ui/button';
 import { useForm } from 'react-hook-form';
 import TextInput from '../global/FormInputs/TextInputForm';
 import SubmitButton from '../global/FormInputs/SubmitButton';
 import { LoginProps } from '@/type/types';
 import LoginPasswordInput from '../global/FormInputs/LoginPasswordInput';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 interface LoginFormProps {
     roleId?: number;
@@ -23,6 +22,8 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
 
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
+    const params = useSearchParams()
+    const returnUrl = params.get('returnUrl') || '/dashboard'
 
     const { 
         handleSubmit, 
@@ -58,7 +59,7 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
                   reset();
                   setIsLoading(false);
                   toast.success("Login Successful");
-                  router.push("/dashboard");
+                  router.push(returnUrl);
                 }
               } catch (error) {
                 setIsLoading(false);

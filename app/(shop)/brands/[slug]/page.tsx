@@ -1,9 +1,10 @@
 
 
 import { PageProps } from '@/.next/types/app/(shop)/brands/[slug]/page';
-import { getGroupedProductsByBrandId, getProductsByBrandId } from '@/actions/products';
+import { getGroupedProductsByBrandId } from '@/actions/products';
 import CustomBreadCrumb, { BreadCrumbItem } from '@/components/frontend/CustomBreadCrumb';
 import ProductListing from '@/components/frontend/listings/ProductListing';
+import { IProducts } from '@/type/types';
 import React from 'react'
 
 
@@ -13,9 +14,7 @@ const page = async ({searchParams: searchParamsPromise, params: paramsPromise}: 
     const { id } = await searchParamsPromise;
     const { slug } = await paramsPromise;
 
-    const products = await getProductsByBrandId(id) || [];
     const groupProducts = await getGroupedProductsByBrandId(id) || [];
-    console.log(groupProducts);
     
     const brandName = slug
     .split('-')
@@ -54,7 +53,7 @@ const page = async ({searchParams: searchParamsPromise, params: paramsPromise}: 
                 key={i}
                 title={`${group.subCategory.title} (${group.products.length})`} 
                 detailLink={"#"} 
-                products={products}
+                products={group.products as IProducts[]}
                 cardType='horizontal'
                 className='bg-gradient-to-r from-sky-500 to-white rounded-lg'
               />

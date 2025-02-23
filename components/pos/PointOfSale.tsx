@@ -1,6 +1,6 @@
 "use client"
 
-import { Products, SubCategory } from '@prisma/client'
+import { Brand, Products, SubCategory } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -10,10 +10,10 @@ import ItemCard from './item-card'
 import OrderCard from './order-card'
 import { ScrollArea, ScrollBar } from '../ui/scroll-area'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
-import { addProductToOrderLine, decrementQty, incrementQty, OrderLineItem, removeProductFromOrderLine, removeProductsfromLocalStorage } from '@/redux/slices/pointOfSale'
+import { addProductToOrderLine, decrementQty, incrementQty, loadOrderLineItem, OrderLineItem, removeProductFromOrderLine, removeProductsfromLocalStorage } from '@/redux/slices/pointOfSale'
 import SearchItems from './search-items'
 import FormSelectInput from '../global/FormInputs/FormSelectInput'
-import { ICustomer } from '@/type/types'
+import { ICustomer, IProducts } from '@/type/types'
 import { createLineOrder } from '@/actions/pos'
 import { Loader, ShoppingBasket } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -21,6 +21,7 @@ import ReceiptPrint from './receiptPrint'
 import { useReactToPrint } from 'react-to-print'
 import * as htmlToImage from 'html-to-image';
 import axios from "axios";
+import { loadHistory } from '@/redux/slices/historySlice'
 
 
 type CustomerOptionProps = {
@@ -30,6 +31,10 @@ type CustomerOptionProps = {
     phone: string;
 }
 
+export interface ProductwithBrand extends Products {
+    brand: Brand;
+}
+
 const PointOfSale = ({
     subCategories,
     products,
@@ -37,7 +42,7 @@ const PointOfSale = ({
     cate
 }: {
     subCategories?: SubCategory[]; 
-    products?: Products[];
+    products?: ProductwithBrand[];
     customers?: ICustomer[];
     cate: string;
 }) => {
@@ -45,8 +50,18 @@ const PointOfSale = ({
     const [clientOrderLineItems, setClientOrderLineItems] = useState<OrderLineItem[]>([]);
     //const [newOrderId, setNewOrderId] = useState<number | undefined>(undefined)
     //const [newCustomerEmail, setNewCustomerEmail] = useState<string | undefined | null>(null)
+    const cartItems = useAppSelector((state) => state.cart.cartItems)
     const orderLineItems = useAppSelector((state) => state.pos.products)
+    const personalDetails = useAppSelector((state) => state.checkout.personalDetails);
+    const shippingAddress = useAppSelector((state) => state.checkout.shippingAddress);
+    const paymentMethod = useAppSelector((state) => state.checkout.paymentMethod);
     const dispatch = useAppDispatch()
+
+    useEffect(() => {
+        dispatch(
+            loadOrderLineItem(),
+        );
+    }, []);
 
     useEffect(() => {
         setClientOrderLineItems(orderLineItems || []);
@@ -83,11 +98,12 @@ const PointOfSale = ({
     const [selectedCustomer, setSelectedCustomer] = 
     useState<any>(initialCustomer);
 
-    const handleAdd = (newOrderLineItems: Products) => {
+    const handleAdd = (newOrderLineItems: ProductwithBrand) => {
         dispatch(
             addProductToOrderLine({
                 id: newOrderLineItems.id,
                 name: newOrderLineItems.name,
+                brand: newOrderLineItems.brand.title,
                 price: newOrderLineItems.productPrice,
                 productThumbnail: newOrderLineItems.productThumbnail,
                 qty: 1,
@@ -136,14 +152,27 @@ const PointOfSale = ({
             customerId: Number(selectedCustomer.value),
             customerName: selectedCustomer.label as string,
             customerEmail: selectedCustomer.email as string,
-            customerPhone: selectedCustomer.phone as string,
+            ...shippingAddress,
+            ...personalDetails,
+            ...paymentMethod
         }
-        const customerItems = orderLineItems;
+        const orderItems = cartItems.map((item) => {
+            return {
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                brand: item.brand,
+                qty: item.qty,
+                productThumbnail: item.image,
+            }
+        })
+
         const orderAmount = total
         const newOrder = {
-            customerItems,
+            orderItems,
             orderAmount,
-            orderType: "Sale"
+            orderType: "Sale",
+            source: "store"
         }
         
         try {

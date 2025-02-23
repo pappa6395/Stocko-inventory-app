@@ -79,6 +79,9 @@ export const authOptions: NextAuthOptions = {
           const user = {
             id: existingUser.id.toString(),
             name: existingUser.name,
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName,
+            phone: existingUser.phone,
             email: existingUser.email,
             role: existingUser.role,
             image: existingUser.profileImage,
@@ -109,6 +112,9 @@ export const authOptions: NextAuthOptions = {
         id: dbUser.id,
         name: dbUser.name,
         email: dbUser.email,
+        firstName: dbUser.firstName,
+        lastName: dbUser.lastName,
+        phone: dbUser.phone,
         role: dbUser.role,
         picture: dbUser.profileImage,
       };
@@ -117,6 +123,9 @@ export const authOptions: NextAuthOptions = {
       if (token && session.user) {
         session.user.id = token.id;
         session.user.name = token.name;
+        session.user.firstName = token.firstName;
+        session.user.lastName = token.lastName;
+        session.user.phone = token.phone;
         session.user.email = token.email;
         session.user.image = token.picture;
         session.user.role = token.role;

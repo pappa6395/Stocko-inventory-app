@@ -6,8 +6,10 @@ import { Button } from '../ui/button'
 import { Plus, Trash2 } from 'lucide-react'
 import { Badge } from '../ui/badge'
 import { Products } from '@prisma/client'
-import { useAppSelector } from '@/redux/hooks/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
 import { BsCartPlus } from 'react-icons/bs'
+import { ProductwithBrand } from './PointOfSale'
+import { loadOrderLineItem } from '@/redux/slices/pointOfSale'
 
 
 const ItemCard = ({
@@ -15,13 +17,14 @@ const ItemCard = ({
     handleAdd,
     handleRemove,
 }: {
-    product: Products;
-    handleAdd: (value: Products) => void
+    product: ProductwithBrand;
+    handleAdd: (value: ProductwithBrand) => void
     handleRemove: (value: number) => void
 
 }) => {
 
     const orderLineItems = useAppSelector((state) => state.pos.products)
+    const dispatch = useAppDispatch();
     const [existing, setExisting] = useState(false);
     
     useEffect(() => {
@@ -30,6 +33,11 @@ const ItemCard = ({
         return () => setExisting(false); // cleanup function to prevent memory leak when component unmounts
     }, [orderLineItems, product.id]);
 
+    useEffect(() => {
+        dispatch(
+            loadOrderLineItem(),
+        );
+    }, []);
     
   return (
 

@@ -1,13 +1,21 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import ProductListing from './ProductListing'
-import { useAppSelector } from '@/redux/hooks/hooks'
+import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
 import { IProducts } from '@/type/types';
+import { loadHistory } from '@/redux/slices/historySlice';
 
 
 const HistoryProductListing = () => {
     const historyItems = useAppSelector((state) => state.history.historyItems);
+    const dispatch = useAppDispatch();
+
+    useEffect(() => {
+      dispatch(
+        loadHistory()
+      );
+    }, []);
 
   return (
 

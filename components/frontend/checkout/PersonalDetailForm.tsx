@@ -11,14 +11,15 @@ import { useRouter } from 'next/navigation';
 import { PersonalDetails, setPersonalDetails } from '@/redux/slices/checkoutSlice';
 import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
 import { setActiveStep } from '@/redux/slices/stepSlice';
+import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 
-const PersonalDetailForm = () => {
+const PersonalDetailForm = ({session}: {session: Session}) => {
 
     const dispatch = useAppDispatch()
     const activeStep = useAppSelector((state) => state.step.activeStep)
     const personalDetails = useAppSelector((state) => state.checkout.personalDetails) as PersonalDetails | null;
-    const router = useRouter();
 
     const {
         register,
@@ -27,16 +28,18 @@ const PersonalDetailForm = () => {
         formState: { errors },
     } = useForm<PersonalDetails>({
         defaultValues: {
-            firstName: personalDetails?.firstName ?? "",
-            lastName: personalDetails?.lastName ?? "",
-            email: personalDetails?.email ?? "",
-            phone: personalDetails?.phone ?? "",
+            firstName: personalDetails?.firstName || session?.user?.firstName,
+            lastName: personalDetails?.lastName || session?.user?.lastName,
+            email: personalDetails?.email || session?.user?.email!,
+            phone: personalDetails?.phone || session?.user?.phone,
         }
     });
 
     const saveData = async(data: PersonalDetails) => {
         dispatch(setActiveStep(activeStep + 1));
-        dispatch(setPersonalDetails(data));
+        dispatch(
+            setPersonalDetails(data)
+        );
 
     }
 

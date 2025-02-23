@@ -57,7 +57,7 @@ const Hero = ({banners, adverts}: HeroProps) => {
             })}    
         </Carousel>
         </div>
-        <div className="sm:col-span-4 col-span-full">
+        <div className="sm:col-span-4">
             <div className="grid grid-cols-2 gap-2">
             {[activeAdverts[3],activeAdverts[2],activeAdverts[0],activeAdverts[1]].map((advert,i) => {
                 return (

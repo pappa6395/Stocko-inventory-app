@@ -1,5 +1,5 @@
-import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
-import { setActiveStep } from '@/redux/slices/stepSlice';
+
+import { useAppSelector } from '@/redux/hooks/hooks'
 import React from 'react'
 
 const NextButton = () => {

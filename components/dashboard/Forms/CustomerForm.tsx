@@ -21,6 +21,7 @@ import TextArea from '@/components/global/FormInputs/TextAreaInput'
 import { cn } from '@/lib/utils'
 import CloseBtn from '@/components/global/FormInputs/CloseBtn'
 import { createCustomer, CustomerDataProps, updateCustomerById } from '@/actions/customers'
+import { deleteManylineOrder, deleteManylineOrderItem, deleteManySale } from '@/actions/pos'
 
 
 type CustomerFormProps = {
@@ -143,6 +144,17 @@ const CustomerForm = ({
   //   router.back()
   // };
 
+  const deleteAll = async () => {
+    try {
+      await deleteManySale();
+      await deleteManylineOrderItem();
+      await deleteManylineOrder()
+
+    } catch (error) {
+      console.error("Failed to delete customer:", error);
+    }
+  }
+
   return (
 
     <div>
@@ -152,6 +164,7 @@ const CustomerForm = ({
         href={"/sales/customers"} 
         loading={isLoading} 
       />
+      {/* <Button type="button" onClick={deleteAll}>Delete</Button> */}
       <div className={cn(step === 1 ? 'grid grid-cols-1 sm:grid-cols-12 py-4 w-full' : "")}>
         {step === 2 ? "" : (
             <div className='grid md:hidden px-4 col-span-full py-4 gap-4'>

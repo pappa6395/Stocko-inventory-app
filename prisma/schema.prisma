@@ -284,7 +284,7 @@ model LineOrderItem {
 
 model LineOrder {
   id           Int   @id @default(autoincrement())
-  customerId   String   
+  customerId   Int  
   customerName String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -293,11 +293,28 @@ model LineOrder {
   customerEmail String?
   orderAmount   Int?
   orderType     String?
-  //Relationships
+  source        String @default("pos")
+  // Ecommerce
+  firstName   String?
+  lastName    String?
+  email       String?
+  phone       String?
+  // Shipping Details
+  streetAddress String?
+  city        String?
+  state       String?
+  zipCode     String?
+  country     String?
+  unitNumber  String?
+  // POS
+  paymentMethod String?
+  // 
+  //Relationship
   lineOrderItems LineOrderItem[]
   sales          Sale[]
   receipts       Receipt[]
 }
+
 
 model Sale {
   id           Int   @id @default(autoincrement())
@@ -316,6 +333,16 @@ model Sale {
   // Relationships
   product   Products   @relation(fields: [productId], references: [id])
   lineOrder LineOrder @relation(fields: [orderId], references: [id])
+}
+
+model Feedback {
+  id           Int   @id @default(autoincrement())
+  title        String
+  message      String
+  orderItemIds Int[]
+  userId       Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Address {

@@ -1,5 +1,5 @@
 
-import { AdvertSize, Brand, Category, Customers, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
+import { AdvertSize, Brand, Category, Customers, LineOrder, LineOrderItem, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -262,5 +262,17 @@ export type ReceiptProps = {
 
 export type GroupProducts = {
     subCategory: SubCategory;
+    brand?: Brand;
     products: Products[];
+}
+
+export interface FeedbackProps {
+    title: string;
+    message: string;
+    orderItemIds: number[];
+    userId: number;
+}
+
+export interface ILineOrder extends LineOrder {
+    lineOrderItems: LineOrderItem[];
 }

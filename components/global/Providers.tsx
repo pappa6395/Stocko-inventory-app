@@ -5,6 +5,7 @@ import { ThemeProvider } from './theme-provider'
 import { Toaster } from 'react-hot-toast';
 import { Provider } from 'react-redux';
 import store from '@/redux/store';
+import { SessionProvider } from 'next-auth/react';
 
 const Providers = ({children}: {children: ReactNode}) => {
   return (
@@ -16,7 +17,11 @@ const Providers = ({children}: {children: ReactNode}) => {
         disableTransitionOnChange
         >
         <Toaster position='top-center' reverseOrder={false} />
-        <Provider store={store}>{children}</Provider>
+        <Provider store={store}>
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </Provider>
     </ThemeProvider>
 
   )

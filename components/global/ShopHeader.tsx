@@ -41,13 +41,13 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
         <div className='container max-w-6xl pb-3 border-b'>
             {/* Desktop Version */}
             <nav className='hidden sm:flex items-center justify-between gap-6'>
-                <div className="flex items-center gap-2">
+                <Link href={"/"} className="flex items-center gap-2">
                     <Logo
                         classNameFrame='size-12'
                         classNameLogo='size-10'
                         classNameText='text-xl' 
                     />
-                </div>
+                </Link>
                 <div className="flex-1">
                     <input 
                         type="search" 
@@ -114,13 +114,13 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
             <nav className="sm:hidden flex items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                     <MobileMenu />
-                    <div className="">
+                    <Link href={"/"} className="">
                     <Logo
                         classNameFrame='size-12'
                         classNameLogo='size-10'
                         classNameText='text-xl' 
                     />
-                    </div>
+                    </Link>
                 </div>
                 <CartMenu />
             </nav>

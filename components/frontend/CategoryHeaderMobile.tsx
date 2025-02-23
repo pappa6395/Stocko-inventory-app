@@ -35,7 +35,7 @@ const CategoryHeaderMobile = ({
                         size={"sm"} 
                         asChild
                     >
-                        <Link href={`/pos?cate=${category.slug}`} className='flex gap-2'>
+                        <Link href={`/categories/${category.slug}?type=main`} className='flex gap-2'>
                             <h3 className='text-xs font-medium truncate'>{category.title}</h3>
                         </Link>
                     </Button>

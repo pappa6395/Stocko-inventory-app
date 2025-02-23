@@ -37,8 +37,15 @@ export function CartMenu() {
 
     const [allCartItems, setAllCartItems] = useState<CartItem[]>([]);
     const cartItems = useAppSelector((state) => state.cart.cartItems);
-    console.log(cartItems);
+
     const dispatch = useAppDispatch();
+
+    useEffect(() => {
+      const allCartItems = localStorage.getItem('cart');
+      if (allCartItems) {
+        setAllCartItems(JSON.parse(allCartItems));
+      }
+    },[cartItems])
     
     function handleRemove(id: number) {
         dispatch(removeProductFromCart(id));
@@ -54,14 +61,11 @@ export function CartMenu() {
         );
     }
 
-    const sumItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.qty, 0), [allCartItems]).toString().padStart(2,'0')
-    const totalSum = cartItems.reduce(
+    const sumItems = useMemo(() => allCartItems.reduce((sum, item) => sum + item.qty, 0), [allCartItems]).toString().padStart(2,'0')
+    const totalSum = allCartItems.reduce(
         (sum, item) => sum + item.price * item.qty,0
     );
     
-    useEffect(() => {
-        setAllCartItems(cartItems || []);
-    }, [cartItems]);
     
   return (
     <Sheet>
@@ -74,7 +78,7 @@ export function CartMenu() {
           </div>
         </button>
       </SheetTrigger>
-      {cartItems && cartItems.length > 0 ? (
+      {allCartItems && allCartItems.length > 0 ? (
         <SheetContent className="w-[400px] sm:w-[540px]">
           <SheetHeader>
             <SheetTitle className="scroll-m-20 text-xl font-semibold tracking-tight first:mt-0 border-b pb-3">
@@ -83,7 +87,7 @@ export function CartMenu() {
           </SheetHeader>
           {/* CONTENT HWRE */}
           <div className="">
-            {cartItems.map((item, i) => {
+            {allCartItems.map((item, i) => {
               return (
                 <div
                   key={i}
@@ -96,8 +100,8 @@ export function CartMenu() {
                     src={item.image}
                     className="w-16 h-16 rounded-lg"
                   />
-                  <div className="space-y-2">
-                    <h2 className="text-xs font-medium">{item.name}</h2>
+                  <div className="flex flex-col items-start justify-start space-y-2 flex-shrink-0">
+                    <h2 className="text-xs w-[16ch] truncate font-medium">{item.brand} {item.name}</h2>
                     <button
                       onClick={() => handleRemove(item.id)}
                       className="text-xs flex items-center text-red-500"
@@ -107,7 +111,7 @@ export function CartMenu() {
                     </button>
                   </div>
                   <div className="space-y-2">
-                    <h2 className="text-sx">${item.price}</h2>
+                    <h2 className="text-sx">${item.price.toLocaleString("en-US")}</h2>
                     <div className="flex items-center space-x-3">
                       <button
                         onClick={() => handleDecrement(item.id)}
@@ -134,7 +138,7 @@ export function CartMenu() {
             <div className="space-y-1 py-3 border-b mb-3">
               <div className="flex items-center justify-between text-sm">
                 <h2 className="font-medium">Total</h2>
-                <p>${totalSum.toFixed(2)}</p>
+                <p>${totalSum.toLocaleString("en-US")}</p>
               </div>
             </div>
           </div>
@@ -160,7 +164,7 @@ export function CartMenu() {
               Empty Cart
             </SheetTitle>
           </SheetHeader>
-          {/* CONTENT HWRE */}
+          {/* CONTENT HERE */}
           <div className="min-h-80  flex-col space-y-4 flex items-center justify-center">
             <Image
               src="/empty-cart.png"

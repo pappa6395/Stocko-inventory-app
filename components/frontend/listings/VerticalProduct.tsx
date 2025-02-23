@@ -35,7 +35,7 @@ const VerticalProduct = ({product}: {product: IProducts}) => {
 
   return (
 
-    <div className='border shadow bg-white dark:bg-slate-800 rounded-lg p-3'>
+    <div className='border w-36 sm:w-auto shadow bg-white dark:bg-slate-800 rounded-lg p-3'>
         <Link 
             href={`/product/${product.slug}`}
             onClick={handleAdd} 
@@ -48,35 +48,35 @@ const VerticalProduct = ({product}: {product: IProducts}) => {
                 height={300}
                 className='w-32 h-32 aspect-square object-contain' 
             />
-            <div className=''>
-                <h2 className="text-sm font-semibold text-gray-700 dark:text-slate-50">
-                    {product.brand.title} {product.name}
+            <div className='flex flex-col justify-center items-center'>
+                <h2 className="text-sm font-semibold w-[10ch] sm:w-[20ch] truncate text-gray-700 dark:text-slate-50">
+                    {product?.brand?.title} {product.name}
                 </h2>
-                <div>
-                    <p className="text-lg font-bold text-gray-500 dark:text-slate-50">
+                <div className='flex flex-col items-center space-y-2'>
+                    <p className="text-base sm:text-lg font-bold text-gray-500 dark:text-slate-50">
                         ${discountedPrice}
                         <span className='line-through px-2 text-gray-400 dark:text-slate-400'>
                             ${product.productPrice.toLocaleString("ex-US")}
                         </span>
                     </p>
                     <p>
-                        <span className="text-sm font-semibold text-teal-500 bg-green-50 px-2 py-1 rounded-lg">
+                        <span className="text-xs sm:text-sm font-semibold text-teal-500 bg-green-50 px-2 py-1 rounded-lg">
                             - {discountRate}% Off
                         </span>
                     </p>
                     <p>
-                        <span className="text-sm font-medium text-gray-500 dark:text-slate-50">
+                        <span className="sm:block hidden text-sm font-medium text-gray-500 dark:text-slate-50">
                             Free shipping
                         </span>
                     </p>
                 </div>
                 <div className='flex gap-1 items-center'>
-                    <FaStar className='size-4 text-amber-200'/>
-                    <FaStar className='size-4 text-amber-200'/>
-                    <FaStar className='size-4 text-amber-200'/>
-                    <FaStar className='size-4 text-amber-200'/>
-                    <IoMdStarHalf className='size-5 text-amber-200'/>
-                    <span className="text-sm font-medium text-gray-500 dark:text-slate-50">
+                    <FaStar className='size-3 sm:size-4 text-amber-200'/>
+                    <FaStar className='size-3 sm:size-4 text-amber-200'/>
+                    <FaStar className='size-3 sm:size-4 text-amber-200'/>
+                    <FaStar className='size-3 sm:size-4 text-amber-200'/>
+                    <IoMdStarHalf className='size-4 sm:size-5 text-amber-200'/>
+                    <span className="sm:block hidden text-sm font-medium text-gray-500 dark:text-slate-50">
                         (50 reviews)
                     </span>
                 </div>
