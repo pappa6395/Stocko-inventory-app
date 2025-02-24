@@ -61,6 +61,7 @@ export async function createCustomer(customerData: CustomerDataProps) {
     console.log(error);
   }
 }
+
 export async function updateCustomerById(
   customerId: number,
   userId: number,

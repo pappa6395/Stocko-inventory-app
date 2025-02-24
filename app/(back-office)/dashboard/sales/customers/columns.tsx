@@ -91,6 +91,7 @@ export const columns: ColumnDef<Customer>[] = [
         <ActionColumn
           row={row}
           model="customer"
+          revPath="/dashboard/sales/customers"
           editEndpoint={`customers/update/${customer.id}`}
           id={(customer.id)}
         />

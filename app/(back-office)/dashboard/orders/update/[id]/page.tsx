@@ -1,32 +1,14 @@
-import Link from "next/link";
-import React from "react";
-import Image from "next/image";
-import {
-  ChevronLeft,
-  Home,
-  LineChart,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Upload,
-  Users2,
-} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import React from "react";
 import CategoryForm from "@/components/dashboard/Forms/CategoryForm";
-import FormHeader from "@/components/dashboard/Forms/FormHeader";
 import { getCategoryById } from "@/actions/category";
 import { getAllMainCategories } from "@/actions/main-categories";
+import { PageProps } from "@/.next/types/app/(back-office)/dashboard/orders/update/[id]/page";
 
-export default async function page({
-  params: { id },
-}: {
-  params: { id: string };
-}) {
+export default async function page({params: paramsPromise}: PageProps) {
+
+  const { id } = await paramsPromise
+
   const category = await getCategoryById(id);
   const allMainCategories = (await getAllMainCategories()) || [];
   

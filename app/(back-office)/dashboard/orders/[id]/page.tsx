@@ -1,7 +1,9 @@
-import { PageProps } from '@/.next/types/app/(back-office)/layout'
+
+
+
+import { PageProps } from '@/.next/types/app/(back-office)/dashboard/orders/[id]/page'
 import { getOrderById } from '@/actions/orders'
 import OrderView from '@/components/dashboard/OrderView'
-import OrderInvoice from '@/components/frontend/orders/OrderInvoice'
 import React from 'react'
 
 
