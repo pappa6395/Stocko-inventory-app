@@ -1,6 +1,6 @@
 "use client"
 
-import { Brand, Products, SubCategory } from '@prisma/client'
+import { Brand, Category, Products, SubCategory } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
 import { addProductToOrderLine, decrementQty, incrementQty, loadOrderLineItem, OrderLineItem, removeProductFromOrderLine, removeProductsfromLocalStorage } from '@/redux/slices/pointOfSale'
 import SearchItems from './search-items'
 import FormSelectInput from '../global/FormInputs/FormSelectInput'
-import { ICustomer, IProducts } from '@/type/types'
+import { ICategory, ICustomer, IProducts, ISubCategory } from '@/type/types'
 import { createLineOrder } from '@/actions/pos'
 import { Loader, ShoppingBasket } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -36,12 +36,12 @@ export interface ProductwithBrand extends Products {
 }
 
 const PointOfSale = ({
-    subCategories,
+    categories,
     products,
     customers, 
     cate
 }: {
-    subCategories?: SubCategory[]; 
+    categories?: Category[]; 
     products?: ProductwithBrand[];
     customers?: ICustomer[];
     cate: string;
@@ -172,7 +172,7 @@ const PointOfSale = ({
             orderItems,
             orderAmount,
             orderType: "Sale",
-            source: "store"
+            source: "pos"
         }
         
         try {
@@ -294,7 +294,7 @@ const PointOfSale = ({
                                 <h3 className='text-sm font-medium truncate'>All</h3>
                             </Link>
                         </Button>
-                        {subCategories && subCategories.map((category, index) => {
+                        {categories && categories.map((c, index) => {
                             return (
                                 <Button 
                                     key={index} 
@@ -302,9 +302,9 @@ const PointOfSale = ({
                                     size={"sm"} 
                                     asChild
                                     className={cn('py-2 px-2', 
-                                    cate === `${category.id}` ? "bg-slate-400" : "")}
+                                    cate === `${c.id}` ? "bg-slate-400" : "")}
                                 >
-                                    <Link href={`/pos?cate=${category.id}`} className='flex gap-2'>
+                                    <Link href={`/pos?cate=${c.id}`} className='flex gap-2'>
                                         {/* <Image 
                                             src={category?.imageUrl ?? "/placeholder.svg"}
                                             alt='category'
@@ -312,7 +312,7 @@ const PointOfSale = ({
                                             height={200}
                                             className='size-6 rounded-full'
                                         /> */}
-                                        <h3 className='text-sm font-medium truncate'>{category.title}</h3>
+                                        <h3 className='text-sm font-medium truncate'>{c.title}</h3>
                                     </Link>
                                 </Button>
                             )
@@ -325,7 +325,7 @@ const PointOfSale = ({
                         <div>
                             <div className='grid grid-cols-3 items-center gap-3'>
                                 <SearchItems 
-                                    allProducts={products as Products[]} 
+                                    allProducts={products as ProductwithBrand[]} 
                                     onSearch={setSearchResults} 
                                 />
                                 <FormSelectInput
@@ -338,7 +338,6 @@ const PointOfSale = ({
                                     href={"/dashboard/sales/customers/new"}
                                 />
                             </div>
-                            
                             <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
                                 {searchResults?.map((product,index) => {
                                     return (

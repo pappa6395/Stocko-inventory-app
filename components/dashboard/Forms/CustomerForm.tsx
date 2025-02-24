@@ -101,9 +101,9 @@ const CustomerForm = ({
 
   const saveCustomer = async(data: CustomerDataProps) => {
     
-    if (!initialData?.user?.id) {
-      throw new Error("User ID is required");
-    }
+    // if (!initialData?.user?.id) {
+    //   throw new Error("User ID is required");
+    // }
     const userId = Number(editingId) 
     const customerId = initialData?.userId || 0;
     data.profileImage = fileUrl || "/placeholder.svg";

@@ -5,11 +5,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
 import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
-import { Customer } from "@/type/types";
+import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
+import { ICustomer } from "@/type/types";
 import Image from "next/image";
+import { Sale } from "@prisma/client";
+import { formatPrice } from "@/lib/formatPrice";
 
 
-export const columns: ColumnDef<Customer>[] = [
+export const columns: ColumnDef<Sale>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -33,30 +36,11 @@ export const columns: ColumnDef<Customer>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "profileImage",
-    header: "Profile Image",
-    cell: ({ row }) => {
-      const customer = row.original
-      const imageUrl = customer?.profileImage || "/placeholder.svg"
-      return (
-        <div className="flex-shrink-0">
-            <Image 
-              src={imageUrl || "/placeholder.svg"} 
-              alt={customer?.firstName || ""} 
-              width={50} 
-              height={50}
-              className="object-contain w-10 h-12" 
-            />
-        </div>
-      )
-    },
-  },
-  {
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => {
-      const customer = row.original
-      const fullName = `${customer?.firstName} ${customer?.lastName}` || ""
+      const sale = row.original
+      const fullName = sale.customerName || ""
       return <p>{fullName}</p>
     }
   },
@@ -64,23 +48,32 @@ export const columns: ColumnDef<Customer>[] = [
     accessorKey: "email",
     header: "Email Address",
     cell: ({ row }) => {
-      const customer = row.original
-      const email = customer?.email || ""
+      const sale = row.original
+      const email = sale.customerEmail || ""
       return <p>{email}</p>
     }
   },
   {
-    accessorKey: "phone",
-    header: "Phone Number",
+    accessorKey: "productName",
+    header: "Product Name",
     cell: ({ row }) => {
-      const customer = row.original
-      const phone = customer?.phone || ""
-      return <p>{phone}</p>
+      const sale= row.original
+      const productName = sale.productName || ""
+      return <p>{productName}</p>
     }
   },
   {
+    accessorKey: "SalePrice",
+    header: "Price",
+    cell: ({ row }) => {
+      const sale = row.original
+      const salePrice = sale.salePrice || 0
+      return <p>${formatPrice(salePrice)}</p>
+    },
+  },
+  {
     accessorKey: "createdAt",
-    header: "Date Created",
+    header: "Purchaed Date",
     cell: ({ row }) => <DateColumn row={row} accessorKey="createdAt" />,
   },
   {

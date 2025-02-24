@@ -2,64 +2,107 @@
 import React from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Delete, File, Trash } from 'lucide-react'
+import { ArrowUpRight, Delete, File, Trash } from 'lucide-react'
 import { LineOrder } from '@prisma/client'
 import Link from 'next/link'
+import { ILineOrder } from '@/type/types'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
+import { convertIsoToDateString } from '@/lib/convertISOtoDate'
 
-const OrderSummary = ({orders}: {orders: LineOrder[]}) => {
+const OrderSummary = ({orders}: {orders: ILineOrder[]}) => {
+
+    const actualOrders = orders.filter((order) => order.lineOrderItems.length > 0);
 
   return (
 
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 
-    md:p-6 border shadow-sm rounded-lg">
-        <div className="flex items-center">
-            <h1 className="font-semibold text-lg md:text-2xl">Products</h1>
-            <Button className="ml-auto" size="sm">
-                Add product
-            </Button>
-        </div>
-        <div>
+        <Card>
+            <CardHeader className="px-7">
+                <div className="flex justify-between items-center">
+                    <CardTitle className="text-3xl">Recent Orders</CardTitle>
+                    <Button 
+                        asChild 
+                        size="lg" 
+                        variant="default" 
+                        className="gap-1 text-sm py-2.5 px-3">
+                        <Link href="#" >
+                            <span className="sr-only sm:not-sr-only">View All</span>
+                            <ArrowUpRight className="h-4 w-4" />
+                        </Link>
+                    </Button>
+                </div>  
+                <CardDescription>Recent orders from your store.</CardDescription>
+            </CardHeader>
+            <CardContent>
             <Table>
                 <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Inventory</TableHead>
-                        <TableHead />
-                    </TableRow>
+                <TableRow>
+                    <TableHead>Customer</TableHead>
+                    <TableHead className="hidden sm:table-cell">Type</TableHead>
+                    <TableHead className="hidden sm:table-cell">Status</TableHead>
+                    <TableHead className="hidden md:table-cell">Date</TableHead>
+                    <TableHead className="hidden md:table-cell">Amount</TableHead>
+                    <TableHead className="text-right">Action</TableHead>
+                </TableRow>
                 </TableHeader>
                 <TableBody>
+                { actualOrders && actualOrders.length > 0 ? (
+                    actualOrders.map((order,index) => {
+                        const date = convertIsoToDateString(order.createdAt)
+                        const isEven = index % 2 === 0;
+                        return (
+                            <TableRow key={index} className={isEven ? "bg-accent" : ""}>
+                                <TableCell>
+                                <div className="font-medium">{order.customerName}</div>
+                                <div className="hidden text-sm text-muted-foreground md:inline">{order.customerEmail}</div>
+                                </TableCell>
+                                <TableCell className="hidden sm:table-cell">{order.orderType}</TableCell>
+                                <TableCell className="hidden sm:table-cell">
+                                {/* <Badge className="text-xs" variant="secondary">
+                                    {order.status}
+                                </Badge> */}
+                                {order.status === "DELIVERED" ? (
+                                    <button className="py-1.5 px-3 bg-emerald-300 
+                                    rounded-full font-semibold dark:text-slate-100">{order.status}</button>
+                                ) : order.status === "PROCESSING" ? (
+                                    <button className="py-1.5 px-3 bg-sky-400 
+                                    rounded-full">{order.status}</button>
+                                ) : order.status === "PENDING" ? (
+                                    <button className="py-1.5 px-3 bg-amber-400 
+                                    rounded-full">{order.status}</button>
+                                ) : order.status === "SHIPPED" ? (
+                                    <button className="py-1.5 px-3 bg-emerald-400 
+                                    rounded-full">{order.status}</button>
+                                ) : (<button className="py-1.5 px-3 bg-red-400 
+                                    rounded-full">{order.status}</button>)}
+                                </TableCell>
+                                <TableCell className="hidden md:table-cell">{date}</TableCell>
+                                <TableCell className="text-right">${order.orderAmount}</TableCell>
+                                <TableCell className="text-right">
+                                    <Button 
+                                        asChild 
+                                        size="sm" 
+                                        variant="outline" 
+                                        className="gap-1 text-sm">
+                                        <Link href={`/dashboard/orders/${order.id}`} >
+                                            <File className="h-3.5 w-3.5" />
+                                            <span className="sr-only sm:not-sr-only">View</span>
+                                        </Link>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        )
+                    })
+                    
+                ) : (
                     <TableRow>
-                        <TableCell className="font-medium">
-                            <p className='text-xs'>Glimmer Lamps</p>
-                            <p className='text-xs text-muted-foreground'>
-                                gilmmer@example.com
-                            </p>
-                        </TableCell>
-                        <TableCell>Elegant and stylish lamps for your home</TableCell>
-                        <TableCell>$99.99</TableCell>
-                        <TableCell>500 in stock</TableCell>
-                        <TableCell>
-                        <div className="flex gap-2">
-                            <Button 
-                                asChild 
-                                size="sm" 
-                                variant="outline" 
-                                className="h-7 gap-1 text-sm">
-                                <Link href="#" >
-                                    <File className="h-3.5 w-3.5" />
-                                    <span className="sr-only sm:not-sr-only">View</span>
-                                </Link>
-                            </Button>
-                        </div>
-                        </TableCell>
+                        <TableCell colSpan={6}>No orders found.</TableCell>
                     </TableRow>
+                )}
                 </TableBody>
             </Table>
-        </div>
-    </main>
-
+            </CardContent>
+        </Card>
+    
   )
 }
 

@@ -92,8 +92,10 @@ const page = async ({params: paramsPromise}: PageProps) => {
                             </p>
                         </div>
                         <div className='border-b flex items-center space-x-2'>
-                            <h2 className="text-2xl font-semibold">${products?.productPrice}</h2>
-                            <s>${products?.productCost}</s>
+                            <h2 className="text-2xl font-semibold">${products?.productPrice.toLocaleString()}</h2>
+                            <s>${products?.productPrice}</s>
+                            <Minus className='text-sm text-gray-400' />
+                            <span>Stock: {products?.stockQty} Left</span>
                         </div>
                         <div>
                             <AddToCartButton product={products} />

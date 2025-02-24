@@ -1,7 +1,7 @@
 "use server"
 
 import { prismaClient } from "@/lib/db";
-import { CategoryProps } from "@/type/types";
+import { CategoryProps, ICategory } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 
@@ -41,7 +41,8 @@ export async function getAllCategories() {
 
             },
             include: {
-                mainCategory: true
+                mainCategory: true,
+
             }
         });
 
@@ -52,6 +53,7 @@ export async function getAllCategories() {
         return null;
     }
 }
+
 
 export async function getCategoryById(id: string) {
 

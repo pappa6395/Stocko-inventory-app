@@ -73,10 +73,10 @@ export async function createLineOrder(
                 paymentMethod: customerData.method,
                 // Line Order details
                 orderNumber: generateOrderNumber(),
-                status: "DELIVERED",
                 orderAmount,
                 orderType,
                 source,
+                status: source === "pos" ? "DELIVERED" : "PROCESSING",
               },
             });
             for (const item of orderItems) {

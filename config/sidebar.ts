@@ -1,5 +1,5 @@
 import { ISidebarLink } from "@/type/types";
-import { BarChart4, Boxes, Cable, CircleDollarSign, Home, Layers, Presentation, Settings, Users } from "lucide-react";
+import { BarChart2, BarChart4, Boxes, Cable, CircleDollarSign, Home, Layers, Presentation, Settings, Users } from "lucide-react";
 
 export const sidebarLinks: ISidebarLink[] = [
     {
@@ -95,6 +95,12 @@ export const sidebarLinks: ISidebarLink[] = [
           href: '/dashboard/sales/customers',
         },
       ]
+    },
+    {
+      label: 'Orders',
+      href: '/dashboard/orders',
+      icon: BarChart2,
+      dropdown: false,
     },
     {
       label: 'POS',

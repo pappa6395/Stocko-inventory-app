@@ -14,12 +14,16 @@ export default function SearchBar({
   const [searchTerm, setSearchTerm] = useState("");
  
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
     const filteredData = data.filter((item: any) =>
+
+      item.orderNumber?.toString().toLowerCase().includes(term) ||
+
       Object.values(item).some(
         (value: any) =>
           value &&
-          value.toString().toLowerCase().includes(e.target.value.toLowerCase())
+          value.toString().toLowerCase().includes(term)
       )
     );
     setIsSearch(true);

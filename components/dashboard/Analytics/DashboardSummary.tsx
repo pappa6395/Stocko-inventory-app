@@ -1,10 +1,9 @@
 
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu"
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter, CardContent } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import { ArrowUpRight, File, ListFilter } from "lucide-react"
 import BarChartCard from "./BarChartCard"
 import RecentSaleCard from "../RecentSaleCard"
@@ -66,8 +65,7 @@ export default async function DashboardSummary() {
                                         <ArrowUpRight className="h-4 w-4" />
                                     </Link>
                                 </Button>
-                            </div>
-                            
+                            </div>  
                             <CardDescription>Recent orders from your store.</CardDescription>
                         </CardHeader>
                         <CardContent>
@@ -141,7 +139,7 @@ export default async function DashboardSummary() {
                         </CardContent>
                     </Card>
                 </TabsContent>
-                <TabsContent value="month">
+                <TabsContent value="sales">
                     <RecentSaleCard />
                 </TabsContent>
                 <TabsContent value="year">

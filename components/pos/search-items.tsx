@@ -1,29 +1,38 @@
 
 import { Products } from "@prisma/client";
 import { Search } from "lucide-react";
-import React, { useState } from "react";
-import { Button } from "../ui/button";
-import Image from "next/image";
+import React, { useEffect, useState } from "react";
+import { ProductwithBrand } from "./PointOfSale";
  
 export default function SearchItems({
   allProducts,
   onSearch
 }: {
-  allProducts: Products[];
-  onSearch: any;
+  allProducts: ProductwithBrand[];
+  onSearch: (filtered: ProductwithBrand[]) => void;
 }) {
   const [searchTerm, setSearchTerm] = useState("");
- 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    const filteredData = allProducts.filter((item: any) =>
+  const [filteredData, setFilteredData] = useState<Products[]>(allProducts);
+
+  
+  useEffect(() => {
+    const filtered = allProducts.filter((item) =>
+
+      item.brand.title.toString().toLowerCase().includes(searchTerm) ||
+
       Object.values(item).some(
-        (value: any) =>
+        (value) =>
           value &&
-          value.toString().toLowerCase().includes(e.target.value.toLowerCase())
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
       )
     );
-    onSearch(filteredData);
+    setFilteredData(filtered);
+    onSearch(filtered);
+
+  },[searchTerm, allProducts, onSearch])
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   }
     
   

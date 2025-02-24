@@ -51,7 +51,7 @@ const ItemCard = ({
         />
         <div>
         <div className='py-2'>
-            <h3 className='pb-2 font-bold text-lg w-[16ch] truncate'>{product.name}</h3>
+            <h3 className='pb-2 font-bold text-lg w-[16ch] truncate'>{product.brand.title} {product.name}</h3>
             <p className='text-sm line-clamp-3 overflow-scroll'>
                 {product.productDetails}
             </p>

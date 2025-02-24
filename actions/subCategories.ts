@@ -37,7 +37,7 @@ export async function getAllSubCategories() {
     try {
         const categories = await prismaClient.subCategory.findMany({
             orderBy: {
-                title: "asc",
+                createdAt: "desc",
 
             },
             include: {
@@ -52,6 +52,7 @@ export async function getAllSubCategories() {
         return null;
     }
 }
+
 
 export async function getSubCategoryById(id: string) {
 

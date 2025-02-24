@@ -234,8 +234,18 @@ export interface ICustomer extends Customers {
     user: IUser
 }
 
+export interface Customer {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    profileImage: string | null;
+}
+
+
 export interface ICategory extends Category {
-    mainCategory: MainCategory
+    mainCategory: MainCategory,
 }
 
 export interface ISubCategory extends SubCategory {

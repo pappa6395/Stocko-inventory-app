@@ -41,7 +41,7 @@ type ActionColumnProps = {
   model: any;
   editEndpoint: string;
   id: number | undefined;
-  // revPath: string;
+  revPath?: string;
 };
 export default function ActionColumn({
   row,

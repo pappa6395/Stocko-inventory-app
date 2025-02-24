@@ -66,7 +66,7 @@ export async function getAnalytics() {
             },
             {   
                 title: "Total Revenue",
-                salesCount: saleSummary.totalRevenue,
+                salesCount: saleSummary.totalRevenue.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
                 detailLink: "/dashboard/sales",
                 icon: ChartNoAxesCombined,
                 unit: DollarSign

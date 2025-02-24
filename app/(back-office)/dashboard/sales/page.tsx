@@ -1,28 +1,28 @@
 
 import React from 'react'
-import { columns } from './columns'
+import { columns } from './column'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
 import { getAllCustomers } from '@/actions/customers'
-import { getCustomers } from '@/actions/orders'
+import { getAllSales } from '@/actions/sales'
 
 
 const page = async () => {
 
-  const customers = (await getCustomers())?.data || [];
+  const sales = (await getAllSales())?.data || [];
 
   return (
 
     <div>
         <TableHeader
-        title="Customers"
-        linkTitle="Add Customer"
-        href="/dashboard/sales/customers/new"
-        data={customers}
+        title="Sales"
+        linkTitle="Add Sale"
+        href="/dashboard/sales/new"
+        data={sales}
         model="customer"
       />
       <div className="py-8">
-        <DataTable data={customers} columns={columns} />
+        <DataTable data={sales} columns={columns} />
       </div>
     </div>
 

@@ -50,7 +50,7 @@ export default function ReceiptPrint({contentRef, handlePrint, success, setSucce
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader>
-            <div ref={contentRef} >
+            <div ref={contentRef} className="bg-slate-50" >
                 <DrawerTitle className="text-center mt-2 pt-2">Stocko Online</DrawerTitle>
                 <div className="flex flex-col items-center space-x-2 text-sm">
                     <p className="text-gray-700">Receipt / Tax INVOICE (ABB)</p>

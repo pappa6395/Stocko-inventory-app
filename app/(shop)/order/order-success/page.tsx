@@ -35,7 +35,7 @@ const page = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [storedCartItems, setStoredCartItems] = useState<CartItem[]>([]);
     const [storedCheckoutData, setStoredCheckoutData] = useState<CheckoutState>();
-    const totalSum = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0)
+    const totalSum = storedCartItems.reduce((sum, item) => sum + item.price * item.qty, 0)
     const router = useRouter();
     console.log("StoredCartItems:" , storedCartItems);
     console.log("StoredCheckoutData:" , storedCheckoutData);
@@ -99,13 +99,15 @@ const page = () => {
         }
         console.log("OrderCartItem",orderItems);
         console.log(newOrder);
+
+        if (!customerData || !orderItems || !orderAmount ) return;
         
         try {
             const savedOrder = await createLineOrder(newOrder, customerData)
-            const data = savedOrder.data
+            const data = savedOrder?.data
             console.log("Order created", data);
-            if (savedOrder.success) {
-                setOrder(data);
+            if (savedOrder?.success) {
+                setOrder(data ?? null);
                 setProcessing(false);
                 setSuccess(true);
                 localStorage.setItem("saveOrder", JSON.stringify(savedOrder));
@@ -127,19 +129,16 @@ const page = () => {
             setProcessing(false);
         } 
     }
-    // const savedOrder = localStorage.getItem("savedOrder");
-    // if (savedOrder && cartItems.length === 0) {
-    //   setOrder(JSON.parse(savedOrder));
-    //   setSuccess(true);
-    // } else if (userId && cartItems.length > 0) {
-    //   handleCreateOrder();
-    // }
-    if (userId) {
+    const savedOrder = localStorage.getItem("savedOrder");
+    if (savedOrder && storedCartItems.length === 0) {
+      setOrder(JSON.parse(savedOrder));
+      setSuccess(true);
+    } else if (userId) {
       handleCreateOrder();
     } else {
-      //throw new Error("No userId or CartItems found")
       return;
     }
+   
     
     },[storedCartItems])
 

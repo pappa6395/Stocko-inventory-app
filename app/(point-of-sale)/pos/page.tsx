@@ -1,7 +1,8 @@
 
 import { PageProps } from '@/.next/types/app/(point-of-sale)/pos/page'
+import { getAllCategories } from '@/actions/category'
 import { getAllCustomers } from '@/actions/customers'
-import { getProductsBySubCategoryId } from '@/actions/products'
+import { getProductsByCategoryId } from '@/actions/products'
 import { getAllSubCategories } from '@/actions/subCategories'
 import PointOfSale from '@/components/pos/PointOfSale'
 import React from 'react'
@@ -10,8 +11,9 @@ import React from 'react'
 const page = async ({searchParams: searchParamsPromise}: PageProps) => {
 
   const { cate="all" } = await searchParamsPromise
-  const subCategories = await getAllSubCategories() || []
-  const products = (await getProductsBySubCategoryId(cate))?.data || []
+  const allCategories = await getAllCategories() || [] 
+  //const allSubCategories = await getAllSubCategories() || []
+  const products = (await getProductsByCategoryId(cate)).data || []
   const customers = (await getAllCustomers())?.data || [];
   
   if (!customers) {
@@ -22,7 +24,7 @@ const page = async ({searchParams: searchParamsPromise}: PageProps) => {
 
     <div className='md:px-0 px-2'>
         <PointOfSale 
-          subCategories={subCategories ?? []}
+          categories={allCategories ?? []}
           products={products ?? []}
           customers={customers ?? []}
           cate={cate ?? ""} 
