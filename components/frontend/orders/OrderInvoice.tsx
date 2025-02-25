@@ -1,14 +1,11 @@
 "use client";
-import Logo from "@/components/global/Logo";
+
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { convertIsoToDateString } from "@/lib/convertISOtoDate";
-import { useAppSelector } from "@/redux/hooks/hooks";
 import { ILineOrder } from "@/type/types";
-import { CheckCircle2 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { useReactToPrint } from 'react-to-print'
 import OrderStatusBtn from "./OrderStatusBtn";
 
@@ -22,6 +19,7 @@ export default function OrderInvoice({
   const totalSum = order?.lineOrderItems?.reduce(
     (sum, item) => sum + item.price * item.qty,0);
 
+  const [isOpen, setIsOpen] = useState(false);
   const currentDate = convertIsoToDateString(order?.createdAt)
   
   const handlePrint = useReactToPrint({
@@ -85,7 +83,7 @@ export default function OrderInvoice({
                       <TableCell>#{order?.orderNumber || ""}</TableCell>
                       <TableCell>{order?.paymentMethod || ""}</TableCell>
                       <TableCell>
-                        <OrderStatusBtn order={order}/>
+                        <OrderStatusBtn order={order} isOpen={isOpen} setIsOpen={setIsOpen}/>
                       </TableCell>
                       <TableCell>
                         {order?.streetAddress || ""}, {order?.unitNumber || ""}
