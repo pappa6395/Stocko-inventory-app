@@ -1,5 +1,6 @@
+"use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { ArrowUpRight, Delete, File, Trash } from 'lucide-react'
@@ -8,10 +9,12 @@ import Link from 'next/link'
 import { ILineOrder } from '@/type/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import { convertIsoToDateString } from '@/lib/convertISOtoDate'
+import OrderStatusBtn from '../frontend/orders/OrderStatusBtn'
 
 const OrderSummary = ({orders}: {orders: ILineOrder[]}) => {
 
     const actualOrders = orders.filter((order) => order.lineOrderItems.length > 0);
+    const [isOpen, setIsOpen] = useState(false);
 
   return (
 
@@ -57,23 +60,7 @@ const OrderSummary = ({orders}: {orders: ILineOrder[]}) => {
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">{order.orderType}</TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                {/* <Badge className="text-xs" variant="secondary">
-                                    {order.status}
-                                </Badge> */}
-                                {order.status === "DELIVERED" ? (
-                                    <button className="py-1.5 px-3 bg-emerald-300 
-                                    rounded-full font-semibold dark:text-slate-100">{order.status}</button>
-                                ) : order.status === "PROCESSING" ? (
-                                    <button className="py-1.5 px-3 bg-sky-400 
-                                    rounded-full">{order.status}</button>
-                                ) : order.status === "PENDING" ? (
-                                    <button className="py-1.5 px-3 bg-amber-400 
-                                    rounded-full">{order.status}</button>
-                                ) : order.status === "SHIPPED" ? (
-                                    <button className="py-1.5 px-3 bg-emerald-400 
-                                    rounded-full">{order.status}</button>
-                                ) : (<button className="py-1.5 px-3 bg-red-400 
-                                    rounded-full">{order.status}</button>)}
+                                    <OrderStatusBtn isOpen={isOpen} setIsOpen={setIsOpen} order={order} />
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell">{date}</TableCell>
                                 <TableCell className="text-right">${order.orderAmount}</TableCell>

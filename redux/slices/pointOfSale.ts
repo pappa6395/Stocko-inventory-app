@@ -16,22 +16,22 @@ interface OrderLineItems {
 }
 
 const getInitialOrderLineItems = (): OrderLineItem[] => {
-  if (typeof window !== "undefined" && window.localStorage) {
-    try {
-      const storedItems = localStorage.getItem("posItems");
-      if (storedItems) {
-        return JSON.parse(storedItems);
-      }
-    } catch (error) {
-      console.error("Failed to parse cart items from localStorage", error);
+  try {
+    const storedItems = localStorage.getItem("posItems");
+    if (storedItems) {
+      return JSON.parse(storedItems);
     }
+  } catch (error) {
+    console.error("Failed to parse cart items from localStorage", error);
   }
   
   return [];
 };
+
 const initialState: OrderLineItems = {
   products: [],
 };
+
 const saveItemsToLocalStorage = (items: OrderLineItem[]) => {
   localStorage.setItem("posItems", JSON.stringify(items));
 };

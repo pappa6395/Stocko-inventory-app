@@ -4,6 +4,7 @@ import { getAllCategories } from '@/actions/category'
 import { getAllCustomers } from '@/actions/customers'
 import { getProductsByCategoryId } from '@/actions/products'
 import { getAllSubCategories } from '@/actions/subCategories'
+import { getAllUsers } from '@/actions/users'
 import PointOfSale from '@/components/pos/PointOfSale'
 import React from 'react'
 
@@ -14,7 +15,7 @@ const page = async ({searchParams: searchParamsPromise}: PageProps) => {
   const allCategories = await getAllCategories() || [] 
   //const allSubCategories = await getAllSubCategories() || []
   const products = (await getProductsByCategoryId(cate)).data || []
-  const customers = (await getAllCustomers())?.data || [];
+  const customers = (await getAllUsers())?.data || [];
   
   if (!customers) {
     return <p>No customer Found</p>

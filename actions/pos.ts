@@ -13,19 +13,20 @@ interface CustomerData {
   customerId: number;
   customerName: string;
   customerEmail: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  streetAddress: string;
-  unitNumber: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  method: string;
+  customerPhone: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  phone?: string;
+  streetAddress?: string;
+  unitNumber?: string;
+  city?: string;
+  state?: string;
+  zipCode?: string;
+  country?: string;
+  method?: string;
 }
-interface NewOrderProps {
+export interface NewOrderProps {
   orderItems: OrderLineItem[];
   orderAmount: number;
   orderType: string;
@@ -61,7 +62,7 @@ export async function createLineOrder(
                 firstName: customerData.firstName,
                 lastName: customerData.lastName,
                 email: customerData.email,
-                phone: customerData.phone,
+                phone: customerData.customerPhone || customerData.phone,
                 // Shipping Address
                 streetAddress: customerData.streetAddress,
                 unitNumber: customerData.unitNumber,
@@ -121,7 +122,7 @@ export async function createLineOrder(
                   productId: item.id,
                   qty: item.qty,
                   salePrice: item.price,
-                  productName: item.name,
+                  productName: `${item.brand} ${item.name}`,
                   productImage: item.productThumbnail ?? "/placeholder.svg",
                   customerName: customerData.customerName,
                   customerEmail: customerData.customerEmail,

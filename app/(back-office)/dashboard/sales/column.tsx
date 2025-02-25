@@ -59,7 +59,8 @@ export const columns: ColumnDef<Sale>[] = [
     cell: ({ row }) => {
       const sale= row.original
       const productName = sale.productName || ""
-      return <p>{productName}</p>
+      //const productBrand = sale.
+      return <p className="w-[20ch] overflow-scroll line-clamp-1">{productName}</p>
     }
   },
   {

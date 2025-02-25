@@ -27,20 +27,20 @@ const OrderView = (props: OrderViewProps) => {
 
     <div>
         <div className='flex gap-3'>
-                <Button 
-                    onClick={handleBack}
-                    variant="outline" 
-                    type="button"
-                    size="icon" 
-                    className="h-7 w-7"
-                >
-                    <ChevronLeft className="h-4 w-4" />
-                    <span className="sr-only">Back</span>
-                </Button>
-                <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
-                    Order Receipt
-                </h1>
-            </div>
+            <Button 
+                onClick={handleBack}
+                variant="outline" 
+                type="button"
+                size="icon" 
+                className="h-7 w-7"
+            >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Back</span>
+            </Button>
+            <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+                Order Receipt
+            </h1>
+        </div>
         {order ? (
             <OrderInvoice order={order} contentRef={contentRef} />
         ) : (

@@ -1,33 +1,69 @@
-import { getOrders } from '@/actions/pos'
+"use client"
+
+import { ILineOrder } from '@/type/types'
+import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { convertIsoToDateString } from '@/lib/convertISOtoDate'
 import { generateSlug } from '@/lib/generateSlug'
-import Link from 'next/link'
-import React from 'react'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { FilePenLine, FileText } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ChevronLeft, FilePenLine, FileText } from 'lucide-react'
+import Link from 'next/link'
+import Image from 'next/image'
+import React, { useState } from 'react'
+import OrderStatusBtn from '../frontend/orders/OrderStatusBtn'
+import Tooltip from '../global/Tooltip'
 
+type OrderHistoryProps = {
+    orders: ILineOrder[],
+}
 
-const page = async () => {
+const OrderHistory = (props: OrderHistoryProps) => {
 
-    const orders = (await getOrders()).data || [];
-    const actualOrders = orders.filter((order) => order.lineOrderItems.length > 0);
-    const achievedOrders = orders.filter((order) => order.lineOrderItems.length === 0);
+    const { orders } = props
+    
+    const [isOpen, setIsOpen] = useState(false)
+    const router = useRouter()
+    const handleBack = () => {
+        router.back()
+    } 
 
   return (
 
     <div>
-        <div>
-            <h2>
-                All Orders
+        <div className='flex gap-3'>
+            <Button 
+                onClick={handleBack}
+                variant="outline" 
+                type="button"
+                size="icon" 
+                className="h-7 w-7"
+            >
+                <ChevronLeft className="h-4 w-4" />
+                <span className="sr-only">Back</span>
+            </Button>
+            <h1 className="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0">
+                Order History
+            </h1>
+        </div>
+        <div className='pt-3 mx-2 flex items-center justify-between gap-2 border-b '>
+            <h2 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                Customer: {orders[0].customerName}
             </h2>
+            <div className='mr-3'>
+                <p className='text-muted-foreground'>
+                    Email: {orders[0].customerEmail}
+                </p>
+                <p className='text-muted-foreground'>
+                    Phone: {orders[0].phone || "-"}
+                </p>
+            </div>
+            
         </div>
         <div className="py-4 text-xs">
-            {actualOrders.length > 0 ? (
+            {orders.length > 0 ? (
                 <div className='space-y-4 mx-4'>
-                    {actualOrders.map((order,i) => {
+                    {orders.map((order,i) => {
                         const totalSum = order?.lineOrderItems?.reduce(
                             (sum, item) => sum + item.price * item.qty,0);
                         const currentDate = convertIsoToDateString(order?.createdAt)
@@ -37,7 +73,7 @@ const page = async () => {
                                 className={cn("shadow rounded-md border", 
                                     order.status === "DELIVERED" 
                                     ? "border-green-500" 
-                                    : "border-gray-200")}
+                                    : "border-yellow-500")}
                             >                                
                                 <Table className="text-xs">
                                     <TableHeader>
@@ -55,7 +91,11 @@ const page = async () => {
                                             <TableCell className='pt'>{currentDate}</TableCell>
                                             <TableCell>#{order?.orderNumber || ""}</TableCell>
                                             <TableCell>{order?.paymentMethod || ""}</TableCell>
-                                            <TableCell>{order?.status || "DELIVERED"}</TableCell>
+                                            <TableCell>
+                                                <div onClick={() => setIsOpen(true)}>
+                                                    <OrderStatusBtn isOpen={isOpen} setIsOpen={setIsOpen} order={order}  />
+                                                </div>
+                                            </TableCell>
                                             <TableCell className='flex-shrink-0'>
                                                 {order?.streetAddress || ""}, {order?.unitNumber || ""}
                                             </TableCell>
@@ -89,17 +129,23 @@ const page = async () => {
                                             );
                                             })} 
                                         </ul>
-                                        <div className="flex mr-3">
-                                            <Button asChild variant={'ghost'} size={"icon"}>
-                                                <Link href={`/dashboard/orders/${order.id}`}>
-                                                    <FileText />
-                                                    <span aria-hidden className='sr-only'>View Order</span>
-                                                </Link>
-                                            </Button>
-                                            <Button variant={"ghost"} size={"icon"}>
-                                                <FilePenLine />
-                                                <span aria-hidden className='sr-only'>Change Status</span>
-                                            </Button>
+                                        <div className="flex mr-5 pr-4">
+                                            <div className='relative group'>
+                                                <Button asChild variant={'ghost'} size={"icon"}>
+                                                    <Link href={`/dashboard/orders/${order.id}`}>
+                                                        <FileText />
+                                                        <span aria-label='View Order' className='sr-only'>View Order</span>
+                                                    </Link>
+                                                </Button>
+                                                <Tooltip label={"View Order"}/>
+                                            </div>
+                                            
+                                            {/* <div className='relative group'>
+                                                <Button variant={"ghost"} size={"icon"}>
+                                                    <FilePenLine />   
+                                                </Button>
+                                                <Tooltip label={"Change Status"}/>
+                                            </div> */}
                                         </div>
                                     </div>
                                 </div>
@@ -120,4 +166,4 @@ const page = async () => {
   )
 }
 
-export default page
+export default OrderHistory

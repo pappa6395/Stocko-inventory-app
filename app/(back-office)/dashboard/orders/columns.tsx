@@ -8,6 +8,8 @@ import SortableColumn from "@/components/dashboard/Table/dataTableColumns/Sortab
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
+import OrderStatusBtn from "@/components/frontend/orders/OrderStatusBtn";
+import { useState } from "react";
 
 export const columns: ColumnDef<LineOrder>[] = [
   {
@@ -49,27 +51,12 @@ export const columns: ColumnDef<LineOrder>[] = [
     header: "Order status",
     cell: ({ row }) => {
       const item = row.original;
+      const [isOpen, setIsOpen] = useState(false);
       return (
-        <div className="">
-          {item.status === "DELIVERED" ? (
-            <button className="dark:text-slate-800 py-1.5 px-3 bg-green-200 rounded-full">
-              {item.status}
-            </button>
-          ) : item.status === "PROCESSING" ? (
-            <button className="dark:text-slate-800 py-1.5 px-3 bg-yellow-200 rounded-full">
-              {item.status}
-            </button>
-          ) : item.status === "PENDING" ? (
-            <button className="dark:text-slate-800 py-1.5 px-3 bg-orange-200 rounded-full">
-              {item.status}
-            </button>
-          ) : (
-            <button className="dark:text-slate-800 py-1.5 px-3 bg-red-200 rounded-full">
-              {item.status}
-            </button>
-          )}
+        <div onClick={() => setIsOpen(true)}>
+          <OrderStatusBtn isOpen={isOpen} setIsOpen={setIsOpen} order={item}  />
         </div>
-      );
+      )
     },
   },
   {

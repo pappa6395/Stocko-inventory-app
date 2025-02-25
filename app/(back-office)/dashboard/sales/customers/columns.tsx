@@ -7,6 +7,9 @@ import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import { Customer } from "@/type/types";
 import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { FileText } from "lucide-react";
 
 
 export const columns: ColumnDef<Customer>[] = [
@@ -76,6 +79,19 @@ export const columns: ColumnDef<Customer>[] = [
       const customer = row.original
       const phone = customer?.phone || ""
       return <p>{phone}</p>
+    }
+  },
+  {
+    accessorKey: "viewOrder",
+    header: "View Order",
+    cell: ({ row }) => {
+      const customer = row.original
+      return <Button asChild variant={'outline'} size={"icon"}>
+                <Link href={`/dashboard/sales/customers/${customer.id}`}>
+                    <FileText />
+                    <span aria-hidden className='sr-only'>View Order</span>
+                </Link>
+            </Button>
     }
   },
   {

@@ -241,6 +241,7 @@ export interface Customer {
     email: string;
     phone: string;
     profileImage: string | null;
+    createdAt: Date;
 }
 
 

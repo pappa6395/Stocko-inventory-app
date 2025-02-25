@@ -1,6 +1,6 @@
 "use client"
 
-import { Brand, Category, Products, SubCategory } from '@prisma/client'
+import { Brand, Category, Products, SubCategory, User } from '@prisma/client'
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -13,8 +13,8 @@ import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks'
 import { addProductToOrderLine, decrementQty, incrementQty, loadOrderLineItem, OrderLineItem, removeProductFromOrderLine, removeProductsfromLocalStorage } from '@/redux/slices/pointOfSale'
 import SearchItems from './search-items'
 import FormSelectInput from '../global/FormInputs/FormSelectInput'
-import { ICategory, ICustomer, IProducts, ISubCategory } from '@/type/types'
-import { createLineOrder } from '@/actions/pos'
+import { ICategory, ICustomer, IProducts, ISubCategory, IUser } from '@/type/types'
+import { createLineOrder, NewOrderProps } from '@/actions/pos'
 import { Loader, ShoppingBasket } from 'lucide-react'
 import toast from 'react-hot-toast'
 import ReceiptPrint from './receiptPrint'
@@ -22,6 +22,9 @@ import { useReactToPrint } from 'react-to-print'
 import * as htmlToImage from 'html-to-image';
 import axios from "axios";
 import { loadHistory } from '@/redux/slices/historySlice'
+import { CartItem, getInitialCartItems } from '@/redux/slices/cartSlice'
+import { CheckoutState } from '@/redux/slices/checkoutSlice'
+import { CustomerDataProps } from '@/actions/customers'
 
 
 type CustomerOptionProps = {
@@ -43,20 +46,20 @@ const PointOfSale = ({
 }: {
     categories?: Category[]; 
     products?: ProductwithBrand[];
-    customers?: ICustomer[];
+    customers?: IUser[];
     cate: string;
 }) => {
     
     const [clientOrderLineItems, setClientOrderLineItems] = useState<OrderLineItem[]>([]);
     //const [newOrderId, setNewOrderId] = useState<number | undefined>(undefined)
     //const [newCustomerEmail, setNewCustomerEmail] = useState<string | undefined | null>(null)
-    const cartItems = useAppSelector((state) => state.cart.cartItems)
+    
     const orderLineItems = useAppSelector((state) => state.pos.products)
-    const personalDetails = useAppSelector((state) => state.checkout.personalDetails);
-    const shippingAddress = useAppSelector((state) => state.checkout.shippingAddress);
-    const paymentMethod = useAppSelector((state) => state.checkout.paymentMethod);
+    
     const dispatch = useAppDispatch()
-
+    
+    console.log("OrderLineItems:", orderLineItems);
+    
     useEffect(() => {
         dispatch(
             loadOrderLineItem(),
@@ -85,13 +88,14 @@ const PointOfSale = ({
         customerOptions = customers?.map((item) => {
             return {
               value: item.id.toString(),
-              label: item.user?.name ?? "Unknown",
-              email: item.user?.email ?? "",
-              phone: item.user?.phone ?? "",
+              label: item.name ?? "Unknown",
+              email: item.email ?? "",
+              phone: item.phone ?? "",
             }
           });
     }
-    const initialCustomerId = 1;
+    
+    const initialCustomerId = 2;
     const initialCustomer = customerOptions?.find(
     (item) => Number(item.value) === initialCustomerId
     );
@@ -109,28 +113,21 @@ const PointOfSale = ({
                 qty: 1,
             })
         );
-        localStorage.setItem("posItem", JSON.stringify([...orderLineItems, newOrderLineItems]));
     }
     const handleRemove = (orderItemId: number) => {
         dispatch(
             removeProductFromOrderLine(orderItemId)
         );
-        localStorage.setItem("posItem", JSON.stringify(orderLineItems.filter(
-            (item) => item.id !== orderItemId)));
     }
     const handleIncrement = (orderItemId: number) => {
         dispatch(
             incrementQty(orderItemId)
         );
-        localStorage.setItem("posItem", JSON.stringify(orderLineItems.map(
-            (item) => item.id === orderItemId ? {...item, qty: item.qty + 1 } : item)));
     }
     const handleDecrement = (orderItemId: number) => {
         dispatch(
             decrementQty(orderItemId)
         );
-        localStorage.setItem("posItem", JSON.stringify(orderLineItems.map(
-            (item) => item.id === orderItemId? {...item, qty: item.qty - 1 } : item)));
     }
     const clearAll = () => {
         dispatch(
@@ -152,29 +149,34 @@ const PointOfSale = ({
             customerId: Number(selectedCustomer.value),
             customerName: selectedCustomer.label as string,
             customerEmail: selectedCustomer.email as string,
-            ...shippingAddress,
-            ...personalDetails,
-            ...paymentMethod
+            customerPhone: selectedCustomer.phone as string,
         }
-        const orderItems = cartItems.map((item) => {
+        
+        const orderItems = orderLineItems.map((lineItem) => {
             return {
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                brand: item.brand,
-                qty: item.qty,
-                productThumbnail: item.image,
+                id: lineItem.id,
+                name: lineItem.name,
+                brand: lineItem.brand,
+                price: lineItem.price,
+                qty: lineItem.qty,
+                productThumbnail: lineItem.productThumbnail,
             }
         })
-
+        
         const orderAmount = total
         const newOrder = {
-            orderItems,
+            orderItems: orderLineItems,
             orderAmount,
             orderType: "Sale",
             source: "pos"
         }
-        
+       
+        if (!customerData || !orderItems || !orderAmount) {
+            toast.error("Incomplete order data, please fill out all required fields.");
+            setProcessing(false);
+            return;
+        }
+
         try {
             const res = await createLineOrder(newOrder, customerData)
             const data = res.data

@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { useReactToPrint } from 'react-to-print'
+import OrderStatusBtn from "./OrderStatusBtn";
 
 export default function OrderInvoice({ 
   order, 
@@ -83,7 +84,9 @@ export default function OrderInvoice({
                       <TableCell>{currentDate}</TableCell>
                       <TableCell>#{order?.orderNumber || ""}</TableCell>
                       <TableCell>{order?.paymentMethod || ""}</TableCell>
-                      <TableCell>{order?.status || "DELIVERED"}</TableCell>
+                      <TableCell>
+                        <OrderStatusBtn order={order}/>
+                      </TableCell>
                       <TableCell>
                         {order?.streetAddress || ""}, {order?.unitNumber || ""}
                       </TableCell>
