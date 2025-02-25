@@ -65,6 +65,7 @@ const page = () => {
             customerId: Number(userId) ?? "",
             customerName: `${storedCheckoutData?.personalDetails?.firstName ?? ""} ${storedCheckoutData?.personalDetails?.lastName ?? ""}`,
             customerEmail: storedCheckoutData?.personalDetails?.email ?? "",
+            customerPhone: storedCheckoutData?.personalDetails?.phone?? "",
             firstName: storedCheckoutData?.personalDetails?.firstName ?? "",
             lastName: storedCheckoutData?.personalDetails?.lastName?? "",
             email: storedCheckoutData?.personalDetails?.email?? "",

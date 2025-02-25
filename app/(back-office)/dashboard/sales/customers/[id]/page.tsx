@@ -1,5 +1,7 @@
-import { PageProps } from '@/.next/types/app/(back-office)/dashboard/sales/customers/new/page'
-import { getOrdersByCustomerId, getOrdersByOrderPagination } from '@/actions/orders'
+
+
+import { PageProps } from '@/.next/types/app/(back-office)/dashboard/sales/customers/page'
+import { getOrdersByOrderPagination } from '@/actions/orders'
 import OrderHistory from '@/components/dashboard/OrderHistory'
 import OrderPagination from '@/components/frontend/orders/OrderPagination'
 import React from 'react'

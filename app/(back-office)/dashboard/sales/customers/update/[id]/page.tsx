@@ -1,6 +1,6 @@
 
 
-import { PageProps } from '@/.next/types/app/(back-office)/dashboard/inventory/categories/new/page';
+import { PageProps } from '@/.next/types/app/(back-office)/dashboard/sales/customers/update/[id]/page';
 import { getCustomerById } from '@/actions/customers';
 import { getAllRoles } from '@/actions/roles';
 import CustomerForm from '@/components/dashboard/Forms/CustomerForm';

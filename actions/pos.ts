@@ -13,7 +13,7 @@ interface CustomerData {
   customerId: number;
   customerName: string;
   customerEmail: string;
-  customerPhone: string;
+  customerPhone?: string;
   firstName?: string;
   lastName?: string;
   email?: string;

@@ -3,7 +3,6 @@ import React from 'react'
 import { columns } from './column'
 import TableHeader from '@/components/dashboard/Table/dataTableComponents/TableHeader'
 import DataTable from '@/components/dashboard/Table/dataTableComponents/DataTable'
-import { getAllCustomers } from '@/actions/customers'
 import { getAllSales } from '@/actions/sales'
 
 
