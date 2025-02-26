@@ -23,7 +23,7 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
     const [isLoading, setIsLoading] = useState(false);
     const router = useRouter()
     const params = useSearchParams()
-    const returnUrl = params.get('returnUrl') || '/dashboard'
+    const returnUrl = params.get('returnUrl') || '/'
 
     const { 
         handleSubmit, 
@@ -72,7 +72,7 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
 
   return (
 
-    <div>
+    <div className='dark:bg-blue-950'>
         <div className='w-full py-5 px-8'>
             <div className='py-4'>
                 <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900 dark:text-slate-50">
@@ -80,8 +80,8 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
                 </h2>
                 <p className='text-center'>Welcome back!, fill in details to login</p>
             </div>
-            <div className="">
-            <form className="space-y-3" onSubmit={handleSubmit(handleLogin)}>
+            <div className="pt-4">
+            <form className="space-y-6" onSubmit={handleSubmit(handleLogin)}>
                 <div>
                     <TextInput
                         register={register}
@@ -176,7 +176,7 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
                             </Button>
                         </div>
                     </div> */}
-                <div className='w-full'>
+                <div className='w-full pt-10'>
                     <SubmitButton 
                         title='Sign in'
                         loading={isLoading}

@@ -92,7 +92,7 @@ return (
     )}  
     
    </div>
-   <div className="flex gap-2 items-center">
+   <div className="">
      <div className="relative rounded-md">
        {icon && (
          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">

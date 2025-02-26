@@ -1,5 +1,5 @@
 
-import { AdvertSize, Brand, Category, Customers, LineOrder, LineOrderItem, MainCategory, Products, Role, SubCategory, User } from "@prisma/client";
+import { AdvertSize, Brand, Category, Customers, LineOrder, LineOrderItem, MainCategory, Products, Role, Sale, SubCategory, User } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -258,6 +258,11 @@ export interface IProducts extends Products {
     name: string;
     subCategory: SubCategory;
     brand: Brand;
+}
+
+export interface SBProducts extends Products {
+    brand: Brand;
+    sale: Sale[];
 }
 
 export type ReceiptProps = {

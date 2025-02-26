@@ -32,6 +32,9 @@ model User {
   profileImage String?
   status       Boolean @default(false)
   inviteSent   Boolean @default(false) 
+  passwordResetToken   Int?
+  passwordResetCount   Int?
+  passwordResetTokenExpiresAt DateTime?
   //session      Session[]
   // Foreign key to Role
   roleId       Int

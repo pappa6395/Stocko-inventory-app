@@ -4,7 +4,7 @@
 import { AddProductToCartProps, IProductCarts } from "@/components/frontend/listings/AddToCartButton";
 import { ProductwithBrand } from "@/components/pos/PointOfSale";
 import { prismaClient } from "@/lib/db";
-import { GroupProducts, IProducts, ProductProps } from "@/type/types";
+import { GroupProducts, IProducts, ProductProps, SBProducts } from "@/type/types";
 import { Products } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -690,5 +690,37 @@ export async function getProductsByCategorySlug(
     } catch (err) {
         console.error("Failed to get products or categories:",err);
         return null;
+    }
+}
+
+export async function getBestSellingProducts(item: number) {
+    
+    try {
+        const bestSellingProducts = await prismaClient.products.findMany({
+            orderBy: {
+                sale: {
+                    _count: "desc"
+                }
+            },
+            include: {
+                sale: true,
+                brand: true,
+            },
+            take: item,
+        });
+
+        return {
+            status: 200,
+            data: bestSellingProducts,
+            error: null
+        }
+
+    } catch (err) {
+        console.error("Failed to get best selling products:", err);
+        return {
+            status: 500,
+            data: null,
+            error: "Failed to get best selling products"
+        }
     }
 }

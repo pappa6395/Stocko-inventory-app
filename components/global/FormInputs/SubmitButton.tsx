@@ -12,12 +12,14 @@ type SubmitButtonProps = {
   loading: boolean;
   showIcon?: boolean;
   size?: "default" | "sm" | "lg" | "icon" | null | undefined;
+  variant?: "default" | "ghost" | "outline" | "feedback" | "destructive" | "shop" | "cart" | "receipt" | "link" | "secondary";
 };
 export default function SubmitButton({
   title,
   loadingTitle = "Saving Please wait...",
   loading,
   className,
+  variant="default",
   loaderIcon = Loader,
   buttonIcon = Plus,
   showIcon = true,
@@ -31,10 +33,10 @@ export default function SubmitButton({
         <Button
           type="button"
           size={size}
-          variant={"default"}
+          variant={variant}
           disabled
           className={cn(
-            "items-center flex justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-800 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-not-allowed",
+            "items-center flex justify-center rounded-md px-2 py-1 text-xs font-normal leading-6 shadow-sm  focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-not-allowed",
             className
           )}
         >
@@ -45,9 +47,9 @@ export default function SubmitButton({
         <Button
           type="submit"
           size={size}
-          variant={"default"}
+          variant={variant}
           className={cn(
-            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal bg-slate-800 dark:bg-slate-50 leading-6 text-white dark:text-slate-950 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
+            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal leading-6 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
             className
           )}
         >

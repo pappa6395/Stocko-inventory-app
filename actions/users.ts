@@ -7,7 +7,10 @@ import { Resend } from "resend";
 import bcrypt from "bcryptjs"
 import InviteUserEmail from "@/emails";
 import { User } from "@prisma/client";
+import PasswordReset from "@/emails/PasswordReset";
+import { generateToken } from "@/lib/generateToken";
 
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function createUser(data: UserProps) {
     console.log("Payload checked:", data);
@@ -33,8 +36,8 @@ export async function createUser(data: UserProps) {
         });
         if (existingUser) {
             return {
-                ok: false,
-                error: "Role already exists",
+                status: "400",
+                error: `User with this ${email} is already exists`,
                 data: null
             }
         }
@@ -57,7 +60,7 @@ export async function createUser(data: UserProps) {
             console.log("New user created:", newUser);
             await sendInvitationEmailToUser(newUser, confirmPassword)
             return {
-                ok: true,
+                status: "200",
                 error: null,
                 data: newUser
             }
@@ -65,7 +68,69 @@ export async function createUser(data: UserProps) {
     } catch (err) {
         console.error("Failed to create user:",err);
         return {
-            ok: false,
+            status: "500",
+            error: "Failed to create user",
+            data: null
+        }
+    }
+}
+
+export async function createUserFromLogin(data: UserProps) {
+    console.log("Payload checked:", data);
+    const { 
+        firstName, 
+        lastName, 
+        email, 
+        password, 
+        confirmPassword, 
+        phone, 
+        status, 
+        roleId, 
+        profileImage 
+    } = data;
+
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10)
+        const isMatch = await bcrypt.compare(confirmPassword, hashedPassword)
+        const existingUser = await prismaClient.user.findUnique({
+            where: {
+                email,
+            }
+        });
+        if (existingUser) {
+            return {
+                status: "400",
+                error: `User with this ${email} is already exists`,
+                data: null
+            }
+        }
+
+        if (isMatch && !existingUser) {
+            const newUser = await prismaClient.user.create({
+                data: {
+                    email,
+                    password: hashedPassword,
+                    firstName,
+                    lastName,
+                    name: `${data.firstName} ${data.lastName}`,
+                    phone,
+                    profileImage,
+                    roleId,
+                    status,
+                }
+            });
+            revalidatePath("/dashboard/users")
+            console.log("New user created:", newUser);
+            return {
+                status: "200",
+                error: null,
+                data: newUser
+            }
+        }
+    } catch (err) {
+        console.error("Failed to create user:",err);
+        return {
+            status: "500",
             error: "Failed to create user",
             data: null
         }
@@ -277,7 +342,6 @@ export async function deleteUserById(id: number) {
 
 export async function sendInvitationEmailToUser(data: User, temporaryPassword: string) {
    
-    const resend = new Resend(process.env.RESEND_API_KEY);
     const {
         name, 
         firstName, 
@@ -300,10 +364,10 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
         const userEmail = email || "";
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
         await resend.emails.send({
-        from: 'Stocko-Online <admin@89residencexclusive.co>',
-        to: userEmail,
-        subject: 'Welcome to Stocko-Online - Your Login Credentials',
-        react: InviteUserEmail({
+            from: 'Stocko-Online <admin@89residencexclusive.co>',
+            to: userEmail,
+            subject: 'Welcome to Stocko-Online - Your Login Credentials',
+            react: InviteUserEmail({
                 username: firstName,
                 password: temporaryPassword,
                 loginEmail: userEmail,
@@ -340,4 +404,58 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
         }
     }
    
+}
+
+export async function sendPasswordResetToken(email: string) {
+    try {
+        const existingUser = await prismaClient.user.findUnique({
+            where: {
+                email
+            }
+        })
+        if (!existingUser) {
+            throw new Error("User not found");
+        }
+        if (existingUser?.passwordResetCount || 0 >= 3) {
+            return {
+                status: "429",
+                data: null,
+                error: "Too many password reset attempts. Please try again in 30 minutes.",
+            }
+        }
+        const token = generateToken(6)
+        await resend.emails.send({
+            from: 'Stocko-Online <admin@89residencexclusive.co>',
+            to: email,
+            subject: 'Reset Password Token',
+            react: PasswordReset({
+                token: token,
+            }),
+        });
+        const updatedUser = await prismaClient.user.update({
+            where: {
+                email
+            },
+            data: {
+                passwordResetToken: Number(generateToken(6)),
+                passwordResetCount: {
+                    increment: (existingUser?.passwordResetCount || 0) + 1,
+                },
+                passwordResetTokenExpiresAt: new Date(Date.now() + 3600000), // 1 hour
+            }
+        });
+        return {
+            status: "200",
+            data: updatedUser,
+            error: null,
+        }
+        
+    } catch (err) {
+        console.error("Failed to send password reset token:",err);
+        return {
+            status: "500",
+            data: null,
+            error: "Failed to send password reset token",
+        }
+    }
 }

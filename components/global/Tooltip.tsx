@@ -2,7 +2,7 @@ import React from 'react'
 
 
 
-const Tooltip = ({label}: {label: string}) => {
+const Tooltip = ({label, className}: {label: string; className?: string;}) => {
 
 
   return (
@@ -12,7 +12,7 @@ const Tooltip = ({label}: {label: string}) => {
         bg-slate-300 text-slate-700 px-2 py-1.5
         rounded-lg z-40'
         >
-            {label}
+          <span className={className}>{label}</span>
     </div>
 
   )

@@ -6,59 +6,50 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuItem } from "@/components/ui/dropdown-menu"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { Bell, Delete, Home, LineChart, Package, Package2, Search, ShoppingCart, Trash, Users } from 'lucide-react'
+import { ArrowUpRight, Bell, Delete, File, Home, LineChart, Package, Package2, Search, ShoppingCart, Trash, Users } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 
 const TransactionList = () => {
 
   return (
 
-    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 
-    md:p-6 border shadow-sm rounded-lg">
-        <div className="flex items-center">
-            <h1 className="font-semibold text-lg md:text-2xl">Products</h1>
-            <Button className="ml-auto" size="sm">
-                Add product
-            </Button>
-        </div>
-        <div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead>Price</TableHead>
-                        <TableHead>Inventory</TableHead>
-                        <TableHead />
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <TableRow>
-                        <TableCell className="font-medium">
-                            <p className='text-xs'>Glimmer Lamps</p>
-                            <p className='text-xs text-muted-foreground'>
-                                gilmmer@example.com
-                            </p>
-                        </TableCell>
-                        <TableCell>Elegant and stylish lamps for your home</TableCell>
-                        <TableCell>$99.99</TableCell>
-                        <TableCell>500 in stock</TableCell>
-                        <TableCell>
-                        <div className="flex gap-2">
-                            <Button variant="outline" size="icon">
-                                <Delete className="h-4 w-4" />
-                                <span className="sr-only">Edit</span>
-                            </Button>
-                            <Button variant="outline" size="icon">
-                                <Trash className="h-4 w-4" />
-                                <span className="sr-only">Delete</span>
-                            </Button>
-                        </div>
-                        </TableCell>
-                    </TableRow>
-                </TableBody>
-            </Table>
-        </div>
-    </main>
+    <Card className="mt-2 pt-2">
+        <CardHeader className="px-7">
+            <div className="flex justify-between items-center">
+                <CardTitle className="text-3xl">Recent Orders</CardTitle>
+                <Button 
+                    asChild 
+                    size="lg" 
+                    variant="default" 
+                    className="gap-1 text-sm py-2.5 px-3">
+                    <Link href="#" >
+                        <span className="sr-only sm:not-sr-only">View All</span>
+                        <ArrowUpRight className="h-4 w-4" />
+                    </Link>
+                </Button>
+            </div>  
+            <CardDescription>Recent orders from your store.</CardDescription>
+        </CardHeader>
+        <CardContent>
+        <Table>
+            <TableHeader>
+            <TableRow>
+                <TableHead>Customer</TableHead>
+                <TableHead className="hidden sm:table-cell">Type</TableHead>
+                <TableHead className="hidden sm:table-cell">Status</TableHead>
+                <TableHead className="hidden md:table-cell">Date</TableHead>
+                <TableHead className="hidden md:table-cell">Amount</TableHead>
+                <TableHead className="text-right">Action</TableHead>
+            </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                    <TableCell colSpan={6}>No orders found.</TableCell>
+                </TableRow>
+            </TableBody>
+        </Table>
+        </CardContent>
+    </Card>
 
   )
 }

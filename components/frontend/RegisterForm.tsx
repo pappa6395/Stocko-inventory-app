@@ -1,36 +1,160 @@
 "use client"
 
-import { Eye, EyeOff, Lock, Mail, User } from 'lucide-react'
+import { Eye, EyeOff, Lock, LogIn, Mail, Phone, User } from 'lucide-react'
 import Link from 'next/link'
 import React, { useState } from 'react'
-import { Button } from '../ui/button'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { useForm } from 'react-hook-form'
+import { createUserFromLogin } from '@/actions/users'
+import TextInput from '../global/FormInputs/TextInputForm'
+import toast from 'react-hot-toast'
+import PasswordInput from '../global/FormInputs/PasswordInput'
+import LoginPasswordInput from '../global/FormInputs/LoginPasswordInput'
+import SubmitButton from '../global/FormInputs/SubmitButton'
+import { UserProps } from '@/type/types'
 
 
 const RegisterForm = () => {
 
-    const [showPassword, setShowPassword] = useState(false);
-    const [isPassword, setIsPassword] = useState("")
+    const [isLoading, setIsLoading] = useState(false);
+    const [emailErr, setEmailErr] = useState<string | null>("");
+    const router = useRouter()
+    const params = useSearchParams()
+    const returnUrl = params.get('returnUrl') || '/'
 
-    const handleTogglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+    const { 
+        handleSubmit, 
+        register, 
+        reset, 
+        formState:{errors} 
+    } = useForm<UserProps>()
+
+
+    const saveSubmit = async (data: UserProps) => {
+        setIsLoading(true);
+        data.name = `${data.firstName} ${data.lastName}`
+        data.status = true;
+        data.profileImage = "/profile.svg"
+        data.roleId = 2;
+        console.log(data);
+
+        try {
+            const newUser = await createUserFromLogin(data);
+            if (newUser?.status === "400") {
+              setIsLoading(false);
+              toast.error("User already exists")
+              setEmailErr(newUser?.error)
+              
+            } else if (newUser?.status === "200") {
+                setIsLoading(false);
+                toast.success("Registration Successful");
+                reset();
+                router.push(returnUrl);
+            } else {
+                setIsLoading(false);
+                toast.error("Failed to create user");
+                reset();
+            }
+        } catch (error) {
+        setIsLoading(false);
+        console.error("Network Error:", error);
+        toast.error("Its seems something is wrong with your Network");
+        }
+        
     }
+
 
   return (
 
-    <div>
-        <div className='lg:w-[90%] w-full py-5 px-8'>
+    <div className='dark:bg-blue-950'>
+        <div className='w-full py-5 px-8'>
             <div className='py-4'>
-                <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+                <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight">
                     Create an Account
                 </h2>
                 <p className='text-center'>Please!, fill in details to create an account</p>
             </div>
             <div className="">
-            <form className="space-y-3">
+            <form className="space-y-3" onSubmit={handleSubmit(saveSubmit)}>
+                <div className='grid grid-cols-2 gap-3'>
+                    <TextInput
+                        register={register}
+                        errors={errors}
+                        label='First Name'
+                        name='firstName'
+                        icon={User}
+                    />
+                    <TextInput
+                        register={register}
+                        errors={errors}
+                        label='Last Name'
+                        name='lastName'
+                        icon={User}
+                    />
+                </div>
+                <div className='grid grid-cols-2 gap-3'>
+                    <TextInput
+                        register={register}
+                        errors={errors}
+                        label='Email Address'
+                        name='email'
+                        type='email'
+                        icon={Mail}
+                    />
+                     <TextInput
+                        register={register}
+                        errors={errors}
+                        label='Phone Number'
+                        name='phone'
+                        type="tel"
+                        icon={Phone}
+                    />
+                    {emailErr && <span className='text-red-500 text-xs col-span-full'>{emailErr}</span>}
+                </div>
+                <div className='relative'>
+                    <LoginPasswordInput
+                        register={register}
+                        errors={errors}
+                        label="Password"
+                        name="password"
+                        icon={Lock}
+                        toolTipText='Password must be at least 8 charactors' 
+                    />
+                    <div className="text-xs text-end pt-1 absolute top-0 right-0">
+                        <Link 
+                            href="/forgot-password" 
+                            className="font-semibold underline text-indigo-600 
+                            hover:text-indigo-500"
+                        >
+                            Forgot password?
+                        </Link>
+                    </div>
+                    <PasswordInput
+                        register={register}
+                        errors={errors}
+                        label="Confirm Password"
+                        name="confirmPassword"
+                        type="password"
+                        icon={Lock}
+                        toolTipText='It must be the same as the password' 
+                    />
+                </div>
+                <div className='w-full'>
+                    <SubmitButton 
+                        title='Sign up'
+                        loading={isLoading}
+                        loadingTitle={isLoading ? 'Loading...' : 'Sign up'}
+                        className='w-full text-md'
+                        buttonIcon={LogIn}
+                        variant={"cart"}
+                    />
+                </div>
+            </form>
+            {/* <form className="space-y-3">
                 <div>
                     <label 
                         htmlFor="fullName" 
-                        className="block text-sm/6 font-medium text-gray-900"
+                        className="block text-sm/6 font-medium"
                     >
                         Full Name
                     </label>
@@ -53,7 +177,7 @@ const RegisterForm = () => {
                     </div>
                 </div>
                 <div>
-                    <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">
+                    <label htmlFor="email" className="block text-sm/6 font-medium">
                         Email address
                     </label>
                     <div className="mt-2 relative">
@@ -75,7 +199,7 @@ const RegisterForm = () => {
                 </div>
                 <div>
                     <div className="flex items-center justify-between">
-                        <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">
+                        <label htmlFor="password" className="block text-sm/6 font-medium">
                         Password
                         </label>
                     </div>
@@ -117,8 +241,8 @@ const RegisterForm = () => {
                         Sign up
                     </button>
                 </div>
-            </form>
-            <p className="mt-10 text-center text-sm/6 text-gray-500">
+            </form> */}
+            <p className="mt-6 text-center text-sm/6 text-gray-500">
                Already registered ?{' '}
                 <Link 
                     href="/login" 

@@ -4,17 +4,23 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuLab
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
-import { ArrowUpRight, File, ListFilter } from "lucide-react"
+import { ArrowUpRight, ExternalLink, File, ListFilter } from "lucide-react"
 import BarChartCard from "./BarChartCard"
-import RecentSaleCard from "../RecentSaleCard"
 import OrderSummary from "../OrderSummary"
 import { getOrders } from "@/actions/pos"
 import { convertIsoToDateString } from "@/lib/convertISOtoDate"
 import Link from "next/link"
+import { getCustomers } from "@/actions/orders"
+import DataTable from "../Table/dataTableComponents/DataTable"
+import { columns } from "@/app/(back-office)/dashboard/sales/customers/columns"
+import { getBestSellingProducts } from "@/actions/products"
+import BestSellingProducts from "../BestSellingProducts"
 
 export default async function DashboardSummary() {
 
     const orders = (await getOrders()).data || [];
+    const bestSellingProducts = (await getBestSellingProducts(5)).data || [];
+    const customers = (await getCustomers()).data || [];
 
   return (
 
@@ -25,6 +31,8 @@ export default async function DashboardSummary() {
                     <TabsList>
                         <TabsTrigger value="orders">Recent Orders</TabsTrigger>
                         <TabsTrigger value="sales">Recent Sales</TabsTrigger>
+                        <TabsTrigger value="customers">Recent Customers</TabsTrigger>
+                        <TabsTrigger value="bestSales">Best Selling</TabsTrigger>
                         <TabsTrigger value="year">Year</TabsTrigger>
                     </TabsList>
                 <div className="ml-auto flex items-center gap-2">
@@ -51,99 +59,33 @@ export default async function DashboardSummary() {
                 </div>
                 <TabsContent value="orders">
                     <OrderSummary orders={orders} />
-                    <Card x-chunk="dashboard-05-chunk-3" className="mt-2 pt-2">
-                        <CardHeader className="px-7">
-                            <div className="flex justify-between items-center">
-                                <CardTitle className="text-3xl">Recent Orders</CardTitle>
-                                <Button 
-                                    asChild 
-                                    size="lg" 
-                                    variant="default" 
-                                    className="gap-1 text-sm py-2.5 px-3">
-                                    <Link href="#" >
-                                        <span className="sr-only sm:not-sr-only">View All</span>
-                                        <ArrowUpRight className="h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>  
-                            <CardDescription>Recent orders from your store.</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                        <Table>
-                            <TableHeader>
-                            <TableRow>
-                                <TableHead>Customer</TableHead>
-                                <TableHead className="hidden sm:table-cell">Type</TableHead>
-                                <TableHead className="hidden sm:table-cell">Status</TableHead>
-                                <TableHead className="hidden md:table-cell">Date</TableHead>
-                                <TableHead className="hidden md:table-cell">Amount</TableHead>
-                                <TableHead className="text-right">Action</TableHead>
-                            </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                            { orders && orders.length > 0 ? (
-                                orders.map((order,index) => {
-                                    const date = convertIsoToDateString(order.createdAt)
-                                    const isEven = index % 2 === 0;
-                                    return (
-                                        <TableRow key={index} className={isEven ? "bg-accent" : ""}>
-                                            <TableCell>
-                                            <div className="font-medium">{order.customerName}</div>
-                                            <div className="hidden text-sm text-muted-foreground md:inline">{order.customerEmail}</div>
-                                            </TableCell>
-                                            <TableCell className="hidden sm:table-cell">{order.orderType}</TableCell>
-                                            <TableCell className="hidden sm:table-cell">
-                                            {/* <Badge className="text-xs" variant="secondary">
-                                                {order.status}
-                                            </Badge> */}
-                                            {order.status === "DELIVERED" ? (
-                                                <button className="py-1.5 px-3 bg-emerald-400 
-                                                rounded-full font-semibold dark:text-slate-100">{order.status}</button>
-                                            ) : order.status === "PROCESSING" ? (
-                                                <button className="py-1.5 px-3 bg-sky-400 
-                                                rounded-full">{order.status}</button>
-                                            ) : order.status === "PENDING" ? (
-                                                <button className="py-1.5 px-3 bg-amber-400 
-                                                rounded-full">{order.status}</button>
-                                            ) : order.status === "SHIPPED" ? (
-                                                <button className="py-1.5 px-3 bg-emerald-400 
-                                                rounded-full">{order.status}</button>
-                                            ) : (<button className="py-1.5 px-3 bg-red-400 
-                                                rounded-full">{order.status}</button>)}
-                                            </TableCell>
-                                            <TableCell className="hidden md:table-cell">{date}</TableCell>
-                                            <TableCell className="text-right">${order.orderAmount}</TableCell>
-                                            <TableCell className="text-right">
-                                                <Button 
-                                                    asChild 
-                                                    size="sm" 
-                                                    variant="outline" 
-                                                    className="gap-1 text-sm">
-                                                    <Link href="#" >
-                                                        <File className="h-3.5 w-3.5" />
-                                                        <span className="sr-only sm:not-sr-only">View</span>
-                                                    </Link>
-                                                </Button>
-                                            </TableCell>
-                                        </TableRow>
-                                    )
-                                })
-                                
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={6}>No orders found.</TableCell>
-                                </TableRow>
-                            )}
-                            </TableBody>
-                        </Table>
-                        </CardContent>
-                    </Card>
                 </TabsContent>
                 <TabsContent value="sales">
-                    <RecentSaleCard />
+                    <BestSellingProducts products={bestSellingProducts}/>
+                </TabsContent>
+                <TabsContent value="customers">
+                    <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 
+                        md:p-6 border shadow-sm rounded-lg">
+                        <div className="flex items-center">
+                            <h1 className="font-semibold text-lg md:text-2xl">Recent Customers</h1>
+                            <Button asChild className="ml-auto" size="sm">
+                                <Link href={`/dashboard/sales/customers`}>
+                                    <span>View All</span>
+                                    <ExternalLink />
+                                </Link>
+                            </Button>
+                        </div>
+                        <div>
+                            <DataTable columns={columns} data={customers.slice(0,5)} />
+                        </div>
+                    </main>  
+                    <BarChartCard />
+                </TabsContent>
+                <TabsContent value="bestSales">
+                    <BestSellingProducts products={bestSellingProducts}/>
                 </TabsContent>
                 <TabsContent value="year">
-                    <BarChartCard />
+                    <BestSellingProducts products={bestSellingProducts}/>
                 </TabsContent>
             </Tabs>
         </div>
