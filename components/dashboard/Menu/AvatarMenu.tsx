@@ -88,7 +88,11 @@ const AvatarMenu = ({user}: {user: User}) => {
     <Sheet>
         <SheetTrigger>
             <Avatar className="size-9">
-                <AvatarImage src={user?.profileImage ?? "/profile.svg" } alt="profile"/>
+                <AvatarImage 
+                    src={user?.profileImage ?? "/profile.svg" } 
+                    alt="profile"
+                    className="size-8 object-contain aspect-auto"
+                />
                 <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
             </Avatar>
             <span className="sr-only">Toggle user menu</span>

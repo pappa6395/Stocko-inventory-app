@@ -12,6 +12,7 @@ import PaymentMethod from './PaymentMethod'
 import { useAppSelector } from '@/redux/hooks/hooks'
 import { Session } from 'next-auth'
 import { CartItem } from '@/redux/slices/cartSlice'
+import { CartMenu } from '../CartMenu'
 
 
 
@@ -90,11 +91,7 @@ const CheckoutPage = ({session}: {session: Session}) => {
                         </div>
                         <p className='hidden sm:block dark:text-slate-800'>You have {sumItems} items in cart, the total amount is ${totalSum}</p>
                     </div>
-                    <Button asChild variant={"outline"}>
-                        <Link href={"/"}>
-                            <span>Edit Cart</span>
-                        </Link>
-                    </Button>
+                    <CartMenu from="checkout" />
                 </div>
                 <div className="sm:hidden block px-2 py-1 rounded-md bg-gray-100 dark:text-slate-800">
                     You have {allCartItems.length} items in cart, the total amount is ${totalSum}

@@ -10,6 +10,7 @@ import CarouselProduct from "./CarouselProduct";
 import ProductWithCart from "./ProductWithCart";
 import HorizontalProduct from "./HorizontalProduct";
 import VerticalProduct from "./VerticalProduct";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function CategoryCarousel({ 
     products, 
@@ -35,6 +36,25 @@ export default function CategoryCarousel({
       slidesToSlide: 1, // optional, default to 1.
     },
   };
+
+  const CustomLeftArrow = ({ onClick }: { onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-slate-800/40 p-2 rounded-full shadow"
+  >
+    <FaChevronLeft className="size-6" />
+  </button>
+);
+
+const CustomRightArrow = ({ onClick }: { onClick?: () => void }) => (
+  <button
+    onClick={onClick}
+    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-slate-800/40 p-2 rounded-full shadow"
+  >
+    <FaChevronRight className="size-6" />
+  </button>
+);
+
   return (
     <Carousel
       swipeable={false}
@@ -50,9 +70,13 @@ export default function CategoryCarousel({
       transitionDuration={1000}
       containerClass="carousel-container"
       removeArrowOnDeviceType={["tablet", "mobile"]}
+      customLeftArrow={<CustomLeftArrow />}
+      customRightArrow={<CustomRightArrow />}
+
       // deviceType={}
       dotListClass="custom-dot-list-style"
       itemClass="px-2 sm:px-4"
+      
     >
       {products.map((product, i) => {
         return (

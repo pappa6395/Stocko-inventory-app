@@ -9,6 +9,8 @@ import InviteUserEmail from "@/emails";
 import { User } from "@prisma/client";
 import PasswordReset from "@/emails/PasswordReset";
 import { generateToken } from "@/lib/generateToken";
+import { incrementCount } from "@/lib/incrementCount";
+import { generateResetToken30minsExpiry } from "@/lib/generateTokenExpiry";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -137,6 +139,16 @@ export async function createUserFromLogin(data: UserProps) {
     }
 }
 
+export async function createBulkUsers(users: UserProps[]) {
+  try {
+    for (const user of users) {
+      await createUser(user);
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 export async function getAllUsers() {
     
     try {
@@ -259,14 +271,12 @@ export async function updateUserPassword(data: ChangePasswordProps) {
     const {
         password,  
         confirmPassword,
-        roleId, 
-        email,
         userId
     } = data;
 
         if (!userId || !data) {
             return {
-            ok: false,
+            status: "400",
             data: null,
             error: "Invalid request",
             };
@@ -275,14 +285,14 @@ export async function updateUserPassword(data: ChangePasswordProps) {
             const user = await prismaClient.user.findUnique({ where: { id: Number(userId) } });
 
             if (!user) return {
-                ok: false,
+                status: "404",
                 data: null,
                 error: "User not found",
             }
 
             if (password !== confirmPassword) {
                 return {
-                  ok: false,
+                  status: "403",
                   data: null,
                   error: "Passwords do not match",
                 };
@@ -300,7 +310,7 @@ export async function updateUserPassword(data: ChangePasswordProps) {
             //revalidatePath("/login")
             console.log("Password updated successfully");
             return {
-                ok: true,
+                status: "200",
                 data: updateUser,
                 error: null,
             }
@@ -308,7 +318,7 @@ export async function updateUserPassword(data: ChangePasswordProps) {
         } catch (err) {
             console.error("Failed to update user by ID:",err);
             return {
-                ok: false,
+                status: "500",
                 data: null,
                 error: "Failed to update user",
             }
@@ -373,7 +383,7 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
                 loginEmail: userEmail,
                 invitedByUsername: 'Admin.Pap',
                 invitedByEmail: 'admin@89residencexclusive.co',
-                inviteLink: `${baseUrl}/login?userId=${data.id}&roleId=${roleId}&email=${userEmail}`,
+                inviteLink: `${baseUrl}/login?id=${data.id}&roleId=${roleId}&email=${userEmail}`,
                 inviteRole: role,
                 inviteFromIp: '192.168.0.1',
                 inviteFromLocation: 'New York',
@@ -408,15 +418,38 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
 
 export async function sendPasswordResetToken(email: string) {
     try {
-        const existingUser = await prismaClient.user.findUnique({
+        let existingUser = await prismaClient.user.findUnique({
             where: {
                 email
             }
         })
         if (!existingUser) {
-            throw new Error("User not found");
+            return {
+                data: null,
+                error: `User with this ${email} is not found`,
+                status: "404"
+            }
         }
-        if (existingUser?.passwordResetCount || 0 >= 3) {
+        const now = new Date();
+
+        // Check if the last reset attempt was more than 30 minutes ago
+        if (existingUser.passwordResetTokenExpiresAt && new Date(existingUser.passwordResetTokenExpiresAt) < now) {
+            // Reset the password reset count since 30 minutes have passed
+            await prismaClient.user.update({
+                where: { email },
+                data: { 
+                    passwordResetCount: 0, 
+                    passwordResetTokenExpiresAt: null 
+                }
+            });
+
+            // Refetch the updated user to ensure count is reset
+            existingUser = await prismaClient.user.findUnique({
+            where: { email }
+            });
+        }
+
+        if (existingUser && (existingUser?.passwordResetCount || 0) >= 3) {
             return {
                 status: "429",
                 data: null,
@@ -425,28 +458,34 @@ export async function sendPasswordResetToken(email: string) {
         }
         const token = generateToken(6)
         await resend.emails.send({
-            from: 'Stocko-Online <admin@89residencexclusive.co>',
+            from: 'Stocko-Online <admin@beauty-property.com>',
             to: email,
             subject: 'Reset Password Token',
             react: PasswordReset({
                 token: token,
             }),
         });
+        if (!existingUser) {
+            throw new Error("User not found");
+        }
         const updatedUser = await prismaClient.user.update({
             where: {
                 email
             },
             data: {
-                passwordResetToken: Number(generateToken(6)),
-                passwordResetCount: {
-                    increment: (existingUser?.passwordResetCount || 0) + 1,
-                },
-                passwordResetTokenExpiresAt: new Date(Date.now() + 3600000), // 1 hour
+                passwordResetToken: Number(token),
+                passwordResetCount: incrementCount(existingUser.passwordResetCount),
+                passwordResetTokenExpiresAt: generateResetToken30minsExpiry(
+                    existingUser.passwordResetCount,existingUser.passwordResetTokenExpiresAt
+                )
+               
             }
         });
         return {
             status: "200",
-            data: updatedUser,
+            data: {
+                id: updatedUser.id,
+            },
             error: null,
         }
         
@@ -456,6 +495,70 @@ export async function sendPasswordResetToken(email: string) {
             status: "500",
             data: null,
             error: "Failed to send password reset token",
+        }
+    }
+}
+
+export async function verifyResetToken(userId: string, resetToken: number) {
+    try {
+        let existingUser = await prismaClient.user.findUnique({
+            where: {
+                id: Number(userId)
+            }
+        })
+        if (!existingUser) {
+            return {
+                status: "429",
+                data: null,
+                error: "User not found",
+            }
+        } else if (existingUser.passwordResetToken !== resetToken) {
+            return {
+                status: "403",
+                data: null,
+                error: "Invalid reset token",
+            };
+        } else if (existingUser.passwordResetTokenExpiresAt && new Date(existingUser.passwordResetTokenExpiresAt) < new Date()) {
+            return {
+                status: "401",
+                data: null,
+                error: "Reset token has expired",
+            }
+        } else if (existingUser && existingUser.passwordResetToken === resetToken) {
+            existingUser = await prismaClient.user.update({
+                where: {
+                    id: Number(userId)
+                },
+                data: {
+                    passwordResetCount: 0,
+                    passwordResetTokenExpiresAt: null,
+                }
+            });
+            return {
+                status: "200",
+                data: {
+                    id: existingUser.id,
+                    roleId: existingUser.roleId,
+                    email: existingUser.email,
+                },
+                error: null,
+            }
+        } else {
+            return {
+                status: "400",
+                data: null,
+                error: "Invalid code, Please check your email and try again",
+            }
+        }
+        
+    } catch (err) {
+        console.error("Failed to verify password reset token:",err);
+        return {
+            status: "500",
+            data: {
+                id: null,
+            },
+            error: "Something went wrong, please try again",
         }
     }
 }

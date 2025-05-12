@@ -1,224 +1,217 @@
-"use client"
+"use client";
 
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import React, { useState } from 'react'
-import FormHeader from './FormHeader'
-import { useRouter } from 'next/navigation'
-import { useForm } from 'react-hook-form';
-import { RoleProps } from '@/type/types'
-import toast from 'react-hot-toast'
-import { Role } from '@prisma/client'
-import TextInput from '@/components/global/FormInputs/TextInputForm'
+import FormHeader from "./FormHeader";
+import { useRouter } from "next/navigation";
+import Select from "react-tailwindcss-select";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  BrandProps,
+  CategoryProps,
+  RoleProps,
+  SelectOptionProps,
+  UnitProps,
+} from "@/type/types";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import FormFooter from '@/components/global/FormInputs/FormFooter'
-import { permissions } from '@/config/permissions'
-import { createRoleName } from '@/lib/createRoleName'
-import { createRole, updateRoleById } from '@/actions/roles'
+} from "@/components/ui/table";
+import TextInput from "@/components/global/FormInputs/TextInputForm";
+
+import toast from "react-hot-toast";
+
+import { Role, Unit } from "@prisma/client";
+import { permissions } from "@/config/permissions";
+import { createRoleName } from "@/lib/createRoleName";
+import { createRole, updateRoleById } from "@/actions/roles";
+import FormFooter from "@/components/global/FormInputs/FormFooter";
 
 
 type RoleFormProps = {
-  initialData?: Role | null;
-  editingId?: string;
-}
+  editingId?: string | undefined;
+  initialData?: Role | undefined | null;
+};
 
-const RoleForm = ({
-  initialData,
-  editingId,
-}: RoleFormProps) => {
-  
+export default function RoleForm({ editingId, initialData }: RoleFormProps) {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<RoleProps>({
+    setValue,
+    watch,
+  } = useForm<Role>({
     defaultValues: {
-      displayTitle: initialData?.displayTitle || "",
-      roleTitle: initialData?.roleTitle || "",
-      description: initialData?.description || "",
-      canViewBrands: initialData?.canViewBrands || false,
-      canAddBrands: initialData?.canAddBrands || false,
-      canEditBrands: initialData?.canEditBrands || false,
-      canDeleteBrands: initialData?.canDeleteBrands || false,
-      canViewCategories: initialData?.canViewCategories || false,
-      canAddCategories: initialData?.canAddCategories || false,
-      canEditCategories: initialData?.canEditCategories || false,
-      canDeleteCategories: initialData?.canDeleteCategories || false,
-      canViewProducts: initialData?.canViewProducts || false,
-      canAddProducts: initialData?.canAddProducts || false,
-      canEditProducts: initialData?.canEditProducts || false,
-      canDeleteProducts: initialData?.canDeleteProducts || false,
-      canAccessDashboard: initialData?.canAccessDashboard || false,
-      canManageRoles: initialData?.canManageRoles || false,
-      canManageUnits: initialData?.canManageUnits || false,
-      canViewUsers: initialData?.canViewUsers || false,
-      canAddUsers: initialData?.canAddUsers || false,
-      canEditUsers: initialData?.canEditUsers || false,
-      canDeleteUsers: initialData?.canDeleteUsers || false,
-      canViewWarehouses: initialData?.canViewWarehouses || false,
-      canAddWarehouses: initialData?.canAddWarehouses || false,
-      canEditWarehouses: initialData?.canEditWarehouses || false,
-      canDeleteWarehouses: initialData?.canDeleteWarehouses || false,
-      canViewSuppliers: initialData?.canViewSuppliers || false,
-      canAddSuppliers: initialData?.canAddSuppliers || false,
-      canEditSuppliers: initialData?.canEditSuppliers || false,
-      canDeleteSuppliers: initialData?.canDeleteSuppliers || false,
-    }
-    
+      ...initialData,
+    },
   });
 
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const saveRole = async(data: RoleProps) => {
-    
-    data.roleTitle = createRoleName(data?.displayTitle || "")
-    console.log("Data:", data);
-    
-    
+  const handleSelectAll = (moduleName: string) => {
+    const modulePermissions = permissions.find(
+      (perm) => perm.model === moduleName
+    );
+    if (modulePermissions) {
+      modulePermissions.permissions.forEach((permission) => {
+        setValue(permission.name as any, !watch(permission.name as any));
+      });
+    }
+  };
+
+  async function saveRole(data: Role) {
+    data.roleTitle = createRoleName(data.displayTitle);
+    const { id, createdAt, updatedAt, ...others } = data;
     try {
-      setIsLoading(true);
-      
+      setLoading(true);
+      data.roleTitle = createRoleName(data.displayTitle);
       if (editingId) {
-        const updateRole = await updateRoleById(editingId, data)
-        console.log("Updated role:", updateRole);
-        
-        if (updateRole) {
-          toast.success("Successfully updated");
-          reset();
-          setIsLoading(false);
-          router.push(`/dashboard/users/roles`);
-        }
+        await updateRoleById(editingId, others as RoleProps);
+        setLoading(false);
+        toast.success("Updated Successfully!");
+        reset();
+        router.push("/dashboard/users/roles");
       } else {
-        const newRole = await createRole(data);
-        
-        if (newRole) {
-          toast.success("Successfully created");
-          reset();
-          setIsLoading(false);
-          router.push(`/dashboard/users/roles`);
-        } else {
-          toast.error("Failed to create role");
-          reset();
-          setIsLoading(false);
-        }
+        await createRole({data: others as RoleProps});
+        setLoading(false);
+        // console.log(others);
+        toast.success("Successfully Created!");
+        reset();
+        router.push("/dashboard/users/roles");
       }
-      
     } catch (error) {
-        console.error("Failed to save or update unit:", error);
+      setLoading(false);
+      console.log(error);
     }
   }
 
   return (
-
-    <div>
-      <FormHeader 
-        title={"Role"} 
+    <form className="" onSubmit={handleSubmit(saveRole)}>
+      {/* Form content */}
+      <FormHeader
+        href="/roles"
+        title="Role"
+        parent="users"
         editingId={editingId}
-        parent={"/users"}
-        href={"/roles"} 
-        loading={isLoading} 
+        loading={loading}
       />
-      <div className='grid grid-cols-1 sm:grid-cols-12 py-4 w-full'>
-        <form 
-          onSubmit={handleSubmit(saveRole)} 
-          className='grid col-span-full gap-4'>
-          <div className='space-y-4 px-4'>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Roles</CardTitle>
-                    <CardDescription>Update the role details</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 px-3">
-                        <TextInput
-                            register={register}
-                            errors={errors}
-                            label="Role Title"
-                            name="displayTitle"
-                          />
-                          <TextInput
-                            register={register}
-                            errors={errors}
-                            label="Role Description"
-                            name="description"
-                          />
-                    </div>
-                </CardContent>
-            </Card>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">Module</TableHead>
-                  <TableHead>Privileges</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {permissions.map((permission, i) => (
-                  <TableRow key={i}>
-                    <TableCell className="font-medium">{permission.model}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center space-x-4">
-                        <ul className="items-center w-full text-sm font-medium 
-                        text-gray-900 bg-white border border-gray-200 rounded-lg 
-                        sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                          {permission.permissions.map((item, j) => {
-                            return (
-                              <li key={j} className="w-full border-b border-gray-200 sm:border-b-0 
-                              sm:border-r dark:border-gray-600">
-                                  <div className="flex items-center ps-3">
-                                      <input 
-                                        id={item.name} 
-                                        type="checkbox"
-                                        {...register(`${item.name}` as any)}
-                                        name={item.name} 
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 
-                                        border-gray-300 rounded-sm focus:ring-blue-500 
-                                        dark:focus:ring-blue-600 dark:ring-offset-gray-700 
-                                        dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 
-                                        dark:border-gray-500"/>
-                                      <label 
-                                        htmlFor={item.name}
-                                        className="w-full py-3 ms-2 text-sm font-medium 
-                                        text-gray-900 dark:text-gray-300"
-                                      >
-                                        {item.display}
-                                      </label>
-                                  </div>
-                              </li>
-                            )
-                          })}
-                            
-                        </ul>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className='grid py-6 translate-y-10'>
-                <FormFooter 
-                  title={"Role"} 
-                  href={"/roles"} 
-                  parent={"/users"}
-                  editingId=''
-                  loading={isLoading} 
+      <div className="max-w-4xl mx-auto space-y-6 py-8">
+        <Card>
+          <CardContent>
+            <div className="grid  gap-6">
+              <div className="grid gap-3 pt-4 grid-cols-1 md:grid-cols-2">
+                <TextInput
+                  register={register}
+                  errors={errors}
+                  label="Role Title"
+                  name="displayTitle"
                 />
+                <TextInput
+                  register={register}
+                  errors={errors}
+                  label="Role Description"
+                  name="description"
+                />
+              </div>
             </div>
-          </div>
-        </form>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent>
+            <div className="">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">Module</TableHead>
+                    <TableHead>Privileges</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {permissions.map((permission, index) => (
+                    <TableRow key={index}>
+                      <TableCell className="font-medium">
+                        {permission.model}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-8">
+                          <ul className="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            {/* Select All Checkbox */}
+                            <li className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                              <div className="flex items-center ps-3">
+                                <input
+                                  id={`selectAll-${permission.model}`}
+                                  type="checkbox"
+                                  className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                  onChange={() =>
+                                    handleSelectAll(permission.model)
+                                  }
+                                />
+                                <label
+                                  htmlFor={`selectAll-${permission.model}`}
+                                  className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                >
+                                  Select All
+                                </label>
+                              </div>
+                            </li>
+                            {/* Individual Privileges */}
+                            {permission.permissions.map((item, idx) => (
+                              <li
+                                key={idx}
+                                className="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600"
+                              >
+                                <div className="flex items-center ps-3">
+                                  <input
+                                    id={item.name}
+                                    type="checkbox"
+                                    {...register(`${item.name}` as any)}
+                                    name={item.name}
+                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                                  />
+                                  <label
+                                    htmlFor={item.name}
+                                    className="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                                  >
+                                    {item.display}
+                                  </label>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
-    </div>
-    
-  )
+      {/* Form footer */}
+      <FormFooter
+        href="/roles"
+        editingId={editingId}
+        loading={loading}
+        title="Role"
+        parent="users"
+      />
+    </form>
+  );
 }
-
-export default RoleForm

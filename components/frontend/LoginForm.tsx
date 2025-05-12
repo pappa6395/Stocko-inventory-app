@@ -181,7 +181,8 @@ const LoginForm = ({roleId, email, userId}: LoginFormProps) => {
                         title='Sign in'
                         loading={isLoading}
                         loadingTitle={isLoading ? 'Loading...' : 'Sign in'}
-                        className='w-full bg-indigo-500 text-md'
+                        className='w-full text-md'
+                        variant='shop'
                         buttonIcon={LogIn}
                     />
                 </div>

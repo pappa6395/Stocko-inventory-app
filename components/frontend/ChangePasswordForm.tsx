@@ -17,7 +17,7 @@ const ChangePasswordForm = ({
     roleId, 
     email
 }: {
-    userId: number;
+    userId: string;
     roleId: string;
     email: string;
 }) => {
@@ -32,37 +32,42 @@ const ChangePasswordForm = ({
 
     const router = useRouter()
     const [isLoading, setIsLoading] = useState(false);
+    const [passwordErr, setPasswordErr] = useState<string | null>("");
     
 
     const saveNewPassword = async (data: ChangePasswordProps) => {
-        
+        setIsLoading(true);
         data.email = email
-        data.userId = userId
+        data.userId = Number(userId)
         data.roleId = Number(roleId)
         console.log("Data:", data);
         
         try {
-            setIsLoading(true);
             const updatePassword = await updateUserPassword(data);
-            if (updatePassword.ok) {
+            if (updatePassword.status === "200") {
                 console.log("updated Password:", updatePassword.data);
                 toast.success("Password updated successfully");
+                setIsLoading(false);
                 router.push("/login")
+            } else {
+                toast.error("Failed to update password");
+                setPasswordErr(updatePassword.error);
+                setIsLoading(false);
+                return;
             }
             
         } catch (e) {
             console.error("Error saving new password:", e);
-        } finally {
             setIsLoading(false);
-        }
+        } 
     }
 
   return (
 
-    <div>
-        <div className='lg:w-[90%] w-full py-5 px-8'>
+    <div className='dark:bg-blue-950'>
+        <div className='w-full py-5 px-8'>
             <div className='py-4'>
-                <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">
+                <h2 className="mt-10 text-center text-2xl/9 font-bold tracking-tight">
                     Change Password
                 </h2>
                 <p className='text-center'>Fill in details to change password.</p>
@@ -88,14 +93,16 @@ const ChangePasswordForm = ({
                         type="password"
                         icon={Lock}
                     />
+                    {passwordErr && <p className='text-red-500 text-xs'>{passwordErr}</p>}
                 </div>
                 <div className='w-full'>
                    <SubmitButton 
-                    title={"Sign in"}
+                    title={"Update Password"}
                     loading={isLoading}
-                    loadingTitle={isLoading ? "Loading..." : "Sign in"}
+                    loadingTitle={isLoading ? "Changing..." : "Update Password"}
                     buttonIcon={LogIn}
-                    className='w-full bg-indigo-500'
+                    variant='shop'
+                    className='w-full'
                    />
                 </div>
             </form>

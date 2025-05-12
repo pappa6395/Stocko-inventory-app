@@ -16,13 +16,13 @@ const Logo = ({
 
   return (
 
-    <div className='flex items-center gap-2'>
-        <div className={cn('flex items-center flex-shrink-0 justify-center rounded-full text-slate-50', classNameFrame)}>
+    <div className='flex items-center gap-2 pt-1'>
+        <div className={cn('flex flex-shrink-0 justify-center rounded-full text-slate-50', classNameFrame)}>
             <Image 
               src={"/StockOnline.png"} 
               alt="logo" 
               width={100} height={100}
-              className={cn(classNameLogo)}
+              className={cn("",classNameLogo)}
             />
         </div>
         <h2 className={cn('font-bold text-xl', classNameText)}>

@@ -21,7 +21,7 @@ const Layout = async({children}: {children: ReactNode}) => {
   return (
 
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-      <Sidebar />
+      <Sidebar session={session} />
       <div className="flex flex-col">
         <Navbar user={userById}/>
         <div className='py-8 px-4 max-w-6xl mx-auto w-full my-4'>

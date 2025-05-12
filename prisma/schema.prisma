@@ -48,50 +48,111 @@ model User {
 }
 
 model Role {
-id            Int     @id @default(autoincrement())
-displayTitle   String // Human-friendly name for UI
-roleTitle      String @unique // Programmatic name for code
-description   String?
-// Relationships
-users User[]
-// Module Permissions
-canViewBrands   Boolean @default(false)
-canAddBrands    Boolean @default(false)
-canEditBrands   Boolean @default(false)
-canDeleteBrands Boolean @default(false)
+  id              Int  @id @default(autoincrement())
+  displayTitle     String // Human-friendly name for UI
+  roleTitle        String  @unique // Programmatic name for code
+  description     String?
+  // Relationships
+  users           User[]
 
-canViewCategories   Boolean @default(false)
-canAddCategories    Boolean @default(false)
-canEditCategories   Boolean @default(false)
-canDeleteCategories Boolean @default(false)
+  // Module Permissions
+  canViewDashboard Boolean @default(false)
 
-canViewProducts   Boolean @default(false)
-canAddProducts    Boolean @default(false)
-canEditProducts   Boolean @default(false)
-canDeleteProducts Boolean @default(false)
+  canViewUsers   Boolean @default(false)
+  canAddUsers    Boolean @default(false)
+  canEditUsers   Boolean @default(false)
+  canDeleteUsers Boolean @default(false)
+  
+  canViewRoles     Boolean @default(false)
+  canAddRoles     Boolean @default(false)
+  canEditRoles    Boolean @default(false)
+  canDeleteRoles  Boolean @default(false)
 
-canAccessDashboard   Boolean @default(false)
-canManageRoles      Boolean @default(false)
-canManageUnits      Boolean @default(false)
+  canViewSales     Boolean @default(false)
+  canAddSales     Boolean @default(false)
+  canEditSales    Boolean @default(false)
+  canDeleteSales  Boolean @default(false)
 
-canViewUsers    Boolean @default(false)
-canAddUsers     Boolean @default(false)
-canEditUsers    Boolean @default(false)
-canDeleteUsers  Boolean @default(false)
+  canViewCustomers     Boolean @default(false)
+  canAddCustomers     Boolean @default(false)
+  canEditCustomers    Boolean @default(false)
+  canDeleteCustomers  Boolean @default(false)
 
-canViewWarehouses   Boolean @default(false)
-canAddWarehouses    Boolean @default(false)
-canEditWarehouses   Boolean @default(false)
-canDeleteWarehouses Boolean @default(false)
+  canViewOrders     Boolean @default(false)
+  canAddOrders     Boolean @default(false)
+  canEditOrders    Boolean @default(false)
+  canDeleteOrders  Boolean @default(false)
 
-canViewSuppliers    Boolean @default(false)
-canAddSuppliers     Boolean @default(false)
-canEditSuppliers    Boolean @default(false)
-canDeleteSuppliers  Boolean @default(false)
+  canViewPos     Boolean @default(false)
 
-createdAt      DateTime   @default(now())
-updatedAt      DateTime   @updatedAt
+  canViewStockTransfer     Boolean @default(false)
+  canAddStockTransfer     Boolean @default(false)
+  canEditStockTransfer    Boolean @default(false)
+  canDeleteStockTransfer  Boolean @default(false)
+
+  canViewStockAdjustment     Boolean @default(false)
+  canAddStockAdjustment     Boolean @default(false)
+  canEditStockAdjustment    Boolean @default(false)
+  canDeleteStockAdjustment  Boolean @default(false)
+
+  canViewApi     Boolean @default(false)
+  canViewReports     Boolean @default(false)
+  canViewSettings     Boolean @default(false)
+  
+  canViewMainCategories   Boolean @default(false)
+  canAddMainCategories    Boolean @default(false)
+  canEditMainCategories   Boolean @default(false)
+  canDeleteMainCategories Boolean @default(false)
+
+  canViewCategories   Boolean @default(false)
+  canAddCategories    Boolean @default(false)
+  canEditCategories   Boolean @default(false)
+  canDeleteCategories Boolean @default(false)
+
+  canViewSubCategories   Boolean @default(false)
+  canAddSubCategories    Boolean @default(false)
+  canEditSubCategories   Boolean @default(false)
+  canDeleteSubCategories Boolean @default(false)
+
+  canViewBrands   Boolean @default(false)
+  canAddBrands    Boolean @default(false)
+  canEditBrands   Boolean @default(false)
+  canDeleteBrands Boolean @default(false)
+
+  canViewAdverts   Boolean @default(false)
+  canAddAdverts    Boolean @default(false)
+  canEditAdverts   Boolean @default(false)
+  canDeleteAdverts Boolean @default(false)
+
+  canViewBanners   Boolean @default(false)
+  canAddBanners    Boolean @default(false)
+  canEditBanners   Boolean @default(false)
+  canDeleteBanners Boolean @default(false)
+
+  canViewUnits   Boolean @default(false)
+  canAddUnits    Boolean @default(false)
+  canEditUnits   Boolean @default(false)
+  canDeleteUnits Boolean @default(false)
+
+  canViewProducts   Boolean @default(false)
+  canAddProducts    Boolean @default(false)
+  canEditProducts   Boolean @default(false)
+  canDeleteProducts Boolean @default(false)  
+
+  canViewWarehouses   Boolean @default(false)
+  canAddWarehouses    Boolean @default(false)
+  canEditWarehouses   Boolean @default(false)
+  canDeleteWarehouses Boolean @default(false)
+
+  canViewSuppliers   Boolean @default(false)
+  canAddSuppliers    Boolean @default(false)
+  canEditSuppliers   Boolean @default(false)
+  canDeleteSuppliers Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
 
 model MainCategory {
   id           Int @id @default(autoincrement())

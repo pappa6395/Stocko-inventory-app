@@ -85,7 +85,7 @@ const HelpMenu = () => {
     <Sheet>
         <SheetTrigger className="flex items-center justify-center w-full gap-1 py-1.5">
             <HelpCircle className='size-4' />
-            <span>Help</span>
+            <span className="">Help</span>
         </SheetTrigger>
         <SheetContent>
             <SheetHeader>

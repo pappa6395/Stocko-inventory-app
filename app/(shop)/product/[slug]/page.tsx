@@ -20,6 +20,7 @@ import { FaCopy, FaFacebook } from 'react-icons/fa'
 import { FaLine, FaXTwitter } from 'react-icons/fa6'
 import ProductListing from '@/components/frontend/listings/ProductListing'
 import ProductContent from '@/components/frontend/ProductContent'
+import ShareProduct from '@/components/frontend/ShareProducts'
 
 
 const page = async ({params: paramsPromise}: PageProps) => {
@@ -31,6 +32,9 @@ const page = async ({params: paramsPromise}: PageProps) => {
     const productId = products?.id || 0
 
     const similarProducts = await getSimilarProducts(subCategoryId, productId)
+
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
+    const url = `${baseUrl}/product/${slug}`
 
     const breadCrumb = [
         {
@@ -63,6 +67,7 @@ const page = async ({params: paramsPromise}: PageProps) => {
         original: "/placeholder.svg",
         thumbnail: "/placeholder.svg",
     }]
+
 
   return (
 
@@ -107,23 +112,7 @@ const page = async ({params: paramsPromise}: PageProps) => {
                                     <span className="font-semibold">+1 (555) 555-5555</span>
                                 </Link>
                             </Badge>
-                            <div className='space-y-1'>
-                                <h2>Share with friends</h2>
-                                <div className='flex items-center gap-2'>
-                                    <Link href="#">
-                                        <FaXTwitter className='size-6'/>
-                                    </Link>
-                                    <Link href="#">
-                                        <FaFacebook className='size-6 text-blue-500'/>
-                                    </Link>
-                                    <Link href="#">
-                                        <FaLine className='size-6 text-green-500'/>
-                                    </Link>
-                                    <Link href="#">
-                                        <FaCopy className='size-6 text-slate-500'/>
-                                    </Link>
-                                </div>
-                            </div>
+                            <ShareProduct productUrl={url} />
                         </div> 
                     </div>
                 </div>

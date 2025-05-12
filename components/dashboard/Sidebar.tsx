@@ -12,33 +12,58 @@ import Logo from '../global/Logo'
 import { sidebarLinks } from '@/config/sidebar'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
+import { Session } from 'next-auth'
 
-const Sidebar = () => {
+const Sidebar = ({session}: {session: Session}) => {
+
   const pathname = usePathname();
+  const router = useRouter();
+
+  // const filterSidebarLinks = (
+  //   links: ISidebarLink[],
+  //   permissions: Record<string, boolean>
+  // ): ISidebarLink[] => {
+  //   return links.filter((link) => {
+  //     if (link.dropdown) {
+  //       link.dropdownMenu = link.dropdownMenu?.filter(
+  //         (subLink) =>
+  //           permissions[`canView${subLink.title.replace(/\s+/g, "")}`]
+  //       );
+  //       return link?.dropdownMenu?.length > 0;
+  //     }
+  //     return permissions[`canView${link.title.replace(/\s+/g, "")}`];
+  //   });
+  // };
+  
+  // const rolePermissions = getRolePermissions(session.user.role);
+  // console.log(rolePermissions);
+  // const filteredLinks = filterSidebarLinks(sidebarLinks, rolePermissions);
+  // console.log(filteredLinks);
+
   const [isOpen, setIsOpen] = useState(false);
   
   const handleToggleMenu = () => {
     setIsOpen(!isOpen);
   };
-  const router = useRouter();
-    const handleSignOut = async () => {
-        try {
-            const result = await signOut({ redirect: false, callbackUrl: "/login" });
-            console.log("Signed out result:", result);
-    
-            if (typeof window !== "undefined") {
-                localStorage.clear(); 
-                document.cookie = "";
-            }
-    
-            toast.success("✅ Signed out successfully");
-            router.push("/login");
-            
-        } catch (err) {
-            console.error("❌ Failed to sign out:", err);
-            toast.error("❌ Failed to sign out. Please try again.");
-        }
-    };
+  
+  const handleSignOut = async () => {
+      try {
+          const result = await signOut({ redirect: false, callbackUrl: "/login" });
+          console.log("Signed out result:", result);
+  
+          if (typeof window !== "undefined") {
+              localStorage.clear(); 
+              document.cookie = "";
+          }
+  
+          toast.success("✅ Signed out successfully");
+          router.push("/login");
+          
+      } catch (err) {
+          console.error("❌ Failed to sign out:", err);
+          toast.error("❌ Failed to sign out. Please try again.");
+      }
+  };
 
   return (
     <div className="hidden border-r bg-muted/40 md:block py-2">

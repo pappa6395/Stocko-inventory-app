@@ -49,7 +49,7 @@ export default function SubmitButton({
           size={size}
           variant={variant}
           className={cn(
-            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal leading-6 shadow-sm hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
+            "flex items-center justify-center rounded-md px-2 py-1 text-xs font-normal leading-6 shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600",
             className
           )}
         >

@@ -5,7 +5,7 @@ import { RoleProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 
 
-export async function createRole(data: RoleProps) {
+export async function createRole({data}: {data: RoleProps}) {
     console.log("Payload checked:", data);
     const roleTitle = data.roleTitle;
     try {
@@ -23,7 +23,9 @@ export async function createRole(data: RoleProps) {
         }
 
         const newRole = await prismaClient.role.create({
-            data
+            data: {
+                ...data,
+            }
         });
         revalidatePath("/dashboard/users/roles")
         console.log("New role created:", newRole);

@@ -32,7 +32,7 @@ import {
           <Section style={logoContainer}>
             <Img
               src={`https://res.cloudinary.com/duwdwnu8y/image/upload/v1740589636/o6bhlmanw8orko3hf0ml.png`}
-              width="100"
+              width="80"
               height="80"
               alt="Stocko"
             />
@@ -57,7 +57,7 @@ import {
               <Column style={{ width: '66%' }}>
                 <Img
                   src={`https://res.cloudinary.com/duwdwnu8y/image/upload/v1740589636/o6bhlmanw8orko3hf0ml.png`}
-                  width="80"
+                  width="60"
                   height="60"
                   alt="Stocko"
                 />
@@ -144,7 +144,7 @@ import {
             </Link>
             <Text style={footerText}>
               ©2022 Stocko Store, LLC, a Salesforce company. <br />
-              500 Howard Street, San Francisco, CA 94105, USA <br />
+              25 Bangna-Trad 4, Bangna, Bangkok, TH <br />
               <br />
               All rights reserved.
             </Text>

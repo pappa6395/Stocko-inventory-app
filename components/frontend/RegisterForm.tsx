@@ -146,7 +146,7 @@ const RegisterForm = () => {
                         loadingTitle={isLoading ? 'Loading...' : 'Sign up'}
                         className='w-full text-md'
                         buttonIcon={LogIn}
-                        variant={"cart"}
+                        variant={"shop"}
                     />
                 </div>
             </form>

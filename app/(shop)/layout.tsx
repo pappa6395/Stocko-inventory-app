@@ -19,13 +19,15 @@ const layout = async ({children}: {children: ReactNode}) => {
 
   return (
     <div className='dark:bg-slate-900'>
-      <ShopHeader user={userById} />
-      <div className='hidden sm:block sm:container max-w-6xl mx-auto py-4'>
+      <div className='fixed z-50 bg-white dark:bg-slate-800 w-full'>
+        <ShopHeader user={userById} />
+      </div>
+      <div className='hidden sm:block sm:container max-w-6xl mx-auto py-4 mt-20'>
        {mainCategories && mainCategories.length > 0 && (
          <CategoryHeader mainCategories={mainCategories ?? []} />
        )}
       </div>
-      <div className='sm:hidden block sm:container max-w-6xl mx-auto'>
+      <div className='sm:hidden block sm:container max-w-6xl mx-auto mt-16'>
           <CategoryHeaderMobile mainCategories={mainCategories ?? []} />
       </div>
       {children}

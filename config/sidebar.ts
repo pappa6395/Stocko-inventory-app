@@ -82,14 +82,14 @@ export const sidebarLinks: ISidebarLink[] = [
           label: 'Sales',
           href: '/dashboard/sales',
         },
-        {
-          label: 'Payments',
-          href: '/dashboard/sales/payments',
-        },
-        {
-          label: 'Quotations',
-          href: '/dashboard/sales/quotations',
-        },
+        // {
+        //   label: 'Payments',
+        //   href: '/dashboard/sales/payments',
+        // },
+        // {
+        //   label: 'Quotations',
+        //   href: '/dashboard/sales/quotations',
+        // },
         {
           label: 'Customers',
           href: '/dashboard/sales/customers',

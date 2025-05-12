@@ -16,6 +16,7 @@ import HelpMenu from '../frontend/HelpMenu'
 
 import { MobileMenu } from '../frontend/MobileMenu'
 import { CartMenu } from '../frontend/CartMenu'
+import SearchBar from '../frontend/SearchBar'
 
 const ShopHeader = ({user}: {user: User | undefined | null}) => {
 
@@ -37,32 +38,18 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
     }
 
   return (
-    <header className='py-3'>
-        <div className='container max-w-6xl pb-3 border-b'>
+    <header className='py-3 px-8'>
+        <div className='sm:container max-w-6xl sm:pb-3 border-b dark:border-none'>
             {/* Desktop Version */}
             <nav className='hidden sm:flex items-center justify-between gap-6'>
-                <Link href={"/"} className="flex items-center gap-2">
+                <Link href={"/"} className="flex items-center gap-2 flex-shrink-0">
                     <Logo
                         classNameFrame='size-12'
                         classNameLogo='size-10'
                         classNameText='text-xl' 
                     />
                 </Link>
-                <div className="flex-1">
-                    <input 
-                        type="search" 
-                        name="search" 
-                        id="search" 
-                        autoComplete="search"
-                        placeholder='Search here...' 
-                        required 
-                        className="block w-full rounded-md bg-white px-3 
-                        py-1.5 text-base text-gray-900 outline outline-1 
-                        -outline-offset-1 outline-gray-300 placeholder:text-gray-400 
-                        focus:outline focus:outline-2 focus:-outline-offset-2 
-                        focus:outline-indigo-600 sm:text-sm/6" 
-                    />
-                </div>
+               <SearchBar />
                 <div>
                     <HelpMenu />
                 </div>  
@@ -75,7 +62,12 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
                                     size={"icon"} 
                                     className='rounded-full'>
                                     <Avatar>
-                                        <AvatarImage src={user?.profileImage ?? "/profile.svg"} alt="profile" className='object-cover rounded' />
+                                        <AvatarImage 
+                                            src={user?.profileImage ?? "/profile.svg"} 
+                                            alt="profile" 
+                                            className='pt-1.5 size-8 object-cover rounded-full 
+                                            flex-shrink-0 pl-2' 
+                                        />
                                         <AvatarFallback>{generateInitial(user?.name ?? "")}</AvatarFallback>
                                     </Avatar>
                                 </Button>
@@ -107,11 +99,11 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
                     )}
                     
                 </div>
-                <CartMenu />
+                <CartMenu from="header" />
                 <ModeToggle />
             </nav>
             {/* Mobile  Version */}
-            <nav className="sm:hidden flex items-center justify-between gap-6">
+            <nav className="sm:hidden flex items-center justify-between gap-6 w-full">
                 <div className="flex items-center gap-4">
                     <MobileMenu />
                     <Link href={"/"} className="">

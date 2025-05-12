@@ -28,12 +28,12 @@ const ForgotPasswordForm = () => {
     } = useForm<ForgotPasswordFormProps>()
 
     const handleForgotPassword = async (data: ForgotPasswordFormProps) => {
-
+        setIsLoading(true)
         console.log(data);
         // Send reset password link to user's email
         try {
             const res = await sendPasswordResetToken(data.email)
-            if (res.status === '429') {
+            if (res.status === '404' || res.status === '429') {
                 toast.error("Too many password reset attempts. Please try again in 30 minutes.");
                 setIsLoading(false);
                 setEmailErr(res.error);
@@ -41,10 +41,10 @@ const ForgotPasswordForm = () => {
             } else if (res.status === '200') {
                 toast.success("Reset password link has been sent to your email");
                 setIsLoading(false);
-                router.push('/verify-token');
+                router.push(`/verify-token?id=${res.data?.id}`);
                 return;
             }
-            
+
         } catch (error) {
             console.error("Failed to send password reset link:", error);
             // Display error message
