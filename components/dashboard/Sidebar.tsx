@@ -13,11 +13,9 @@ import { sidebarLinks } from '@/config/sidebar'
 import { signOut } from 'next-auth/react'
 import toast from 'react-hot-toast'
 import { Session } from 'next-auth'
+import { filterLinks } from '@/lib/filterLinks'
 
 const Sidebar = ({session}: {session: Session}) => {
-
-  const pathname = usePathname();
-  const router = useRouter();
 
   // const filterSidebarLinks = (
   //   links: ISidebarLink[],
@@ -34,12 +32,16 @@ const Sidebar = ({session}: {session: Session}) => {
   //     return permissions[`canView${link.title.replace(/\s+/g, "")}`];
   //   });
   // };
-  
+
   // const rolePermissions = getRolePermissions(session.user.role);
   // console.log(rolePermissions);
   // const filteredLinks = filterSidebarLinks(sidebarLinks, rolePermissions);
   // console.log(filteredLinks);
 
+  const pathname = usePathname();
+  const router = useRouter();
+  const user = session.user;
+  const filteredLinks = filterLinks(sidebarLinks, user);
   const [isOpen, setIsOpen] = useState(false);
   
   const handleToggleMenu = () => {
@@ -83,7 +85,7 @@ const Sidebar = ({session}: {session: Session}) => {
           </div>
           <div className="flex-1">
             <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-              {sidebarLinks.map((link,i) => {
+              {filteredLinks.map((link,i) => {
                 const Icon = link.icon;
                 const isHrefDropdown = link.dropdownMenu?.some(item => item.href === pathname)
                 return (

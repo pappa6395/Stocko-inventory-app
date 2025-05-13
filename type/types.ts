@@ -8,12 +8,14 @@ export interface ISidebarLink {
     href?: string;
     icon: React.FC<LucideProps>;
     dropdown: boolean;
+    access: string;
     dropdownMenu?: DropdownMenuProps[]
 }
 
 export interface DropdownMenuProps {
     label: string;
     href: string;
+    access: string;
 }
 
 export type CategoryProps = {

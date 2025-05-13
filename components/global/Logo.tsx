@@ -6,12 +6,14 @@ import React from 'react'
 const Logo = ({
   classNameLogo, 
   classNameText,
-  classNameFrame
+  classNameFrame,
+  labelShown = true
 }
   : {
     classNameLogo?: string; 
     classNameText?: string;
     classNameFrame?: string;
+    labelShown?: boolean;
   }) => {
 
   return (
@@ -25,9 +27,7 @@ const Logo = ({
               className={cn("",classNameLogo)}
             />
         </div>
-        <h2 className={cn('font-bold text-xl', classNameText)}>
-            Stocko-Online
-        </h2>
+        {labelShown && <h2 className={cn('font-bold text-xl', classNameText)}>Stocko-Online</h2>}
     </div>
 
   )
