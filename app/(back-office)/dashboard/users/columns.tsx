@@ -9,6 +9,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
 import { IUser } from "@/type/types";
+import UserRoleBtn from "@/components/frontend/orders/UserRoleBtn";
 
 
 
@@ -44,14 +45,22 @@ export const columns: ColumnDef<IUser>[] = [
     accessorKey: "name",
     header: ({ column }) => <SortableColumn column={column} title="Name" />,
   },
+  // {
+  //   accessorKey: "role",
+  //   header: "Role",
+  //   cell: ({ row }) => {
+  //     const user = row.original?.role || null
+  //     const role = user.displayTitle
+  //     return <p>{role}</p>
+  //   }
+  // },
   {
     accessorKey: "role",
     header: "Role",
     cell: ({ row }) => {
-      const user = row.original?.role || null
-      const role = user.displayTitle
-      return <p>{role}</p>
-    }
+      const item = row.original;
+      return <UserRoleBtn user={item} />;
+    },
   },
   {
     accessorKey: "status",

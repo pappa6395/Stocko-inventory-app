@@ -5,7 +5,7 @@ import { ChangePasswordProps, UserProps } from "@/type/types";
 import { revalidatePath } from "next/cache";
 import { Resend } from "resend";
 import bcrypt from "bcryptjs"
-import InviteUserEmail from "@/emails";
+import InviteUserEmail, { InviteUserEmailProps } from "@/emails";
 import { User } from "@prisma/client";
 import PasswordReset from "@/emails/PasswordReset";
 import { generateToken } from "@/lib/generateToken";
@@ -374,7 +374,7 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
         const userEmail = email || "";
         const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
         await resend.emails.send({
-            from: 'Stocko-Online <admin@89residencexclusive.co>',
+            from: 'Stocko-Online <admin@beauty-property.com>',
             to: userEmail,
             subject: 'Welcome to Stocko-Online - Your Login Credentials',
             react: InviteUserEmail({
@@ -382,7 +382,7 @@ export async function sendInvitationEmailToUser(data: User, temporaryPassword: s
                 password: temporaryPassword,
                 loginEmail: userEmail,
                 invitedByUsername: 'Admin.Pap',
-                invitedByEmail: 'admin@89residencexclusive.co',
+                invitedByEmail: 'admin@8beauty-property.com',
                 inviteLink: `${baseUrl}/login?id=${data.id}&roleId=${roleId}&email=${userEmail}`,
                 inviteRole: role,
                 inviteFromIp: '192.168.0.1',
@@ -561,4 +561,86 @@ export async function verifyResetToken(userId: string, resetToken: number) {
             error: "Something went wrong, please try again",
         }
     }
+}
+
+export async function inviteUser(data: InviteUserEmailProps) {
+  const {
+    username,
+    password,
+    invitedByUsername,
+    invitedByEmail,
+    loginEmail,
+    inviteRole,
+    inviteLink,
+  } = data;
+  try {
+    const res = await resend.emails.send({
+      from: "Stockify <jb@jazzafricaadventures.com>",
+      to: loginEmail ?? "",
+      subject: `Join Stockify Inventory Management System as${inviteRole}`,
+      react: InviteUserEmail({
+            username: username,
+            password: password,
+            loginEmail: loginEmail,
+            invitedByUsername: 'Admin.Pap',
+            invitedByEmail: 'admin@8beauty-property.com',
+            inviteLink: inviteLink,
+            inviteRole: inviteRole,
+            inviteFromIp: '192.168.0.1',
+            inviteFromLocation: 'New York',
+        }), 
+    });
+    //Update the user
+    const updatedUser = await prismaClient.user.update({
+      where: {
+        email: loginEmail,
+      },
+      data: {
+        inviteSent: true,
+      },
+    });
+    console.log(res, updatedUser);
+    revalidatePath("/dashboard/users");
+    return updatedUser;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+
+export async function updateUserRole(userId: string, roleId: string) {
+  if (userId) {
+    try {
+      const updatedUser = await prismaClient.user.update({
+        where: {
+          id: Number(userId),
+        },
+        data: {
+          roleId: Number(roleId),
+        },
+      });
+      revalidatePath("/dashboard/users");
+      return {
+        status: 200,
+        error: null,
+        data: {
+          id: updatedUser.id,
+        },
+      };
+    } catch (error) {
+      console.log(error);
+      return {
+        status: 500,
+        error: "Something Went wrong",
+        data: null,
+      };
+    }
+  } else {
+    return {
+      status: 404,
+      error: "Invalid User ID provided",
+      data: null,
+    };
+  }
 }

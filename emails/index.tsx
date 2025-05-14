@@ -20,7 +20,7 @@ import {
   } from '@react-email/components';
   import * as React from 'react';
   
-  interface InviteUserEmailProps {
+  export interface InviteUserEmailProps {
     username?: string;
     password?: string;
     loginEmail?: string;

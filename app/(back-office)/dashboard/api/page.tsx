@@ -1,13 +1,13 @@
-import React from 'react'
+import AuthorizePageWrapper from "@/components/dashboard/auth/AuthPageWrapper";
+import { permissionsObj } from "@/config/permissions";
+import React from "react";
 
-
-const page = () => {
-
+export default function page() {
   return (
-
-    <div>page</div>
-    
-  )
+    <AuthorizePageWrapper requiredPermission={permissionsObj.canViewApi}>
+      <div className="">
+        <h2>API Integrations</h2>
+      </div>
+    </AuthorizePageWrapper>
+  );
 }
-
-export default page

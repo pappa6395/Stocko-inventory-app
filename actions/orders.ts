@@ -146,6 +146,10 @@ export async function getOrdersByOrderPagination(
     }
 }
 
+export type StatusData = {
+  status: OrderStatus;
+};
+
 export async function changeOrderStatusById(id: number, updateStatus: OrderStatus) {
   try{
     const existingOrder = await prismaClient.lineOrder.findUnique({
