@@ -13,7 +13,7 @@ const layout = async ({children}: {children: ReactNode}) => {
 
   const session = await getServerSession(authOptions)
   const userId = session?.user.id || "";
-  const userById = (await getUserById(userId))?.data as User
+  const userById = (await getUserById(userId))?.data || null 
 
   const mainCategories = await getPopulatedMainCategories() || []
 

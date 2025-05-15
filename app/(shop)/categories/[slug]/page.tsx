@@ -7,7 +7,26 @@ import PriceRange from '@/components/frontend/PriceRange';
 import { Button } from '@/components/ui/button';
 import { IProducts } from '@/type/types';
 import Link from 'next/link';
-import React from 'react'
+import React from 'react';
+
+type Props = {
+    params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({params}: Props) {
+  //Fetch all the products, then find a single product
+  const { slug } = await params;
+  const categoryName = slug
+    .split('-')
+    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  return {
+    title: categoryName,
+    alternates: {
+      canonical: `/categories/${slug}`,
+    },
+  };
+}
 
 const page = async ({searchParams: searchParamsPromise, params: paramsPromise}: PageProps) => {
 

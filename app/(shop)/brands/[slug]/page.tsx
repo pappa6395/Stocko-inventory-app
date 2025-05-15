@@ -1,13 +1,49 @@
 
 
 import { PageProps } from '@/.next/types/app/(shop)/brands/[slug]/page';
+import { getAllBrands } from '@/actions/brand';
 import { getGroupedProductsByBrandId } from '@/actions/products';
 import CustomBreadCrumb, { BreadCrumbItem } from '@/components/frontend/CustomBreadCrumb';
 import ProductListing from '@/components/frontend/listings/ProductListing';
 import { IProducts } from '@/type/types';
 import React from 'react'
 
+type Props = {
+    params: Promise<{ slug: string }>;
+}
 
+export async function generateMetadata({params}: Props) {
+  //Fetch all the products, then find a single product
+  const { slug } = await params;
+  const brandName = slug
+    .split('-')
+    .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+  return {
+    title: brandName,
+    alternates: {
+      canonical: `/brands/${slug}`,
+    },
+  };
+}
+
+export async function generateStaticParams() {
+
+    try {
+        const brands = await getAllBrands() || [];
+        if (brands?.length > 0) {
+            return brands.map((b) => ({
+            slug: b.slug,
+            }));
+        }
+        return [];
+        
+    } catch (err) {
+        console.error("Failed to generate static params:",err);
+        return [];
+    }
+  
+}
 
 const page = async ({searchParams: searchParamsPromise, params: paramsPromise}: PageProps) => {
 

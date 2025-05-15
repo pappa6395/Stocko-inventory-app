@@ -1,6 +1,6 @@
 
 import { PageProps } from '@/.next/types/app/(shop)/product/[slug]/page'
-import { getProductBySlug, getSimilarProducts } from '@/actions/products'
+import { getAllProducts, getProductBySlug, getSimilarProducts } from '@/actions/products'
 import CustomBreadCrumb from '@/components/frontend/CustomBreadCrumb'
 import AddToCartButton from '@/components/frontend/listings/AddToCartButton'
 import ProductImageGallery from '@/components/frontend/listings/ProductImageGallery'
@@ -22,6 +22,46 @@ import ProductListing from '@/components/frontend/listings/ProductListing'
 import ProductContent from '@/components/frontend/ProductContent'
 import ShareProduct from '@/components/frontend/ShareProducts'
 
+//app/products/[slug]
+
+type Props = {
+    params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params}: Props) {
+  //Fetch all the products, then find a single product
+  const { slug } = await params;
+  const product = await getProductBySlug(slug) || null
+  return {
+    title: product?.name,
+    description: product?.productDetails,
+    alternates: {
+      canonical: `/product/${product?.slug}`,
+    },
+    openGraph: {
+      title: product?.name,
+      description: product?.productDetails,
+      images: [product?.productThumbnail],
+    },
+  };
+}
+export async function generateStaticParams() {
+
+    try {
+        const products = await getAllProducts() || [];
+        if (products?.length > 0) {
+            return products.map((p) => ({
+            slug: p.slug,
+            }));
+        }
+        return [];
+        
+    } catch (err) {
+        console.error("Failed to generate static params:",err);
+        return [];
+    }
+  
+}
 
 const page = async ({params: paramsPromise}: PageProps) => {
 
