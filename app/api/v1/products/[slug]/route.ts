@@ -1,12 +1,14 @@
 import { getAllProducts, getProductBySlug } from "@/actions/products";
 
 import { NextResponse } from "next/server";
-type Params = {
-  slug: string;
-};
-export async function GET(request: Request, context: { params: Params }) {
+
+type Props = {
+  params: Promise<{ slug: string }>
+}
+
+export async function GET(request: Request, {params}: Props) {
   
-    const { slug } = await context.params;
+    const { slug } = await params;
 
   try {
     const product = await getProductBySlug(slug);

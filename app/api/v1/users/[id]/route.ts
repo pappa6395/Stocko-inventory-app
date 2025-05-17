@@ -3,12 +3,14 @@ import { getUserById } from "@/actions/users";
 import { User } from "@prisma/client";
 
 import { NextResponse } from "next/server";
-type Params = {
-  id: string;
-};
-export async function GET(request: Request, context: { params: Params }) {
+
+type Props = {
+  params: Promise<{ id: string }>
+}
+
+export async function GET(request: Request, {params}: Props) {
     
-  const { id } = await context.params;
+  const { id } = await params;
   try {
     const user: User | null | undefined = (await getUserById(id))?.data || null;
     if (!user) {
