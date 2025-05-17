@@ -327,3 +327,31 @@ const mainCategoryRevenueArray: MonthlyMainCategoryRevenue[] =
 
 return mainCategoryRevenueArray;
 };
+
+export async function getProductsCount() {
+  try {
+    const productsCount = await prismaClient.products.count();
+    return productsCount;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+}
+export async function getUsersCount() {
+  try {
+    const usersCount = await prismaClient.user.count();
+    return usersCount;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+}
+export async function getOrdersCount() {
+  try {
+    const ordersCount = await prismaClient.lineOrder.count();
+    return ordersCount;
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+}

@@ -1,3 +1,5 @@
+"use client"
+
 import { CodeBlock, atomOneLight, atomOneDark } from "react-code-blocks";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
