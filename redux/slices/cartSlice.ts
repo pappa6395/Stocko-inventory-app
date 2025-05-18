@@ -9,6 +9,7 @@ export interface CartItem {
   price: number;
   image: string;
   qty: number;
+  stock: number;
 }
 
 interface CartState {
@@ -67,7 +68,7 @@ const cartSlice = createSlice({
       const item = state.cartItems.find(
         (product) => product.id === action.payload
       );
-      if (item) {
+      if (item && item.qty < item.stock) {
         item.qty += 1;
         saveItemsToLocalStorage(state.cartItems);
       }

@@ -40,13 +40,17 @@ const AddToCartButton = ({product}: AddProductToCartProps) => {
         qty: quantity,
         brand: product?.brand.title || "",
         image: product?.productThumbnail || "/placeholder.svg",
+        stock: product?.stockQty || 0,
       };
       dispatch(addProductToCart(newCartItem));
 
     }
 
     const handleIncrement = () => {
-        setQuantity((prevQty) => prevQty + 1 )
+        const stocks = product?.stockQty || 0;
+        if (quantity < stocks) {
+            setQuantity((prevQty) => prevQty + 1);
+        } 
     }
 
     const handleDecrement = () => {

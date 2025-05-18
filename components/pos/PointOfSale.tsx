@@ -111,6 +111,7 @@ const PointOfSale = ({
                 price: newOrderLineItems.productPrice,
                 productThumbnail: newOrderLineItems.productThumbnail,
                 qty: 1,
+                stock: newOrderLineItems.stockQty,
             })
         );
     }
@@ -343,12 +344,16 @@ const PointOfSale = ({
                             <div className='grid grid-cols-2 md:grid-cols-4 gap-4'>
                                 {searchResults?.map((product,index) => {
                                     return (
-                                        <ItemCard 
-                                            key={index} 
-                                            product={product}
-                                            handleAdd={handleAdd}
-                                            handleRemove={handleRemove}
-                                        />
+                                        <div key={index}>
+                                            {product.stockQty > 0 && (
+                                                <ItemCard  
+                                                    product={product}
+                                                    handleAdd={handleAdd}
+                                                    handleRemove={handleRemove}
+                                                />
+                                            )}
+                                        </div>
+                                        
                                     )
                                 })}  
                             </div>

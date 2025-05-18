@@ -24,7 +24,7 @@ type ProductListingProps = {
 const ProductListing = ({
     title,
     detailLink,
-    products,
+    products: allProducts,
     cardType = "horizontal",
     scrollable,
     carousel,
@@ -32,6 +32,7 @@ const ProductListing = ({
   }: ProductListingProps
 ) => {
 
+    const products = allProducts.filter((item) => item.stockQty > 0);
 
   return (
 

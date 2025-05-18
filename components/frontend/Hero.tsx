@@ -37,7 +37,7 @@ const Hero = ({banners, adverts}: HeroProps) => {
   return (
 
     <div className='grid grid-cols-1 sm:grid-cols-4 md:grid-cols-8 lg:grid-cols-12 gap-2'>
-        <div className="relative col-span-full sm:col-span-4 md:col-span-5 lg:col-span-8">
+        <div className="relative col-span-full sm:col-span-4 md:col-span-5 lg:col-span-9">
         <Carousel
             autoplay
             wrapMode='wrap'
@@ -51,13 +51,13 @@ const Hero = ({banners, adverts}: HeroProps) => {
                         width={800}
                         height={500} 
                         onClick={() => router.push(banner.link)}
-                        className='w-full cursor-pointer rounded-md'
+                        className='w-full h-[340px] cursor-pointer rounded-md'
                     />
                 )
             })}    
         </Carousel>
         </div>
-        <div className="col-span-full md:col-span-2 lg:col-span-4">
+        <div className="col-span-full md:col-span-2 lg:col-span-3">
             <div className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-2 lg:grid-cols-2 gap-2">
             {[activeAdverts[3],activeAdverts[2],activeAdverts[0],activeAdverts[1]].map((advert,i) => {
                 return (

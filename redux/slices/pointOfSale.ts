@@ -8,6 +8,7 @@ export interface OrderLineItem {
   brand: string;
   price: number;
   qty: number;
+  stock: number;
   productThumbnail: string | null;
 }
 
@@ -71,7 +72,7 @@ const pointOfSaleSlice = createSlice({
       const item = state.products.find(
         (product) => product.id === action.payload
       );
-      if (item) {
+      if (item && item.qty < item.stock) {
         item.qty += 1;
         saveItemsToLocalStorage(state.products);
       }

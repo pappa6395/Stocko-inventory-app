@@ -5,7 +5,7 @@ import { prismaClient } from "@/lib/db";
 import { generateOrderNumber } from "@/lib/generateOrderNumber";
 import { OrderLineItem } from "@/redux/slices/pointOfSale";
 import { ILineOrder } from "@/type/types";
-import { LineOrder } from "@prisma/client";
+import { LineOrder, NotificationStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 
@@ -33,6 +33,59 @@ export interface NewOrderProps {
   source: string;
 }
 
+type NotificationProps = {
+  message: string;
+  status?: NotificationStatus;
+  statusText: string;
+};
+
+export async function createNotification(data: NotificationProps) {
+  try {
+    const newNot = await prismaClient.notification.create({
+      data,
+    });
+    revalidatePath("/dashboard");
+    return newNot;
+  } catch (error) {
+    console.log(error);
+  }
+}
+export async function updateNotificationStatusById(id: number) {
+  try {
+    const updatedNot = await prismaClient.notification.update({
+      where: {
+        id,
+      },
+      data: {
+        read: true,
+      },
+    });
+    revalidatePath("/dashboard");
+    return {
+      data: updatedNot,
+      ok: true,
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
+export async function getNotifications() {
+  try {
+    const notifications = await prismaClient.notification.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      where: {
+        read: false,
+      },
+    });
+    return notifications;
+  } catch (error) {
+    console.log(error);
+  }
+}
 
 export async function createLineOrder(
     newOrder: NewOrderProps,
@@ -95,6 +148,25 @@ export async function createLineOrder(
               });
               if (!updatedProduct) {
                 throw new Error(`Failed to update stock for product ID: ${item.id}`);
+              }
+              if (updatedProduct.stockQty < updatedProduct.alertQuantity) {
+                // Send/Create the Notification
+                const message =
+                  updatedProduct.stockQty === 0
+                    ? `The stock of ${updatedProduct.name} is out. Current stock: ${updatedProduct.stockQty}.`
+                    : `The stock of ${updatedProduct.name} has gone below threshold. Current stock: ${updatedProduct.stockQty}.`;
+                const statusText =
+                  updatedProduct.stockQty === 0 ? "Stock Out" : "Warning";
+                const status: NotificationStatus =
+                  updatedProduct.stockQty === 0 ? "DANGER" : "WARNING";
+
+                const newNotification = {
+                  message,
+                  status,
+                  statusText,
+                };
+                await createNotification(newNotification);
+                // Send email
               }
 
               // Create Line Order Item

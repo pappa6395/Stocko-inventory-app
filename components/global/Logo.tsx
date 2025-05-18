@@ -18,7 +18,7 @@ const Logo = ({
 
   return (
 
-    <div className='flex items-center gap-2 pt-1'>
+    <div className='flex items-center gap-2'>
         <div className={cn('flex flex-shrink-0 justify-center rounded-full text-slate-50', classNameFrame)}>
             <Image 
               src={"/StockOnline.png"} 
@@ -27,7 +27,7 @@ const Logo = ({
               className={cn("",classNameLogo)}
             />
         </div>
-        {labelShown && <h2 className={cn('font-bold text-xl', classNameText)}>Stocko-Online</h2>}
+        {labelShown && <h2 className={cn('font-bold text-xl pt-2.5', classNameText)}>Stocko-Online</h2>}
     </div>
 
   )

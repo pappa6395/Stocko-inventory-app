@@ -476,3 +476,18 @@ model Receipt {
 
   lineOrder LineOrder @relation(fields: [orderId], references: [id])
 }
+
+enum NotificationStatus {
+  WARNING
+  DANGER
+  INFO
+}
+model Notification {
+  id            Int   @id @default(autoincrement())
+  message       String
+  status        NotificationStatus @default(WARNING)
+  statusText    String
+  read          Boolean @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

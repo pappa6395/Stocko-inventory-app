@@ -56,7 +56,7 @@ export function CartMenu({from="header"}: {from?: string}) {
         );
     }
     function handleIncrement(id: number) {
-        dispatch(
+      dispatch(
             incrementQty(id)
         );
     }
