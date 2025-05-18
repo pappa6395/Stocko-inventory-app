@@ -88,6 +88,7 @@ const page = () => {
                 price: item.price,
                 brand: item.brand,
                 qty: item.qty,
+                stock: item.stock,
                 productThumbnail: item.image
             }
         })
