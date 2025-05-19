@@ -433,8 +433,8 @@ export const permissions = [
     name: "canViewPos",
   },
   {
-    display: "Stock Transfer",
-    name: "canViewStockTransfer",
+    display: "Stock Purchase",
+    name: "canViewStockPurchase",
   },
   {
     display: "Stock Adjustment",
@@ -504,7 +504,7 @@ export const permissionsObj = {
   canViewCustomers: "canViewCustomers",
   canViewOrders: "canViewOrders",
   canViewPos: "canViewPos",
-  canViewStockTransfer: "canViewStockTransfer",
+  canViewStockPurchase: "canViewStockPurchase",
   canViewStockAdjustment: "canViewStockAdjustment",
   canViewApi: "canViewApi",
   canViewReports: "canViewReports",

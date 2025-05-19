@@ -290,13 +290,13 @@ export const sidebarLinks: ISidebarLink[] = [
     label: "Stock",
     icon: FolderTree,
     dropdown: true,
-    href: "/dashboard/stock/transfer",
-    access: "canViewStockTransfer",
+    href: "/dashboard/stock/purchase",
+    access: "canViewStockPurchase",
     dropdownMenu: [
       {
-        label: "Stock Transfer",
-        href: "/dashboard/stock/transfer",
-        access: "canViewStockTransfer",
+        label: "Stock Purchase",
+        href: "/dashboard/stock/purchase",
+        access: "canViewStockPurchase",
       },
       {
         label: "Stock Adjustment",

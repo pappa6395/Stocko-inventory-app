@@ -45,7 +45,10 @@ const FormHeader = ({
                     {editingId ? "Update" : "Create"} {title}
                 </h1>
             </div>
-            <div className='mr-4 flex gap-2'>
+            {title === "Stock Adjustments" ? (
+                ""
+            ) : (
+                <div className='mr-4 flex gap-2'>
                 <CloseBtn href={href} size="sm" parent={parent} />
                 <SubmitButton
                     title={editingId ? `Update ${title}` : `Save ${title}`}
@@ -54,6 +57,7 @@ const FormHeader = ({
                     loadingTitle={editingId ? `Updating...` : `Saving...`}
                 />
             </div>
+            )}
         </div>
     </div>
   )

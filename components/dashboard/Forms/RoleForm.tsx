@@ -230,8 +230,8 @@ export default function RoleForm({ editingId, initialData }: RoleFormProps) {
                 <TextInput
                   register={register}
                   errors={errors}
-                  label="Role Name"
-                  name="displayName"
+                  label="Role Title"
+                  name="displayTitle"
                 />
                 <TextInput
                   register={register}

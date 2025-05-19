@@ -168,7 +168,7 @@ model Role {
   canViewCustomers     Boolean @default(false)
   canViewOrders     Boolean @default(false)
   canViewPos     Boolean @default(false)
-  canViewStockTransfer     Boolean @default(false)
+  canViewStockPurchase     Boolean @default(false)
   canViewStockAdjustment     Boolean @default(false)
   canViewApi     Boolean @default(false)
   canViewReports     Boolean @default(false)
@@ -259,23 +259,24 @@ model Warehouse {
 }
 
 model Supplier {
-  id          Int      @id @default(autoincrement())
-  name        String
-  slug        String @unique
-  status      Boolean
-  imageUrl    String?
-  products    Products[]
-  companyName String
-  vatNumber   String
-  email       String
-  phone       String
-  address     String
-  city        String
-  state       String
-  postalCode  String
-  country     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  name            String
+  slug            String @unique
+  status          Boolean
+  imageUrl        String?
+  products        Products[]
+  purchaseOrders  PurchaseOrder[]
+  companyName     String
+  vatNumber       String
+  email           String
+  phone           String
+  address         String
+  city            String
+  state           String
+  postalCode      String
+  country         String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Banner {
@@ -330,6 +331,9 @@ model Products {
   isFeatured        Boolean @default(false)
   status            Boolean
   alertQuantity     Int
+
+  adjustments       AdjustmentItem[]
+  purchaseOrders    PurchaseOrderItem[]
   unitId            Int
   unit              Unit @relation(fields:[unitId], references: [id])
   subCategoryId     Int
@@ -490,4 +494,54 @@ model Notification {
   read          Boolean @default(false)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+}
+
+model Adjustment {
+  id            Int   @id @default(autoincrement())
+  refNo         String @unique @default("AAAAB")
+  reason        String 
+  items         AdjustmentItem[]
+  
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model AdjustmentItem {
+  id            Int   @id @default(autoincrement())
+  quantity      Int
+  type          String
+  currentStock  Int
+  productName   String
+
+  adjustmentId  Int
+  adjustment    Adjustment @relation(fields: [adjustmentId], references: [id])
+  productId     Int
+  product       Products   @relation(fields: [productId], references: [id])
+
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+}
+
+model PurchaseOrder {
+  id            Int       @id @default(autoincrement())
+  supplierId    Int
+  supplier      Supplier          @relation(fields: [supplierId], references: [id])
+  status        String
+  items         PurchaseOrderItem[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+}
+
+model PurchaseOrderItem {
+  id                Int   @id @default(autoincrement())
+  productId         Int
+  product           Products       @relation(fields: [productId], references: [id])
+  quantity          Int
+
+  purchaseOrderId   Int
+  purchaseOrder     PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
 }

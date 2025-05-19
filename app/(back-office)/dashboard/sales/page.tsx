@@ -16,7 +16,7 @@ const page = async () => {
         <TableHeader
         title="Sales"
         linkTitle="Add Sale"
-        href="/dashboard/sales/new"
+        href="#"
         data={sales}
         model="customer"
       />

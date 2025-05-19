@@ -122,7 +122,11 @@ export function NotificationMenu({
                         </button>
                       </SheetClose>
                     </div>
-                    <p className="text-xs">{item.message}</p>
+                    <p className={`text-xs ${item.status === "DANGER" 
+                      ? "dark:text-red-500" 
+                      : "dark:text-yellow-500"}`}>
+                        {item.message}
+                    </p>
                   </div>
                 </div>
               );

@@ -186,7 +186,7 @@ export interface RoleProps {
     canEditOrders: boolean;
     canDeleteOrders: boolean;
     canViewPos: boolean;
-    canViewStockTransfer: boolean;
+    canViewStockPurchase: boolean;
     canAddStockTransfer: boolean;
     canEditStockTransfer: boolean;
     canDeleteStockTransfer: boolean;
@@ -295,7 +295,7 @@ export interface ISubCategory extends SubCategory {
     category: Category
 }
 
-export interface IProducts extends Products {
+export interface IProducts extends ProductProps {
     id: number;
     name: string;
     subCategory: SubCategory;
@@ -334,3 +334,7 @@ export interface FeedbackProps {
 export interface ILineOrder extends LineOrder {
     lineOrderItems: LineOrderItem[];
 }
+
+export type AdjustmentProps = {
+  reason: string;
+};
