@@ -295,7 +295,7 @@ export interface ISubCategory extends SubCategory {
     category: Category
 }
 
-export interface IProducts extends ProductProps {
+export interface IProducts extends Products {
     id: number;
     name: string;
     subCategory: SubCategory;
