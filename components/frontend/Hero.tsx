@@ -51,7 +51,7 @@ const Hero = ({banners, adverts}: HeroProps) => {
                         width={800}
                         height={500} 
                         onClick={() => router.push(banner.link)}
-                        className='w-full h-[340px] cursor-pointer rounded-md'
+                        className='w-full h-[340px] object-cover md:object-contain cursor-pointer rounded-md'
                     />
                 )
             })}    

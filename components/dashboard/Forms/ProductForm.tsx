@@ -67,6 +67,7 @@ const ProductForm = ({
       saleUnit: initialData?.saleUnit || 0,
       productCost: initialData?.productCost || 50,
       productPrice: initialData?.productPrice || 100,
+      supplierPrice: initialData?.supplierPrice || 20,
       alertQuantity: initialData?.alertQuantity || 10,
       productDetails: initialData?.productDetails || "",
       productTax: initialData?.productTax,
@@ -257,6 +258,7 @@ const ProductForm = ({
     data.unitId = Number(selectedUnit?.value);
     data.productCost = Number(data.productCost);
     data.productPrice = Number(data.productPrice);
+    data.supplierPrice = Number(data.supplierPrice);
     data.stockQty = Number(data.stockQty);
     data.alertQuantity = Number(data.alertQuantity);
     data.saleUnit = Number(data.saleUnit);
@@ -780,6 +782,14 @@ const ProductForm = ({
                               name="alertQuantity"
                               type="number"
                               toolTipText='To alert when stock is low quantity for refillment'
+                            />
+                            <TextInput
+                              register={register}
+                              errors={errors}
+                              label="Supplier Price"
+                              name="supplierPrice"
+                              type="number"
+                              unit="$"
                             />
                         </div>
                     </div>

@@ -213,8 +213,6 @@ body {
   padding-bottom: 10px;
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -223,3 +221,17 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.font-jet {
+  font-family: "JetBrains Mono", monospace;
+}
+
+/* button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+  background-color: inherit !important;
+  background-image: none;
+} */
+

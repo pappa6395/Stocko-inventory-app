@@ -1,5 +1,22 @@
 
-import { AdvertSize, Brand, Category, Customers, LineOrder, LineOrderItem, MainCategory, Products, Role, Sale, SubCategory, User } from "@prisma/client";
+import { 
+    AdvertSize, 
+    Brand, 
+    Category, 
+    Customers, 
+    LineOrder, 
+    LineOrderItem, 
+    MainCategory, 
+    Products, 
+    PurchaseOrderItem, 
+    PurchaseOrderStatus, 
+    Role,
+    Sale, 
+    SubCategory, 
+    Supplier, 
+    User,
+    PurchaseOrder as PrismaPurchaseOrder
+} from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 
@@ -111,6 +128,7 @@ export type ProductProps = {
 
     productCost: number;
     productPrice: number;
+    supplierPrice: number;
     alertQuantity: number;
     productTax: number;
     taxMethod: string;
@@ -156,7 +174,7 @@ export type WarehouseProductProps = {
 
 export type SelectOptionsProps = {
     label: string;
-    value: string;
+    value: string | number | boolean;
 };
 
 export interface RoleProps {
@@ -286,6 +304,10 @@ export interface Customer {
     createdAt: Date;
 }
 
+export interface IPurchaseOrder extends PrismaPurchaseOrder {
+  supplier: Supplier;
+  items: PurchaseOrderItem[];
+}
 
 export interface ICategory extends Category {
     mainCategory: MainCategory,
@@ -337,4 +359,35 @@ export interface ILineOrder extends LineOrder {
 
 export type AdjustmentProps = {
   reason: string;
+};
+
+export interface OrderCustomer {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  profileImage: string | null;
+  createdAt: Date;
+  id: number;
+}
+
+export interface PurchaseItem {
+  productId: number;
+  quantity: number;
+  currentStock: number;
+  productName: string;
+  productCost: number;
+  subTotal: number;
+}
+
+export type PurchaseOrderProps = {
+  status: PurchaseOrderStatus;
+  discount: number;
+  tax: number;
+  shippingCost: number;
+  totalAmount: number;
+  balanceAmount: number;
+  notes: string; // You can update this as needed
+  items: PurchaseItem[];
+  supplierId: number;
 };

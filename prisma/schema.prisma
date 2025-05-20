@@ -320,6 +320,7 @@ model Products {
   productCost       Float
   productPrice      Float
   productTax        Float
+  supplierPrice     Float @default(100)
   taxMethod         String
   productImages     String[]
   productThumbnail  String?
@@ -366,6 +367,12 @@ enum OrderStatus {
   SHIPPED
   DELIVERED
   CANCELLED
+}
+
+enum PurchaseOrderStatus {
+  PAID
+  PARTIAL
+  UNPAID
 }
 
 model LineOrderItem {
@@ -523,25 +530,33 @@ model AdjustmentItem {
 }
 
 model PurchaseOrder {
-  id            Int       @id @default(autoincrement())
+  id            Int    @id @default(autoincrement())
   supplierId    Int
   supplier      Supplier          @relation(fields: [supplierId], references: [id])
-  status        String
+  status        PurchaseOrderStatus @default(PAID)
+  discount      Int?
+  notes         String?
+  tax           Int?
+  refNo         String
+  totalAmount   Int
+  balanceAmount Int 
+  shippingCost  Int?
   items         PurchaseOrderItem[]
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
-
 }
 
 model PurchaseOrderItem {
-  id                Int   @id @default(autoincrement())
-  productId         Int
-  product           Products       @relation(fields: [productId], references: [id])
-  quantity          Int
-
-  purchaseOrderId   Int
-  purchaseOrder     PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
-
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  id              Int   @id @default(autoincrement())
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+  purchaseOrderId Int
+  productId       Int  
+  product         Products       @relation(fields: [productId], references: [id])
+  quantity        Int
+  productName     String
+  unitCost        Int
+  subTotal        Int
+  currentStock    Int
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
 }

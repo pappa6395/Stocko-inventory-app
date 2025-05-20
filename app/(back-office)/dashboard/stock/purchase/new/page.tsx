@@ -1,9 +1,16 @@
-import React from 'react'
+import { getAllProducts } from "@/actions/products";
+import { getAllSuppliers } from "@/actions/suppliers";
+import PurchaseForm from "@/components/dashboard/Forms/PurchaseForm";
+import React from "react";
 
-const NewStockPurchasePage = () => {
+export default async function page() {
+
+  const products = (await getAllProducts()) || [];
+  const suppliers = (await getAllSuppliers()) || [];
+
   return (
-    <div>NewStockPurchasePage</div>
-  )
+    <div>
+      <PurchaseForm products={products} suppliers={suppliers} />
+    </div>
+  );
 }
-
-export default NewStockPurchasePage

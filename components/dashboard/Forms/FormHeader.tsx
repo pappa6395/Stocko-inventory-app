@@ -45,9 +45,10 @@ const FormHeader = ({
                     {editingId ? "Update" : "Create"} {title}
                 </h1>
             </div>
-            {title === "Stock Adjustments" ? (
+            {title === "Stock Adjustments"  ? (
                 ""
-            ) : (
+            ) : title === "Stock Purchasing Orders" 
+            ? "" : (
                 <div className='mr-4 flex gap-2'>
                 <CloseBtn href={href} size="sm" parent={parent} />
                 <SubmitButton
