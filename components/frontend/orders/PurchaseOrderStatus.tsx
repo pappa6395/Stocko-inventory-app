@@ -73,7 +73,6 @@ export default function PurchaseOrderStatus({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <div className="">
           {selectedStatus.value === "PAID" ? (
             <button className="dark:text-slate-800 py-1.5 px-3 bg-green-200 rounded-full">
               {selectedStatus.value}
@@ -87,18 +86,18 @@ export default function PurchaseOrderStatus({
               {selectedStatus.value}
             </button>
           )}
-        </div>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {" "}
-            <h2 className="scroll-m-20 border-b pb-2 text-2xl font-semibold tracking-tight first:mt-0">
-              Change Order Status
-            </h2>
+            Change Order Status
           </DialogTitle>
           <DialogDescription>
-            <form className="space-y-4" onSubmit={handleChangeStatus}>
+            Select the update order status
+          </DialogDescription>
+        </DialogHeader>
+          <form className="space-y-4" onSubmit={handleChangeStatus}>
               <FormSelectInput
                 label="Order Status"
                 options={orderStatus}
@@ -114,8 +113,6 @@ export default function PurchaseOrderStatus({
                 />
               </DialogFooter>
             </form>
-          </DialogDescription>
-        </DialogHeader>
       </DialogContent>
     </Dialog>
   );

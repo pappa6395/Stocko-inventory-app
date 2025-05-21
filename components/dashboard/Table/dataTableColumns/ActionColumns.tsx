@@ -35,6 +35,7 @@ import { deleteMainCategoryById } from "@/actions/main-categories";
 import { deleteSubCategoryById } from "@/actions/subCategories";
 import { deleteBannerById } from "@/actions/banners";
 import { deleteAdvertById } from "@/actions/adverts";
+import { deletePurchaseOrder } from "@/actions/purchases";
  
 type ActionColumnProps = {
   row: any;
@@ -122,6 +123,12 @@ export default function ActionColumn({
         toast.success(`${model} Deleted Successfully`);
       } else if (model === "user") {
         const res = await deleteUserById(id);
+        if (res?.ok) {
+          window.location.reload();
+        }
+        toast.success(`${model} Deleted Successfully`);
+      } else if (model === "purchaseOrder") {
+        const res = await deletePurchaseOrder(id);
         if (res?.ok) {
           window.location.reload();
         }

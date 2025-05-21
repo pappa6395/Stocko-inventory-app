@@ -44,16 +44,26 @@ export const columns: ColumnDef<IPurchaseOrder>[] = [
     cell: ({ row }) => {
       const purchase = row.original;
       const supplier = purchase?.supplier?.name;
-      return <h2>{supplier}</h2>;
+      return (
+        <div>
+          <p>{supplier}</p>
+        </div>
+      )
     },
   },
   {
     accessorKey: "totalAmount",
-    header: "Grand Total",
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Grand Total" />
+    ),
     cell: ({ row }) => {
       const purchase = row.original;
       const totalAmount = purchase?.totalAmount;
-      return <h2>{totalAmount}</h2>;
+      return (
+        <div className="ml-8">
+          <p>{totalAmount.toLocaleString("EN-us")}</p>
+        </div>
+      )
     },
   },
   {
@@ -62,16 +72,26 @@ export const columns: ColumnDef<IPurchaseOrder>[] = [
     cell: ({ row }) => {
       const purchase = row.original;
       const paid = purchase?.totalAmount - purchase.balanceAmount;
-      return <h2>{paid}</h2>;
+      return (
+        <div className="">
+          <p>{paid.toLocaleString("EN-us")}</p>
+        </div>
+      )
     },
   },
   {
     accessorKey: "balanceAmount",
-    header: "Due",
+    header: ({ column }) => (
+      <SortableColumn column={column} title="Due" />
+    ),
     cell: ({ row }) => {
       const purchase = row.original;
       const balance = purchase?.balanceAmount;
-      return <h2>{balance}</h2>;
+      return (
+        <div className="ml-4">
+          <p>{balance.toLocaleString("EN-us")}</p>
+        </div>
+      )
     },
   },
   {

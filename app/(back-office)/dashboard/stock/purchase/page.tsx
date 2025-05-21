@@ -2,7 +2,7 @@ import { getPurchaseOrders } from "@/actions/purchases";
 import DataTable from "@/components/dashboard/Table/dataTableComponents/DataTable";
 import TableHeader from "@/components/dashboard/Table/dataTableComponents/TableHeader";
 import { columns } from "./columns";
-
+import * as React from "react";
 
 
 export default async function page() {

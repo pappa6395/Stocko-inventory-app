@@ -215,10 +215,10 @@ export default function PurchaseForm({
             : Number(data.balanceAmount) === totalPrice
             ? "UNPAID"
             : ("PARTIAL" as PurchaseOrderStatus),
-        supplierId: selectedSupplier.value as number,
+        supplierId: Number(selectedSupplier.value),
       };
-
       const parseEditingId = Number(editingId);
+      console.log("payload: ", purchaseData);
 
       if (editingId) {
         await updatePurchaseOrderById(parseEditingId, purchaseData);

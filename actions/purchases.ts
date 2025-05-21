@@ -250,12 +250,28 @@ export async function updatePurchaseOrderById(
 }
 
 export async function deletePurchaseOrder(id: number) {
+  console.log("payload check: ", id);
+  
   try {
+    const existingOrder = await prismaClient.purchaseOrder.findUnique({
+      where: {
+        id,
+      }
+    })
+    if (!existingOrder) {
+      console.log("Purchase Order not found");
+      return {
+        ok: false,
+        error: "Purchase Order not found",
+      };
+    }
+
     const deletedOrder = await prismaClient.purchaseOrder.delete({
       where: {
         id,
       },
     });
+    revalidatePath("/dashboard/stock/purchase");
     return {
       ok: true,
       data: deletedOrder,
