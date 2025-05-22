@@ -391,3 +391,21 @@ export type PurchaseOrderProps = {
   items: PurchaseItem[];
   supplierId: number;
 };
+
+export type SearchProduct = {
+  name: string;
+  slug: string;
+  productThumbnail: string;
+  type: string;
+  id?: string;
+};
+
+export type ProductResult = {
+  id: string;
+  name: string;
+  slug: string;
+  stockQty: number;
+  productCost: number;
+  productPrice: number;
+  productThumbnail: string;
+};

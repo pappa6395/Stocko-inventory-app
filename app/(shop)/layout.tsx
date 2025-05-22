@@ -1,4 +1,5 @@
 import { getPopulatedMainCategories } from '@/actions/main-categories'
+import { getSearchProducts } from '@/actions/products'
 import { getUserById } from '@/actions/users'
 import { CategoryHeader } from '@/components/frontend/CategoryHeader'
 import CategoryHeaderMobile from '@/components/frontend/CategoryHeaderMobile'
@@ -14,13 +15,13 @@ const layout = async ({children}: {children: ReactNode}) => {
   const session = await getServerSession(authOptions)
   const userId = session?.user.id || "";
   const userById = (await getUserById(userId))?.data || null 
-
+  const products = await getSearchProducts() || [];
   const mainCategories = await getPopulatedMainCategories() || []
 
   return (
     <div className='dark:bg-slate-900'>
       <div className='fixed z-50 bg-white dark:bg-slate-800 w-full'>
-        <ShopHeader user={userById} />
+        <ShopHeader user={userById} products={products} />
       </div>
       <div className='hidden sm:block sm:container max-w-6xl mx-auto py-4 mt-20'>
        {mainCategories && mainCategories.length > 0 && (

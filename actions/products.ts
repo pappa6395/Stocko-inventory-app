@@ -4,7 +4,7 @@
 import { AddProductToCartProps, IProductCarts } from "@/components/frontend/listings/AddToCartButton";
 import { ProductwithBrand } from "@/components/pos/PointOfSale";
 import { prismaClient } from "@/lib/db";
-import { GroupProducts, IProducts, ProductProps, SBProducts } from "@/type/types";
+import { GroupProducts, IProducts, ProductProps, SBProducts, SearchProduct } from "@/type/types";
 import { Products } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
@@ -723,4 +723,160 @@ export async function getBestSellingProducts(item: number) {
             error: "Failed to get best selling products"
         }
     }
+}
+
+export async function getSearchProducts() {
+  try {
+    const allProducts = await prismaClient.products.findMany({
+      select: {
+        name: true,
+        slug: true,
+        productThumbnail: true,
+      },
+    });
+    const products = allProducts.map((item) => {
+      return {
+        name: item.name,
+        slug: item.slug,
+        productThumbnail: item.productThumbnail,
+        type: "prod",
+      };
+    });
+    const allCategories = await prismaClient.category.findMany({
+      select: {
+        title: true,
+        slug: true,
+        imageUrl: true,
+      },
+    });
+    const allBrands = await prismaClient.brand.findMany({
+      select: {
+        title: true,
+        slug: true,
+        imageUrl: true,
+        id: true,
+      },
+    });
+    const categories = allCategories.map((item) => {
+      return {
+        name: item.title,
+        slug: item.slug,
+        productThumbnail: item.imageUrl,
+        type: "cate",
+      };
+    });
+    const brands = allBrands.map((item) => {
+      return {
+        name: item.title,
+        slug: item.slug,
+        productThumbnail: item.imageUrl,
+        type: "brand",
+        id: item.id,
+      };
+    });
+    const results = [...products, ...categories, ...brands];
+    return results as SearchProduct[];
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+export async function getProductsBySearchQuery(
+  query: string,
+  sort?: "asc" | "desc",
+  min?: number,
+  max?: number
+) {
+  const categories = await prismaClient.category.findMany({
+    where: {
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { description: { contains: query, mode: "insensitive" } },
+      ],
+    },
+  });
+  const brands = await prismaClient.brand.findMany({
+    where: {
+      OR: [
+        { title: { contains: query, mode: "insensitive" } },
+        { slug: { contains: query, mode: "insensitive" } },
+      ],
+    },
+  });
+
+  const products = await prismaClient.products.findMany({
+    where: {
+      OR: [
+        { name: { contains: query, mode: "insensitive" } },
+        { productDetails: { contains: query, mode: "insensitive" } },
+      ],
+      AND: [
+        min ? { productPrice: { gte: min } } : {},
+        max ? { productPrice: { lte: max } } : {},
+      ],
+    },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      stockQty: true,
+      productCost: true,
+      productPrice: true,
+      productThumbnail: true,
+      subCategoryId: true,
+      brandId: true,
+    },
+    orderBy: {
+      productPrice: sort,
+    },
+  });
+
+  const allProducts = await prismaClient.products.findMany({
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      stockQty: true,
+      productCost: true,
+      productPrice: true,
+      productThumbnail: true,
+      subCategoryId: true,
+      brandId: true,
+    },
+  });
+
+  // Filter products based on the found categories and brands
+  const categoryIds = categories.map((category) => category.id);
+  const brandIds = brands.map((brand) => brand.id);
+
+  const filteredProducts = allProducts.filter((product) => {
+    return (
+      categoryIds.includes(product.subCategoryId) ||
+      brandIds.includes(product.brandId)
+    );
+  });
+
+  const resultingProducts = [...products, ...filteredProducts];
+  // Transform the filtered products to match the ProductResult type
+  const result = resultingProducts.map((product) => ({
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    stockQty: product.stockQty,
+    productCost: product.productCost,
+    productPrice: product.productPrice,
+    productThumbnail: product.productThumbnail,
+  }));
+  // Remove duplicate products
+  const uniqueProductIds = new Set();
+  const uniqueProducts = resultingProducts.filter((product) => {
+    if (!uniqueProductIds.has(product.id)) {
+      uniqueProductIds.add(product.id);
+      return true;
+    }
+    return false;
+  });
+
+  return uniqueProducts as IProducts[];
 }

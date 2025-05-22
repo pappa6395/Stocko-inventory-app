@@ -13,7 +13,7 @@ export type CustomBreadCrumbProps = {
     breadCrumb: BreadCrumbItem[];
 }
 export type BreadCrumbItem = {
-    label: string;
+    label?: string;
     href: string;
 }
 

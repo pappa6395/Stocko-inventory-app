@@ -17,8 +17,16 @@ import HelpMenu from '../frontend/HelpMenu'
 import { MobileMenu } from '../frontend/MobileMenu'
 import { CartMenu } from '../frontend/CartMenu'
 import SearchBar from '../frontend/SearchBar'
+import ModernSearchBar from '../frontend/modernSearchBar'
+import { SearchProduct } from '@/type/types'
 
-const ShopHeader = ({user}: {user: User | undefined | null}) => {
+const ShopHeader = ({
+    user,
+    products
+}: {
+    user: User | undefined | null;
+    products: SearchProduct[]
+}) => {
 
     const router = useRouter();
 
@@ -49,7 +57,9 @@ const ShopHeader = ({user}: {user: User | undefined | null}) => {
                         classNameText='text-xl' 
                     />
                 </Link>
-               <SearchBar />
+               <div className='flex-1'>
+                <ModernSearchBar products={products} />
+               </div>
                 <div>
                     <HelpMenu />
                 </div>  
