@@ -21,6 +21,11 @@ import { FaLine, FaXTwitter } from 'react-icons/fa6'
 import ProductListing from '@/components/frontend/listings/ProductListing'
 import ProductContent from '@/components/frontend/ProductContent'
 import ShareProduct from '@/components/frontend/ShareProducts'
+import ProductReviewForm from '@/components/frontend/ProductReviewForm'
+import { timeAgo } from '@/lib/timeAgo'
+import { getApprovedProductReviews } from '@/actions/reviews'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/config/authOptions'
 
 //app/products/[slug]
 
@@ -67,6 +72,7 @@ const page = async ({params: paramsPromise}: PageProps) => {
 
     const { slug } = await paramsPromise
 
+    const session = await getServerSession(authOptions);
     const products = await getProductBySlug(slug) || null
     const subCategoryId = products?.subCategoryId || 0
     const productId = products?.id || 0
@@ -76,6 +82,7 @@ const page = async ({params: paramsPromise}: PageProps) => {
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
     const url = `${baseUrl}/product/${slug}`
 
+    const productReviews = await getApprovedProductReviews(products?.id ?? 0) || [];
     const breadCrumb = [
         {
             label: 'Home',
@@ -108,6 +115,8 @@ const page = async ({params: paramsPromise}: PageProps) => {
         thumbnail: "/placeholder.svg",
     }]
 
+    const averageRating = productReviews.reduce(
+        (acc, item) => acc + item.rating, 0) / productReviews.length;
 
   return (
 
@@ -207,35 +216,106 @@ const page = async ({params: paramsPromise}: PageProps) => {
         </div>
         {/* Product Detail */}
         <div className='pt-4 border-t'>
-            <Tabs defaultValue="description">
-                <TabsList className="grid grid-cols-3 w-[400px]">
-                    <TabsTrigger value="description">Description</TabsTrigger>
-                    <TabsTrigger value="content">Content</TabsTrigger>
-                    <TabsTrigger value="review">Reviews</TabsTrigger>
+            <Tabs defaultValue="content" className="w-full">
+                <TabsList>
+                    <TabsTrigger value="content">Product Details</TabsTrigger>
+                    <TabsTrigger value="description">Product Description</TabsTrigger>
+                    <TabsTrigger value="reviews">Product Reviews</TabsTrigger>
                 </TabsList>
+                <TabsContent value="content">
+                    <ProductContent codeString={products?.content || ""} />
+                </TabsContent>
                 <TabsContent value="description">
                     {products?.productDetails}
                 </TabsContent>
-                <TabsContent value="content">
-                    <ProductContent codeString={products?.content ?? ""} />
-                </TabsContent>
-                <TabsContent value="review">
-                    <div>
-                        <h2>Write a Review</h2>
-                        <form>
-                            <div className="flex items-center gap-2">
-                                <input type="text" placeholder="Your Name" className="border-2 w-full py-2 px-3" />
-                                <input type="email" placeholder="Your Email" className="border-2 w-full py-2 px-3" />
+                <TabsContent value="reviews">
+                    {productReviews && productReviews.length > 0 ? (
+                    <div className="px-8 max-w-4xl ">
+                        <h2>Reviews</h2>
+                        <div className="py-3">
+                        <h2 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+                            {averageRating.toFixed(1)}
+                        </h2>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                        {[...Array(5)].map((_, i) => (
+                            <svg
+                            key={i}
+                            className={`w-6 h-6 ${
+                                i < averageRating ? "text-yellow-500" : "text-gray-300"
+                            }`}
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            >
+                            <path d="M12 .587l3.668 7.568L24 9.423l-6 5.854 1.417 8.148L12 18.896l-7.417 4.53L6 15.277 0 9.423l8.332-1.268L12 .587z" />
+                            </svg>
+                        ))}
+                        </div>
+                        <p>based on {productReviews.length} reviews</p>
+
+                        <div className="py-6 space-y-6">
+                        {productReviews.map((item) => {
+                            return (
+                            <div key={item.id} className="">
+                                <div className="flex pb-3 justify-between">
+                                <div className="flex items-center space-x-3">
+                                    <Image
+                                    src={item.image ?? "/placeholder.svg"}
+                                    alt={item.name ?? ""}
+                                    className="w-12 h-12 rounded-lg"
+                                    width={200}
+                                    height={200}
+                                    />
+                                    <div className="">
+                                    <h2>{item.name}</h2>
+                                    <div className="flex items-end space-x-2">
+                                        <div className="flex">
+                                        {[...Array(item.rating)].map((_, i) => (
+                                            <svg
+                                            key={i}
+                                            className={`w-5 h-5 text-yellow-500`}
+                                            fill="currentColor"
+                                            viewBox="0 0 24 24"
+                                            >
+                                            <path d="M12 .587l3.668 7.568L24 9.423l-6 5.854 1.417 8.148L12 18.896l-7.417 4.53L6 15.277 0 9.423l8.332-1.268L12 .587z" />
+                                            </svg>
+                                        ))}
+                                        </div>
+                                        <p>{item.rating.toFixed(1)}</p>
+                                    </div>
+                                    </div>
+                                </div>
+                                <div className="">
+                                    <p>{timeAgo(item.createdAt)}</p>
+                                </div>
+                                </div>
+                                <p>{item.comment}</p>
                             </div>
-                            <textarea placeholder="Your Review" className="border-2 w-full py-2 px-3 h-32 resize-none" />
-                            <div className="flex items-center gap-2">
-                                <input type="text" placeholder="Rating" className="border-2 w-16 py-2 px-3" />
-                                <Button variant={"default"}>Submit</Button>
-                            </div>
-                        </form>
+                            );
+                        })}
+                        </div>
+                        <div className="py-6">
+                        <ProductReviewForm
+                            productId={products?.id ?? 0}
+                            session={session}
+                            returnUrl={`/product/${slug}`}
+                        />
+                        </div>
                     </div>
+                    ) : (
+                    <div className="">
+                        <h2>No Product Reviews</h2>
+                        <div className="py-6">
+                        <ProductReviewForm
+                            productId={products?.id ?? 0}
+                            session={session}
+                            returnUrl={`/product/${slug}`}
+                        />
+                        </div>
+                    </div>
+                    )}
                 </TabsContent>
-            </Tabs>           
+            </Tabs>         
         </div>
         {/* Related Products */}
         <div>

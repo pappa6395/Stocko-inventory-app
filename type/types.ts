@@ -15,7 +15,8 @@ import {
     SubCategory, 
     Supplier, 
     User,
-    PurchaseOrder as PrismaPurchaseOrder
+    PurchaseOrder as PrismaPurchaseOrder,
+    Review
 } from "@prisma/client";
 import { LucideProps } from "lucide-react";
 import { ForwardRefExoticComponent, RefAttributes } from "react";
@@ -322,6 +323,7 @@ export interface IProducts extends Products {
     name: string;
     subCategory: SubCategory;
     brand: Brand;
+    reviews: Review[];
 }
 
 export interface SBProducts extends Products {

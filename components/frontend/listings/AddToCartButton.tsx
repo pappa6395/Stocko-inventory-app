@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button'
 import { useAppDispatch, useAppSelector } from '@/redux/hooks/hooks';
 import { addProductToCart, decrementQty, incrementQty, removeProductFromCart } from '@/redux/slices/cartSlice';
-import { Brand, Category, MainCategory, Products, SubCategory } from '@prisma/client';
+import { Brand, Category, MainCategory, Products, Review, SubCategory } from '@prisma/client';
 import { Minus, Plus } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 
@@ -19,6 +19,7 @@ export interface ISubCategory extends SubCategory {
 export interface IProductCarts extends Products {
     subCategory: ISubCategory;
     brand: Brand;
+    
 }
 export interface AddProductToCartProps {
     product: IProductCarts | null;

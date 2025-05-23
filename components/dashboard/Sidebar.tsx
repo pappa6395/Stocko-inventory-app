@@ -155,13 +155,12 @@ const Sidebar = ({
             </nav>
           </div>
           
-          
         </div>
-        <div className="mt-auto p-4">
-            <Button type="button" size="sm" className="w-full" onClick={handleSignOut}>
-              Logout
-            </Button>
-          </div>
+        {/* <div className="p-4">
+          <Button type="button" size="sm" className="w-full" onClick={handleSignOut}>
+            Logout
+          </Button>
+        </div> */}
       </div>
   )
 }

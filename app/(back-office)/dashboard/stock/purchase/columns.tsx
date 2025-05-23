@@ -7,6 +7,8 @@ import PurchaseOrderStatus from "@/components/frontend/orders/PurchaseOrderStatu
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export const columns: ColumnDef<IPurchaseOrder>[] = [
   {
@@ -92,6 +94,20 @@ export const columns: ColumnDef<IPurchaseOrder>[] = [
           <p>{balance.toLocaleString("EN-us")}</p>
         </div>
       )
+    },
+  },
+  {
+    accessorKey: "discount",
+    header: "View",
+    cell: ({ row }) => {
+      const purchase = row.original;
+      return (
+        <Button asChild variant={"outline"}>
+          <Link href={`/dashboard/stock/purchase/${purchase.id}`}>
+            View Details
+          </Link>
+        </Button>
+      );
     },
   },
   {

@@ -60,7 +60,11 @@ const ProductListing = ({
                             <div className='flex gap-4 py-3 items-center'>
                                 {products.map((product,i) => {
                                     return (
-                                        <HorizontalProduct key={i} product={product} />
+                                        <HorizontalProduct 
+                                            key={i} 
+                                            product={product}
+                                            scrollable 
+                                        />
                                     )
                                 })}
                             </div>
@@ -82,7 +86,11 @@ const ProductListing = ({
                             <div className='flex gap-4 py-3 items-center'>
                                 {products.map((product,i) => {
                                     return (
-                                        <VerticalProduct key={i} product={product} />
+                                        <VerticalProduct 
+                                            key={i} 
+                                            product={product}
+                                            scrollable 
+                                        />
                                     )
                                 })}
                             </div>

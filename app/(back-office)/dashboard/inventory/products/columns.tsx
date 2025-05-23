@@ -9,6 +9,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import StatusColumn from "@/components/dashboard/Table/dataTableColumns/StatusColumn";
 import { IProducts } from "@/type/types";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 
 export const columns: ColumnDef<IProducts>[] = [
@@ -65,10 +67,33 @@ export const columns: ColumnDef<IProducts>[] = [
       return <p>{subCategory}</p>
     }
   },
+   {
+    accessorKey: "stockQty",
+    header: "Stock",
+    cell: ({ row }) => {
+      const product = row.original;
+
+      return <h2>{product.stockQty}</h2>;
+    },
+  },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <StatusColumn row={row} accessorKey={"status"} />,
+  },
+  {
+    accessorKey: "productDetails",
+    header: "View",
+    cell: ({ row }) => {
+      const product = row.original;
+      return (
+        <Button asChild variant={"outline"} size={"sm"}>
+          <Link href={`/dashboard/inventory/products/${product.id}`}>
+            View{" "}
+          </Link>
+        </Button>
+      );
+    },
   },
   {
     accessorKey: "createdAt",

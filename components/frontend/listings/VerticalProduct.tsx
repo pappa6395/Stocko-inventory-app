@@ -10,7 +10,13 @@ import React from 'react'
 import { FaStar } from 'react-icons/fa6'
 import { IoMdStarHalf } from "react-icons/io";
 
-const VerticalProduct = ({product}: {product: IProducts}) => {
+const VerticalProduct = ({
+    product,
+    scrollable
+}: {
+    product: IProducts;
+    scrollable?: boolean;
+}) => {
 
     const discountRate = 5
     const discount = product.productPrice * discountRate / 100

@@ -6,12 +6,14 @@ errors: any;
 label: string;
 name: string;
 helperText?: string;
+placeholder?: string;
 };
 export default function TextArea({
 register,
 errors,
 label,
 name,
+placeholder,
 helperText = "",
 }: TextAreaProps) {
 return (
@@ -31,6 +33,7 @@ return (
         "block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 text-sm",
         errors[`${name}`] && "focus:ring-red-500"
       )}
+      placeholder={placeholder}
     />
     {errors[`${name}`] && (
       <span className="text-xs text-red-600">Description is required</span>

@@ -83,21 +83,21 @@ const ShopHeader = ({
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Link href="/dashboard">
-                                    Dashboard
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>Settings</DropdownMenuItem>
-                            <DropdownMenuItem>Support</DropdownMenuItem>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>
-                                <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
-                                    Log out
-                                </Button>
-                            </DropdownMenuItem>
+                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                    <Link href="/dashboard">
+                                        Dashboard
+                                    </Link>
+                                </DropdownMenuItem>
+                                {/* <DropdownMenuItem>Settings</DropdownMenuItem>
+                                <DropdownMenuItem>Support</DropdownMenuItem> */}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>
+                                    <Button type="button" variant={"ghost"} size={"lg"} onClick={handleSignOut}>
+                                        Log out
+                                    </Button>
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     ) : (

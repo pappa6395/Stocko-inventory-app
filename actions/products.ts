@@ -850,12 +850,29 @@ export async function getProductsBySearchQuery(
   const categoryIds = categories.map((category) => category.id);
   const brandIds = brands.map((brand) => brand.id);
 
-  const filteredProducts = allProducts.filter((product) => {
+  let filteredProducts = allProducts.filter((product) => {
     return (
       categoryIds.includes(product.subCategoryId) ||
       brandIds.includes(product.brandId)
     );
   });
+  // Apply min and max price filters to the filtered products
+  filteredProducts = filteredProducts.filter((product) => {
+    const meetsMinCondition = min ? product.productPrice >= min : true;
+    const meetsMaxCondition = max ? product.productPrice <= max : true;
+    return meetsMinCondition && meetsMaxCondition;
+  });
+
+  // Sort the filtered products if sort is provided
+  if (sort) {
+    filteredProducts.sort((a, b) => {
+      if (sort === "asc") {
+        return a.productPrice - b.productPrice;
+      } else {
+        return b.productPrice - a.productPrice;
+      }
+    });
+  }
 
   const resultingProducts = [...products, ...filteredProducts];
   // Transform the filtered products to match the ProductResult type
@@ -879,4 +896,30 @@ export async function getProductsBySearchQuery(
   });
 
   return uniqueProducts as IProducts[];
+}
+
+export async function getProductDetails(id: number) {
+  try {
+    const product = await prismaClient.products.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        subCategory: {
+          include: {
+            category: {
+              include: {
+                mainCategory: true,
+              },
+            },
+          },
+        },
+        brand: true,
+        reviews: true,
+      },
+    });
+    return product;
+  } catch (error) {
+    console.log(error);
+  }
 }
