@@ -293,6 +293,7 @@ export async function getSimilarProducts(subCategoryId: number, productId: numbe
                 include: {
                     subCategory: true,
                     brand: true,
+                    reviews: true
                 }
             });
             return product
