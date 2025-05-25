@@ -321,9 +321,26 @@ export const sidebarLinks: ISidebarLink[] = [
   },
   {
     label: "Reports",
-    href: "/dashboard/reports",
     icon: BarChart4,
-    dropdown: false,
+    dropdown: true,
+    href: "/dashboard/reports/products",
     access: "canViewReports",
+    dropdownMenu: [
+      {
+        label: "Product Report",
+        href: "/dashboard/reports/products",
+        access: "canViewProducts",
+      },
+      {
+        label: "Inventory Report",
+        href: "/dashboard/reports/inventory",
+        access: "canViewProducts",
+      },
+      {
+        label: "Customers Report",
+        href: "/dashboard/reports/customers",
+        access: "canViewCustomers",
+      },
+    ],
   },
 ];

@@ -86,6 +86,26 @@ export async function getAllProducts() {
     }
 }
 
+export async function getProductsWithSales() {
+  try {
+    const products = await prismaClient.products.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        subCategory: true,
+        sale: true,
+        purchaseOrders: true,
+      },
+    });
+
+    return products;
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
 export async function getProductsBySubCategoryId(subCategoryId: string) {
     
     try {

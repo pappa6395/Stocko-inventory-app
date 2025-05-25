@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
 import { ArrowUpRight, Delete, File, Trash } from 'lucide-react'
-import { LineOrder } from '@prisma/client'
 import Link from 'next/link'
 import { ILineOrder } from '@/type/types'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
@@ -14,7 +13,6 @@ import OrderStatusBtn from '../frontend/orders/OrderStatusBtn'
 const OrderSummary = ({orders}: {orders: ILineOrder[]}) => {
 
     const actualOrders = orders.filter((order) => order.lineOrderItems.length > 0);
-    const [isOpen, setIsOpen] = useState(false);
 
   return (
 
@@ -60,7 +58,7 @@ const OrderSummary = ({orders}: {orders: ILineOrder[]}) => {
                                 </TableCell>
                                 <TableCell className="hidden sm:table-cell">{order.orderType}</TableCell>
                                 <TableCell className="hidden sm:table-cell">
-                                    <OrderStatusBtn isOpen={isOpen} setIsOpen={setIsOpen} order={order} />
+                                    <OrderStatusBtn order={order} />
                                 </TableCell>
                                 <TableCell className="hidden md:table-cell">{date}</TableCell>
                                 <TableCell className="text-right">${order.orderAmount}</TableCell>

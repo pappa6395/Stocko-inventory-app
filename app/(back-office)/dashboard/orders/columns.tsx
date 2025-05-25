@@ -2,16 +2,15 @@
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { LineOrder } from "@prisma/client";
 import ActionColumn from "@/components/dashboard/Table/dataTableColumns/ActionColumns";
 import SortableColumn from "@/components/dashboard/Table/dataTableColumns/SortableColumn";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import DateColumn from "@/components/dashboard/Table/dataTableColumns/DateColumn";
 import OrderStatusBtn from "@/components/frontend/orders/OrderStatusBtn";
-import { useState } from "react";
+import { ILineOrder } from "@/type/types";
 
-export const columns: ColumnDef<LineOrder>[] = [
+export const columns: ColumnDef<ILineOrder>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -51,10 +50,9 @@ export const columns: ColumnDef<LineOrder>[] = [
     header: "Order status",
     cell: ({ row }) => {
       const item = row.original;
-      const [isOpen, setIsOpen] = useState(false);
       return (
-        <div onClick={() => setIsOpen(true)}>
-          <OrderStatusBtn isOpen={isOpen} setIsOpen={setIsOpen} order={item}  />
+        <div>
+          <OrderStatusBtn order={item}  />
         </div>
       )
     },

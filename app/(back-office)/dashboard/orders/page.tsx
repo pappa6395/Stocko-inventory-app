@@ -17,7 +17,7 @@ export default async function page() {
         model="order"
       />
       {/* <CustomDataTable categories={categories} /> */}
-      <DataTable data={orders} columns={columns}/>
+      <DataTable tableTitle="orders" data={orders} columns={columns}/>
     </div>
   );
 }

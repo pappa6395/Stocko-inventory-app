@@ -1,14 +1,11 @@
-import * as React from "react";
-import AuthorizePageWrapper from "@/components/dashboard/auth/AuthPageWrapper";
-import { permissionsObj } from "@/config/permissions";
-import Reports from "@/components/dashboard/reports/Reports";
+import { redirect } from "next/navigation";
+import React from "react";
 
 export default function page() {
+  redirect("/dashboard/reports/products");
   return (
-    <AuthorizePageWrapper requiredPermission={permissionsObj.canViewReports}>
-      <div>
-        <Reports />
-      </div>
-    </AuthorizePageWrapper>
+    <div>
+      <p>Loading..</p>
+    </div>
   );
 }

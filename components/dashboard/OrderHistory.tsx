@@ -22,7 +22,6 @@ const OrderHistory = (props: OrderHistoryProps) => {
 
     const { orders } = props
     
-    const [isOpen, setIsOpen] = useState(false)
     const router = useRouter()
     const handleBack = () => {
         router.back()
@@ -92,8 +91,8 @@ const OrderHistory = (props: OrderHistoryProps) => {
                                             <TableCell>#{order?.orderNumber || ""}</TableCell>
                                             <TableCell>{order?.paymentMethod || ""}</TableCell>
                                             <TableCell>
-                                                <div onClick={() => setIsOpen(true)}>
-                                                    <OrderStatusBtn isOpen={isOpen} setIsOpen={setIsOpen} order={order}  />
+                                                <div>
+                                                    <OrderStatusBtn order={order}  />
                                                 </div>
                                             </TableCell>
                                             <TableCell className='flex-shrink-0'>

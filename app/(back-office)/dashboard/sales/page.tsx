@@ -21,7 +21,7 @@ const page = async () => {
         model="customer"
       />
       <div className="py-8">
-        <DataTable data={sales} columns={columns} />
+        <DataTable tableTitle="sales" data={sales} columns={columns} />
       </div>
     </div>
 

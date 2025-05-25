@@ -16,16 +16,14 @@ import SubmitButton from '@/components/global/FormInputs/SubmitButton'
 import { FileBox } from 'lucide-react'
 import { changeOrderStatusById } from '@/actions/orders'
 import toast from 'react-hot-toast'
+import { ILineOrder } from '@/type/types'
 
-type OrderStatusProps = {
-    order: LineOrder | null,
-    isOpen: boolean
-    setIsOpen: (isOpen: boolean) => void,
-}
 
-const OrderStatusBtn = (props: OrderStatusProps) => {
 
-    const { order, isOpen, setIsOpen } = props
+const OrderStatusBtn = ({ order }: { order: ILineOrder | null }) => {
+
+    const [isOpen, setIsOpen] = useState(false)
+
     const orderStatus = [
         {
             value: "DELIVERED",

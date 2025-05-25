@@ -37,6 +37,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 
 export function NotificationMenu({
   notifications,
@@ -77,72 +78,64 @@ export function NotificationMenu({
             </SheetTitle>
           </SheetHeader>
           {/* CONTENT HWRE */}
-          <div className="">
-            {notifications.map((item, i) => {
-              const statusClass =
-                item.status === "WARNING"
-                  ? "border-yellow-500 bg-yellow-50"
-                  : item.status === "DANGER"
-                  ? "border-red-500 bg-red-50"
-                  : "border-blue-500 bg-blue-50";
+          <ScrollArea className="h-[500px] w-full p-2" >
+            <div className="">
+              {notifications.map((item, i) => {
+                const statusClass =
+                  item.status === "WARNING"
+                    ? "border-yellow-500 bg-yellow-50"
+                    : item.status === "DANGER"
+                    ? "border-red-500 bg-red-50"
+                    : "border-blue-500 bg-blue-50";
 
-              const textClass =
-                item.status === "WARNING"
-                  ? "text-yellow-600"
-                  : item.status === "DANGER"
-                  ? "text-red-600"
-                  : "text-blue-600";
+                const textClass =
+                  item.status === "WARNING"
+                    ? "text-yellow-600"
+                    : item.status === "DANGER"
+                    ? "text-red-600"
+                    : "text-blue-600";
 
-              const Icon =
-                item.status === "WARNING" || item.status === "DANGER"
-                  ? AlertCircle
-                  : Check;
+                const Icon =
+                  item.status === "WARNING" || item.status === "DANGER"
+                    ? AlertCircle
+                    : Check;
 
-              return (
-                <div
-                  key={i}
-                  className={cn(
-                    "flex justify-between gap-4 py-3 border-b-2 items-center px-3 rounded-md",
-                    statusClass
-                  )}
-                >
-                  <button className={cn(textClass)}>
-                    <Icon className="w-6 h-6 flex-shrink-0" />
-                  </button>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <h2 className="text-sm font-bold">{item.statusText}</h2>
-                      <SheetClose asChild>
-                        <button
-                          onClick={() => handleChangeStatus(item.id)}
-                          className="text-xs flex items-center text-red-500"
-                        >
-                          <Trash className="w-4 h-4 mr-1" />
-                          <span>Mark it Read</span>
-                        </button>
-                      </SheetClose>
+                return (
+                  <div
+                    key={i}
+                    className={cn(
+                      "flex justify-between gap-4 py-3 border-b-2 items-center px-3 rounded-md",
+                      statusClass
+                    )}
+                  >
+                    <button className={cn(textClass)}>
+                      <Icon className="w-6 h-6 flex-shrink-0" />
+                    </button>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h2 className="text-sm font-bold">{item.statusText}</h2>
+                        <SheetClose asChild>
+                          <button
+                            onClick={() => handleChangeStatus(item.id)}
+                            className="text-xs flex items-center text-red-500"
+                          >
+                            <Trash className="w-4 h-4 mr-1" />
+                            <span>Mark it Read</span>
+                          </button>
+                        </SheetClose>
+                      </div>
+                      <p className={`text-xs ${item.status === "DANGER" 
+                        ? "dark:text-red-500" 
+                        : "dark:text-yellow-500"}`}>
+                          {item.message}
+                      </p>
                     </div>
-                    <p className={`text-xs ${item.status === "DANGER" 
-                      ? "dark:text-red-500" 
-                      : "dark:text-yellow-500"}`}>
-                        {item.message}
-                    </p>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* <SheetFooter>
-            
-            <SheetClose asChild>
-              <Button asChild>
-                <Link href="/checkout">
-                  <span>Proceed to Checkout</span>
-                </Link>
-              </Button>
-            </SheetClose>
-          </SheetFooter> */}
+                );
+              })}
+            </div>
+            <ScrollBar orientation="vertical" />
+          </ScrollArea>
         </SheetContent>
       ) : (
         <SheetContent side={"left"} className="w-[400px] sm:w-[540px]">

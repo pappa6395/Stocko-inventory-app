@@ -83,7 +83,7 @@ export default function OrderInvoice({
                       <TableCell>#{order?.orderNumber || ""}</TableCell>
                       <TableCell>{order?.paymentMethod || ""}</TableCell>
                       <TableCell>
-                        <OrderStatusBtn order={order} isOpen={isOpen} setIsOpen={setIsOpen}/>
+                        <OrderStatusBtn order={order} />
                       </TableCell>
                       <TableCell>
                         {order?.streetAddress || ""}, {order?.unitNumber || ""}

@@ -50,11 +50,14 @@ const Sidebar = ({
   const router = useRouter();
   const user = session.user;
   const filteredLinks = filterLinks(sidebarLinks, user);
-  const [isOpen, setIsOpen] = useState(false);
+  //const [isOpen, setIsOpen] = useState(false);
+  const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(
+    null
+  );
   
-  const handleToggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+  // const handleToggleMenu = () => {
+  //   setIsOpen(!isOpen);
+  // };
   
   const handleSignOut = async () => {
       try {
@@ -93,12 +96,13 @@ const Sidebar = ({
               {filteredLinks.map((link,i) => {
                 const Icon = link.icon;
                 const isHrefDropdown = link.dropdownMenu?.some(item => item.href === pathname)
+                const isOpen = openDropdownIndex === i;
                 return (
                   <div key={i}>
                     {link.dropdown ? (
                       <Collapsible>
                         <CollapsibleTrigger
-                          onClick={handleToggleMenu} 
+                          onClick={() => setOpenDropdownIndex(isOpen ? null : i)} 
                           className={cn(
                             'w-full flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary',
                             isHrefDropdown && "bg-muted text-primary"
