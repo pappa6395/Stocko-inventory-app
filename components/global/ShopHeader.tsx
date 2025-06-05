@@ -16,7 +16,6 @@ import HelpMenu from '../frontend/HelpMenu'
 
 import { MobileMenu } from '../frontend/MobileMenu'
 import { CartMenu } from '../frontend/CartMenu'
-import SearchBar from '../frontend/SearchBar'
 import ModernSearchBar from '../frontend/modernSearchBar'
 import { SearchProduct } from '@/type/types'
 

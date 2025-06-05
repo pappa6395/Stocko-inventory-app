@@ -5,14 +5,14 @@ import { FaXTwitter } from "react-icons/fa6";
 
 export const footer = {
     logo: <Logo />,
-    summary: "Lorem ipsum dolor sit amet consectetur, adipisicing elit.Quam aliquam doloremque non doloribus quasi inventore cumque tempora, provident accusantium delectus.",
+    summary: "Stocko-Online is a powerful, all-in-one e-commerce and inventory management system designed to streamline online sales, real-time stock tracking, and seamless order fulfillment — empowering businesses to grow smarter and faster.",
     contacts: [
         {
-            label: "+123 456 7890",
+            label: "+6694 254 5659",
             icon: Headset
         },
         {
-            label: "stockoonline@stocko.com",
+            label: "https://stocko-inventory-app.vercel.app",
             icon: Mail
         },
         {

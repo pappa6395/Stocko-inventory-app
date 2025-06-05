@@ -79,7 +79,7 @@ export default async function DashboardSummary() {
                             <DataTable columns={columns} data={customers.slice(0,5)} />
                         </div>
                     </main>  
-                    <BarChartCard />
+                    {/* <BarChartCard /> */}
                 </TabsContent>
                 <TabsContent value="bestSales">
                     <BestSellingProducts products={bestSellingProducts}/>
