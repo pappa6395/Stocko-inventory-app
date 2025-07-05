@@ -7,7 +7,9 @@ import GoogleProvider from "next-auth/providers/google";
 import EmailProvider from "next-auth/providers/email";
 import type { Adapter } from "next-auth/adapters";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { compare } from "bcrypt";
+import { compare } from "bcryptjs";
+
+
 // more providers at https://next-auth.js.org/providers
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prismaClient) as Adapter,

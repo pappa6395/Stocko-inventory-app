@@ -1,5 +1,4 @@
 
-import { PageProps } from '@/.next/types/app/(point-of-sale)/pos/page'
 import { getAllCategories } from '@/actions/category'
 import { getAllCustomers } from '@/actions/customers'
 import { getProductsByCategoryId } from '@/actions/products'
@@ -8,10 +7,13 @@ import { getAllUsers } from '@/actions/users'
 import PointOfSale from '@/components/pos/PointOfSale'
 import React from 'react'
 
+type Props = {
+  searchParams: Promise<{ cate: string }>
+}
 
-const page = async ({searchParams: searchParamsPromise}: PageProps) => {
+const page = async ({searchParams}: Props) => {
 
-  const { cate="all" } = await searchParamsPromise
+  const { cate="all" } = await searchParams;
   const allCategories = await getAllCategories() || [] 
   //const allSubCategories = await getAllSubCategories() || []
   const products = (await getProductsByCategoryId(cate)).data || []
